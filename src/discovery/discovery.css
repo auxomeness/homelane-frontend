@@ -1,22 +1,18 @@
-@import '@fontsource/plus-jakarta-sans/400.css';
-@import '@fontsource/plus-jakarta-sans/500.css';
-@import '@fontsource/plus-jakarta-sans/600.css';
-@import '@fontsource/plus-jakarta-sans/700.css';
 
-/* Figma palette (same values as agent.css). Scoped here so other modules are unaffected.
+/* Palette and font shared with the admin and agent pages. Scoped here so other modules are unaffected.
    Variable names are kept so the shared Card and Button components pick these colors up. */
 .discovery-app {
   --deep-purple: #1e1b4b;   /* Figma primary navy */
   --brand-purple: #1e1b4b;
-  --soft-lavender: #f1f5f9; /* light neutral surface */
+  --soft-lavender: #f8f6fb; /* light neutral surface, same family as the map and agent pages */
   --warm-white: #ffffff;
-  --dark-ink: #0f172a;
-  --muted-gray: #475569;
+  --dark-ink: #251e2b;
+  --muted-gray: #514a70;
   --warm-gold: #f09a20;
   --icon-ink: #111238;
-  --line: #e2e8f0;
-  --edge: #cbd5e1;
-  --canvas: #f8fafc;
+  --line: #e9e6f1;
+  --edge: rgba(30, 27, 75, .13);
+  --canvas: #fbf9fc;
   --elevation: 0 6px 8px rgba(10, 13, 38, .14);
 
   min-height: 100vh;
@@ -26,7 +22,7 @@
   overflow-x: hidden;
   background: var(--canvas);
   color: var(--dark-ink);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 .discovery-app :where(button, input, select) { font: inherit; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -48,7 +44,7 @@
 .discovery-header__actions img { width: 20px; height: 20px; }
 
 .discovery-nav { bottom: calc(16px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(4, 1fr); padding: 0 1.5px; }
-.discovery-nav__item { position: relative; height: 64px; padding: 0; border: 0; background: transparent; color: #0f172a; cursor: pointer; }
+.discovery-nav__item { position: relative; height: 64px; padding: 0; border: 0; background: transparent; color: #251e2b; cursor: pointer; }
 .discovery-nav__icon { position: absolute; top: 15px; left: 50%; display: grid; width: 28px; height: 28px; place-items: center; transform: translateX(-50%); }
 .discovery-nav__icon img { position: relative; width: 28px; height: 28px; }
 .discovery-nav__label { position: absolute; top: 47px; right: 0; left: 0; font-size: 8px; font-weight: 600; line-height: 12px; text-align: center; }
@@ -61,8 +57,8 @@
 .discovery-app .btn { min-width: 160px; height: 48px; padding: 0 16px; border: 1px solid transparent; border-radius: 8px; font-size: 13px; font-weight: 500; line-height: 18px; }
 .discovery-app .btn--primary { background: var(--deep-purple); color: #fff; }
 .discovery-app .btn--primary:hover { background: #111238; }
-.discovery-app .btn--secondary { border-color: var(--line); background: #eef2ff; color: #11123a; }
-.discovery-app .btn--secondary:hover { background: #e0e7ff; }
+.discovery-app .btn--secondary { border-color: var(--line); background: #f1ecf6; color: #11123a; }
+.discovery-app .btn--secondary:hover { background: #e9e6f1; }
 .discovery-app .btn:focus-visible { outline: 2px solid var(--deep-purple); outline-offset: 2px; }
 
 /* ---------- Page shell ---------- */
@@ -84,9 +80,9 @@
 /* ---------- Map Discovery ---------- */
 .map-page { padding-top: 90px; }
 .map-title { margin: 0 0 10px; color: var(--dark-ink); font-size: 18px; font-weight: 700; line-height: 24px; }
-.map-placeholder { position: relative; height: 240px; overflow: hidden; border: 1px solid var(--edge); border-radius: 8px; background: #e8edf3; }
+.map-placeholder { position: relative; height: 240px; overflow: hidden; border: 1px solid var(--edge); border-radius: 8px; background: #f1ecf6; }
 .map-placeholder__art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.map-placeholder__label { position: absolute; right: 0; bottom: 15px; left: 0; color: #94a3b8; font-size: 11px; font-weight: 500; text-align: center; }
+.map-placeholder__label { position: absolute; right: 0; bottom: 15px; left: 0; color: #777582; font-size: 11px; font-weight: 500; text-align: center; }
 .map-pin { position: absolute; z-index: 1; height: 24px; padding: 0 9px; border: 1px solid var(--deep-purple); border-radius: 12px; background: #fff; color: var(--deep-purple); box-shadow: var(--elevation); font-size: 11px; font-weight: 700; line-height: 22px; transform: translate(-50%, -100%); margin-top: -6px; cursor: pointer; }
 .map-pin::after { content: ''; position: absolute; bottom: -6px; left: 50%; width: 0; height: 0; border-top: 6px solid #fff; border-right: 5px solid transparent; border-left: 5px solid transparent; transform: translateX(-50%); }
 .map-pin.is-selected { z-index: 2; height: 30px; border-color: #fff; background: var(--deep-purple); color: #fff; font-size: 12px; line-height: 28px; }
@@ -98,7 +94,7 @@
 .location-card label > span:first-child { color: var(--muted-gray); font-size: 11px; font-weight: 500; line-height: 16px; }
 .location-card__field { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px; border: 1px solid var(--edge); border-radius: 15px; background: var(--canvas); color: var(--muted-gray); }
 .location-card__field input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--dark-ink); font-size: 12px; font-weight: 500; outline: none; }
-.location-card__field input::placeholder { color: #64748b; font-weight: 400; }
+.location-card__field input::placeholder { color: #777582; font-weight: 400; }
 .location-card__field button { display: grid; padding: 0; place-items: center; border: 0; background: transparent; color: var(--muted-gray); cursor: pointer; }
 .location-card__field:focus-within { outline: 2px solid var(--deep-purple); outline-offset: 1px; }
 
@@ -144,9 +140,9 @@
 .conversation-item__row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; line-height: 20px; }
 .conversation-item__row strong { font-size: 14px; font-weight: 600; }
 .conversation-item.is-unread .conversation-item__row strong { font-weight: 700; }
-.conversation-item__row time, .message time { color: #64748b; font-size: 11px; font-weight: 400; }
+.conversation-item__row time, .message time { color: #777582; font-size: 11px; font-weight: 400; }
 .conversation-item__property { color: var(--muted-gray); font-size: 12px; line-height: 20px; }
-.conversation-item__preview { overflow: hidden; color: #64748b; font-size: 12px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-item__preview { overflow: hidden; color: #777582; font-size: 12px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
 .conversation-item.is-unread .conversation-item__preview { color: var(--dark-ink); font-weight: 600; padding-right: 22px; }
 .unread-badge { position: absolute; top: 53px; right: 13px; display: grid; width: 18px; height: 18px; place-items: center; border-radius: 50%; background: var(--deep-purple); color: #fff; font-size: 10px; font-weight: 700; }
 
@@ -172,13 +168,13 @@
 .offer-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
 .offer-card__amount { margin: 0; color: var(--deep-purple); font-size: 18px; font-weight: 700; }
 .offer-card__note { margin: 0; color: var(--muted-gray); font-size: 12px; }
-.offer-card__disclaimer { margin: 0; color: #92400e; font-size: 11px; font-weight: 700; }
+.offer-card__disclaimer { margin: 0; color: #855a12; font-size: 11px; font-weight: 700; }
 
 .status-pill { padding: 2px 10px; border-radius: 999px; background: var(--soft-lavender); color: var(--deep-purple); font-size: 11px; font-weight: 600; }
-.status-pill--pending { background: #f1f5f9; color: #475569; }
-.status-pill--countered { background: #fef3c7; color: #92400e; }
-.status-pill--accepted { background: #d1fae5; color: #065f46; }
-.status-pill--declined { background: #ffe4e6; color: #9f1239; }
+.status-pill--pending { background: #e9e6f1; color: #514a70; }
+.status-pill--countered { background: #fff0d7; color: #855a12; }
+.status-pill--accepted { background: #e0f4e9; color: #176b43; }
+.status-pill--declined { background: #fbe5ea; color: #99394e; }
 
 /* ---------- Notifications ---------- */
 .notifications-page { padding-top: 100px; }
@@ -193,14 +189,14 @@
 .notification-list, .offer-grid { margin: 17px 0 0; padding: 0; list-style: none; }
 .notification-list { display: grid; gap: 13px; }
 .notification { display: flex; align-items: center; gap: 12px; height: 77px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; opacity: .55; }
-.notification.is-unread { opacity: 1; box-shadow: 0 2px 8px rgba(15, 23, 42, .1); }
-.notification__icon { display: grid; flex: none; width: 40px; height: 40px; place-items: center; border-radius: 50%; background: var(--soft-lavender); color: #64748b; }
+.notification.is-unread { opacity: 1; box-shadow: 0 2px 8px rgba(30, 27, 75, .1); }
+.notification__icon { display: grid; flex: none; width: 40px; height: 40px; place-items: center; border-radius: 50%; background: var(--soft-lavender); color: #777582; }
 .notification__icon.is-unread { background: var(--deep-purple); color: #fff; }
 .notification__body { display: grid; flex: 1; gap: 4px; min-width: 0; padding-bottom: 4px; }
 .notification__row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .notification__row strong { font-size: 13px; font-weight: 600; line-height: 16px; }
-.notification time, .offer-summary time { color: #64748b; font-size: 10px; }
-.notification__body p { margin: 0; overflow: hidden; color: #64748b; font-size: 11px; line-height: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.notification time, .offer-summary time { color: #777582; font-size: 10px; }
+.notification__body p { margin: 0; overflow: hidden; color: #777582; font-size: 11px; line-height: 14px; text-overflow: ellipsis; white-space: nowrap; }
 .notification__link { display: inline-flex; align-items: center; gap: 4px; width: fit-content; padding: 0; border: 0; background: transparent; color: var(--dark-ink); font-size: 10px; font-weight: 500; line-height: 12px; cursor: pointer; }
 .notification__link svg, .offer-summary__view svg { stroke-width: 3; }
 
@@ -209,26 +205,26 @@
 .offer-summary__top { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .offer-summary__top .notification__icon { width: 28px; height: 28px; }
 .offer-summary__top strong { overflow: hidden; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.offer-summary__meta { margin: 0; color: #64748b; font-size: 9px; }
+.offer-summary__meta { margin: 0; color: #777582; font-size: 9px; }
 .offer-summary__bottom { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
 .offer-summary__bottom time { font-size: 9px; }
 .offer-summary__view { display: inline-flex; align-items: center; gap: 3px; margin-left: auto; padding: 0; border: 0; background: transparent; color: var(--dark-ink); font-size: 9px; font-weight: 600; cursor: pointer; }
 
 /* ---------- Viewings ---------- */
 .viewing-list { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.viewing-card { display: grid; gap: 8px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 4px 12px rgba(15, 23, 42, .1); }
+.viewing-card { display: grid; gap: 8px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 4px 12px rgba(30, 27, 75, .1); }
 .viewing-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .viewing-card__heading { font-size: 11px; font-weight: 500; }
 .viewing-card__heading.is-large { font-size: 14px; }
 .viewing-status { display: grid; height: 32px; padding: 0 16px; place-items: center; border-radius: 16px; font-size: 13px; font-weight: 500; }
-.viewing-status--pending { background: #fef3c7; color: #92400e; }
-.viewing-status--confirmed { background: #d1fae5; color: #065f46; }
+.viewing-status--pending { background: #fff0d7; color: #855a12; }
+.viewing-status--confirmed { background: #e0f4e9; color: #176b43; }
 .viewing-card__property { margin: 0; font-size: 13px; font-weight: 500; }
 .viewing-card__price { margin: -4px 0 4px; font-size: 11px; font-weight: 700; }
 .viewing-card__line { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted-gray); font-size: 12px; line-height: 20px; }
 .viewing-card__banner { display: flex; align-items: flex-start; gap: 8px; margin: 4px 0 0; padding: 12px; border-radius: 8px; background: var(--soft-lavender); color: #334155; font-size: 12px; line-height: 16px; }
 .viewing-card__banner svg { flex: none; }
-.viewing-card__banner.is-confirmed { background: #d1fae5; color: #065f46; }
+.viewing-card__banner.is-confirmed { background: #e0f4e9; color: #176b43; }
 
 /* ---------- Small phones ---------- */
 @media (max-width: 480px) {
