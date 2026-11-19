@@ -11,19 +11,13 @@
     margin: 3.5rem 0;
 }
 
-
-
 .listing-filter {
     margin-top: 2rem;
     display: flex;
     justify-content: space-between;
 }
 
-
-
-
 .review-grid-container {
-
     margin: 2rem 0;
     border: 1px solid #e4e2e2;
     border-radius: 1rem;
@@ -65,16 +59,257 @@
     padding: 1.5rem;
     color: #575656;
 }
-.admin-map-review { display: grid; gap: 16px; padding: 20px; margin: 20px 0 40px; border: 1px solid #e9e6ef; border-radius: 18px; background: #fff; }
-.admin-map-tabs { display: flex; gap: 6px; width: fit-content; padding: 4px; border: 1px solid #e9e6ef; border-radius: 12px; background: #fff; }
-.admin-map-tabs>* { padding: 8px 15px; border-radius: 9px; color: #625d6b; font-weight: 700; }
-.admin-map-tabs>span { background: #241d4d; color: white; }
-.admin-review-filters { grid-template-columns: minmax(180px,2fr) minmax(130px,1fr) minmax(205px,1.5fr) minmax(130px,1fr); }
-.admin-review-filters>label:first-child { grid-column: auto; }
-.admin-map-review__controls { display: grid; grid-template-columns: 1fr 2fr; align-items: center; gap: 10px 14px; color: #514b5b; }
-.admin-map-review__controls select { min-height: 42px; padding: 8px 10px; border: 1px solid #ded9e7; border-radius: 9px; background: white; font: inherit; }
-.admin-map-review__save { justify-self: start; min-height: 42px; padding: 0 18px; border: 0; border-radius: 10px; background: #241d4d; color: white; font: inherit; font-weight: 700; cursor: pointer; }
-.admin-map-review__save:disabled { opacity: .5; cursor: not-allowed; }
-.admin-map-review__queue { color: #77717e; font-size: .9rem; }
-@media(max-width:900px) { .admin-review-filters { grid-template-columns: 1fr 1fr; } .admin-review-filters>label:first-child { grid-column: 1/-1; } }
-@media(max-width:640px) { .admin-map-review { padding: 14px; } .admin-map-review__controls { grid-template-columns: 1fr; } }
+
+.listing-review-actions {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.listing-review-actions a,
+.listing-review-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: .5rem .9rem;
+    border: 1px solid #ded9e7;
+    border-radius: .6rem;
+    background: #fff;
+    color: #241d4d;
+    font: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.listing-review-actions button {
+    border-color: #241d4d;
+    background: #241d4d;
+    color: #fff;
+}
+
+.listing-review-actions a:hover,
+.listing-review-actions button:hover {
+    opacity: .82;
+}
+
+.listing-review-actions a:focus-visible,
+.listing-review-actions button:focus-visible {
+    outline: 2px solid #241d4d;
+    outline-offset: 2px;
+}
+
+.admin-map-review[open] {
+    position: fixed;
+    top: var(--admin-review-top, 1rem);
+    right: var(--admin-review-right, 1rem);
+    bottom: auto;
+    left: auto;
+    display: grid;
+    width: min(36rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - var(--admin-review-top, 1rem) - 1rem);
+    gap: 1rem;
+    padding: 1.25rem;
+    margin: 0;
+    overflow: auto;
+    border: 1px solid #e9e6ef;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0 1rem 3rem rgba(30, 27, 75, .2);
+    color: #241d4d;
+}
+
+.admin-map-review::backdrop {
+    background: rgba(20, 18, 44, .35);
+}
+
+.admin-map-review__heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.admin-map-review__heading h2 {
+    margin-bottom: .3rem;
+    font-size: 1.1rem;
+}
+
+.admin-map-review__heading p {
+    color: #77717e;
+    font-size: .8rem;
+    line-height: 1.4;
+}
+
+.admin-map-review__heading button {
+    padding: .4rem .65rem;
+    border: 1px solid #ded9e7;
+    border-radius: .5rem;
+    background: #fff;
+    color: #241d4d;
+    font: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+}
+
+.admin-review-step {
+    display: grid;
+    gap: .65rem;
+    padding: 1rem;
+    border: 1px solid #e9e6ef;
+    border-radius: .75rem;
+    background: #fbfafd;
+}
+
+.admin-review-step__heading {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: .15rem;
+}
+
+.admin-review-step__heading span {
+    display: grid;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: none;
+    place-items: center;
+    border-radius: 50%;
+    background: #241d4d;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.admin-review-step__heading h3 {
+    font-size: .95rem;
+}
+
+.admin-review-step label {
+    color: #514b5b;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.admin-review-step select {
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid #ded9e7;
+    border-radius: .55rem;
+    background: #fff;
+    color: #241d4d;
+    font: inherit;
+}
+
+.admin-review-property {
+    display: grid;
+    gap: .25rem;
+    overflow-wrap: anywhere;
+}
+
+.admin-review-property strong {
+    font-size: .9rem;
+}
+
+.admin-review-property span,
+.admin-review-hint {
+    color: #77717e;
+    font-size: .8rem;
+    line-height: 1.45;
+}
+
+.admin-review-coordinates {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem;
+    padding: .65rem .75rem;
+    border-radius: .55rem;
+    background: #f0eef6;
+}
+
+.admin-review-coordinates dt {
+    margin-bottom: .2rem;
+    color: #77717e;
+    font-size: .72rem;
+}
+
+.admin-review-coordinates dd {
+    font-size: .82rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-review-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.admin-review-footer p {
+    color: #77717e;
+    font-size: .76rem;
+    line-height: 1.4;
+}
+
+.admin-map-review__save {
+    min-height: 42px;
+    flex: none;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 10px;
+    background: #241d4d;
+    color: white;
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.admin-map-review__save:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.listing-review-result {
+    padding: .8rem 1rem;
+    margin: 0 1rem 1rem;
+    border: 1px solid #b8dfca;
+    border-radius: .6rem;
+    background: #e8f7ee;
+    color: #176b43;
+    font-size: .85rem;
+}
+
+@media (max-width: 640px) {
+    .review-grid-container-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .listing-review-actions {
+        width: 100%;
+    }
+
+    .listing-review-actions > * {
+        flex: 1;
+    }
+
+    .admin-map-review[open] {
+        top: 1rem;
+        right: 1rem;
+        max-height: calc(100dvh - 2rem);
+        padding: .9rem;
+    }
+
+    .admin-review-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-review-coordinates {
+        grid-template-columns: 1fr;
+    }
+}
