@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, House } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { Agents, listData } from "../libs/listData";
 import AdminHeader from "./AdminHeader";
@@ -95,44 +95,71 @@ export function AdminAgentDetails() {
 }
 
 export function AdminListingDetails() {
+    const { listId } = useParams<{ listId: string }>();
+    const list = listData.find((item) => item.id === listId);
 
-    const { listId } = useParams <{listId: string}>();
-    
-    const list = listData.find(
-        (list) => listId === list.id
-    )
+    return (
+        <main className="listing-details-container admin-layout">
+            <AdminHeader/>
+            <AdminNavigation/>
 
-    return(
-        <main className="listing-details-container">
+            <div className="admin-page-content listing-details-body">
+                <Link className="listing-details-back" to="/admin/listing-reviews">
+                    <ArrowLeft size={16} />
+                    <span>Back to listing reviews</span>
+                </Link>
 
-            <Link to={"/admin/listing-reviews"}>
-            <div className="back">
-                <ArrowLeft/>
-                <p>Back to listing reviews</p>
+                <header className="list-details-header">
+                    <h1>Listing details</h1>
+                    <p>Review the property facts, assigned agent, and submitted location.</p>
+                </header>
+
+                {!list ? <p className="listing-details-empty">Listing not found.</p> : <>
+                    <div className="listing-details-title">
+                        <h2>{list.title}</h2>
+                        <span className={'listing-details-status listing-details-status--' + list.status}>
+                            {list.status === 'cancelled' ? 'Rejected' : list.status}
+                        </span>
+                    </div>
+
+                    <div className="listing-details-grid">
+                        <section className="listing-property-card">
+                            <div className="listing-property-photo">
+                                {list.image ? <img src={list.image} alt={list.title} /> : <House size={36} strokeWidth={1.5} />}
+                            </div>
+                            <strong className="listing-property-price">₱ {list.intPrice.toLocaleString('en-PH')}</strong>
+                            <p className="listing-property-location">{list.location}</p>
+                            <div className="listing-property-facts">Property facts not provided</div>
+                        </section>
+
+                        <div className="listing-details-side">
+                            <section className="listing-details-card">
+                                <h3>Assigned agent</h3>
+                                <div className="listing-assigned-agent">No assigned agent provided</div>
+                                <div className="listing-agent-submission">
+                                    <span>Agent submission</span>
+                                    <span className="listing-submission-status">Not available</span>
+                                </div>
+                            </section>
+
+                            <section className="listing-details-card">
+                                <h3>Location</h3>
+                                <span className="listing-details-label">Submitted location</span>
+                                <p>{list.location}</p>
+                            </section>
+
+                            <section className="listing-details-card">
+                                <h3>Record decision</h3>
+                                <p className="listing-decision-copy">Approve this listing for publication or reject the submission.</p>
+                                <div className="listing-decision-actions">
+                                    <button type="button" className="listing-decision-reject" disabled>Reject</button>
+                                    <button type="button" className="listing-decision-approve" disabled>✓ Approve</button>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </>}
             </div>
-
-        {!list ? <h1>List not found</h1> :
-            <>
-            <header className="list-details-header">
-                <h2>Listing details</h2>
-                <span>Review the property facts, assigned agent, and submitted location </span>
-            </header>
-
-            <section className="list-content">
-                <div className="list-profile">
-                    {list.image}
-                </div>
-
-                <div className="list-name">
-                <h3>{list.title}</h3>
-                <span>{list.location}</span> | 
-                </div>
-
-            </section>
-            </>
-            }
-
-            </Link>
         </main>
     );
 }
