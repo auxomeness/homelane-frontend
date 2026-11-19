@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router";
-import AdminDashboard from "./admin/pages/dashboard/AdminDashboard";
+import AdminDashboard from "./components/admin/pages/dashboard/AdminDashboard"; 
 import App from "./App";
-import AdminListingReview from "./admin/pages/listing-review/AdminListingReview";
-import AdminAgentReview from "./admin/pages/agent-review/AdminAgentReview";
+import AdminListingReview from "./components/admin/pages/listing-review/AdminListingReview";
+import AdminAgentReview from "./components/admin/pages/agent-review/AdminAgentReview";
 import AgentApp, { AgentIndexRedirect } from "./components/agent/AgentApp";
 import AgentDashboard from "./components/agent/pages/dashboard/AgentDashboard";
 import AgentListings from "./components/agent/pages/listings/AgentListings";
@@ -17,6 +17,7 @@ import Viewings from "./discovery/pages/Viewings";
 import PropertyMapPage from "./shared/maps/PropertyMapPage";
 import StaffGate from "./shared/maps/StaffGate";
 import StaffMapPage from "./shared/maps/StaffMapPage";
+import { AdminAgentDetails, AdminListingDetails } from "./components/admin/shared/DetailsView";
 
 const AppRoutes = createBrowserRouter([
   {
@@ -26,11 +27,15 @@ const AppRoutes = createBrowserRouter([
   {
     path: "/admin",
     Component: () => <StaffGate role="admin" />,
+    // Component: AdminDashboard,
     children: [
       { index: true, Component: AdminDashboard },
-      { path: "listing-reviews", Component: AdminListingReview },
       { path: "map", Component: () => <StaffMapPage role="admin" /> },
+      { path: "listing-reviews", Component: AdminListingReview },
+      { path: "listing-reviews/:listId", Component: AdminListingDetails },
+
       { path: "agent-reviews", Component: AdminAgentReview },
+      { path: "agent-reviews/:agentId", Component: AdminAgentDetails },
     ],
   },
   {

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import AdminHeader from '../../shared/AdminHeader';
 import AdminNavigation from '../../shared/AdminNavigation';
-import CategoryFilter from '../../../components/CategoryFilter';
+import CategoryFilter from '../../../CategoryFilter';
 import { Agents, type CategoryStatus } from '../../libs/listData';
-import SearchFilter from '../../../components/SearchFIlter';
+import SearchFilter from '../../../SearchFIlter';
 
 import './adminAgentReviewStyles.css'
 import { AgentReviewGrid } from '../../shared/ReviewGrid';
@@ -24,9 +24,11 @@ export default function AdminAgentReview() {
         return matchesCategory && matchesSearch;
     });
     return(
-        <main className="agent-container">
+        <main className="agent-container admin-layout">
             <AdminHeader/>
             <AdminNavigation/>
+
+            <div className="admin-page-content">
 
             <header id='agent-header'>
                 <h1>Agent reviews</h1>
@@ -53,6 +55,8 @@ export default function AdminAgentReview() {
 
                 {filteredAgents.map((agent) => (
                     <AgentReviewGrid 
+                    key={agent.id}
+                    id={Number(agent.id)}
                     image={agent.image} 
                     name={agent.name} 
                     location={agent.location} 
@@ -61,6 +65,7 @@ export default function AdminAgentReview() {
                 ))}
                 {filteredAgents.length === 0 && <p className="review-empty">No listings match your filters.</p>}
             </section>
+            </div>
         </main>
     );
 }

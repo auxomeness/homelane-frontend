@@ -8,6 +8,7 @@ import type { AgentReviewGridProps, ListReviewGridProps } from '../libs/listData
 
 
 export function AgentReviewGrid( {
+    id,
     image,
     name,
     location,
@@ -15,7 +16,10 @@ export function AgentReviewGrid( {
     status
 }: AgentReviewGridProps) {
     return(
-        <Link to={'/'}>
+        <Link 
+            key={id} 
+            to={`/admin/agent-reviews/${id}`}>
+        
         <section className="review-container">
                         <div className="review-name">
                             <div className="review-name-image">
@@ -44,6 +48,7 @@ export function AgentReviewGrid( {
 
 
 export function ListReviewGrid({
+    id,
     image,
     title,
     location,
@@ -58,7 +63,10 @@ export function ListReviewGrid({
     ).format(intPrice)
 
     return(
-        <Link to={'/'}>
+        <Link 
+            key={id} 
+            to={`/admin/listing-reviews/${id}`}>
+            
             <section className="review-container">
                 <div className="review-name">
                     <div className="review-name-image">

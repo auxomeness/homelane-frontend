@@ -17,8 +17,8 @@ export interface SeearchFilterProps {
 // ----------------- Grid Details -------------------------- 
 
 export interface AgentReviewGridProps {
-    // link: string,
-    image: string,
+    id: number;
+    image: string;
     name: string;
     title?: string;
     location: string;
@@ -27,8 +27,8 @@ export interface AgentReviewGridProps {
     }
     
 export interface ListReviewGridProps {
-    // link: string,
-    image: string,
+    id: number;
+    image: string;
     title: string;
     location: string;
     intPrice: number;
@@ -37,16 +37,31 @@ export interface ListReviewGridProps {
 // ----------------- Grid Details -------------------------- 
     
     
-    export interface list {
-        image: string;
-        title: string;
+export interface list {
+    id: string;
+    image: string;
+    title: string;
     location: string;
     intPrice: number;
     status: StatusType;
 }
 
+export interface agent {
+    submission: Date;
+    id: string;
+    image: string;
+    name: string;
+    email: string;
+    mobileNumber: string;
+    title: string;
+    location: string;
+    status: StatusType;
+
+}
+
 export const listData: list[] = [
     {
+        id: "1",
         image: "",
         title: "Three-bedroom townhome",
         location: "Quezon City",
@@ -54,6 +69,7 @@ export const listData: list[] = [
         status: "pending"
     },
     {
+        id: "2",
         image: "",
         title: "Ortigas Skyline Condo",
         location: "Pasig City",
@@ -61,6 +77,7 @@ export const listData: list[] = [
         status: "pending"
     },
     {
+        id: "3",
         image: "",
         title: "Garden-view family home",
         location: "San Juan",
@@ -68,6 +85,7 @@ export const listData: list[] = [
         status: "pending"
     },
     {
+        id: "4",
         image: "",
         title: "Makati Garden Residences",
         location: "Makati",
@@ -75,6 +93,7 @@ export const listData: list[] = [
         status: "approved"
     },
     {
+        id: "5",
         image: "",
         title: "Pasig Courtyard townhouse",
         location: "Pasig",
@@ -83,20 +102,60 @@ export const listData: list[] = [
     },
 ]
 
-export const Agents = [
+export const Agents: agent[] = [
     {
-        image:'', name: "Xian Humping de los reyes", title: "PRC#0029182", location: "Naga City, PH", status: "pending"
+        id: "1",
+        image: '',
+        name: "Xian Humping de los reyes",
+        title: "PRC#0029182",
+        location: "Naga City, PH",
+        status: "pending",
+        submission: new Date("2026-11-19"),
+        email: "xianhumf@gmail.com",
+        mobileNumber: "09284758371"
     },
     {
-        image:'', name: "Neil Anlene Villanueva", title: "PRC#0029183", location: "San Fernando City, PH", status: "approved"
+        id: "2",
+        image: '',
+        name: "Neil Anlene Villanueva",
+        title: "PRC#0029183",
+        location: "San Fernando City, PH",
+        status: "approved",
+        submission: new Date("2026-11-19"),
+        email: "neilanlyvilla@gmail.com",
+        mobileNumber: "09284758321"
     },
     {
-        image:'', name: "Syxied Sebven Abelado", title: "PRC#0029182", location: "Naga City, PH", status: "cancelled"
+        id: "3",
+        image: '',
+        name: "Syxied Sebven Abelado",
+        title: "PRC#0029182",
+        location: "Naga City, PH",
+        status: "cancelled",
+        submission: new Date("2026-11-19"),
+        email: "drbbrnsdf@gmail.com",
+        mobileNumber: "09284758374"
     },
     {
-        image:'', name: "Syxied Sebven Abelado", title: "PRC#0029182", location: "Naga City, PH", status: "cancelled"
+        id: "4",
+        image: '',
+        name: "Syxied Sebven Abelado",
+        title: "PRC#0029182",
+        location: "Naga City, PH",
+        status: "cancelled",
+        submission: new Date("2026-11-19"),
+        email: "xianhumf@gmail.com",
+        mobileNumber: "09284758371"
     },
     {
-        image:'', name: "Syxied Sebven Abelado", title: "PRC#0029182", location: "Naga City, PH", status: "cancelled"
+        id: "5",
+        image: '',
+        name: "Syxied Sebven Abelado",
+        title: "PRC#0029182",
+        location: "Naga City, PH",
+        status: "cancelled",
+        submission: new Date("2026-11-19"),
+        email: "syxiedsebvenabelas@gmail.com",
+        mobileNumber: "09284787371"
     },
-] as const
+]

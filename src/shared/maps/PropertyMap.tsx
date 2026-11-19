@@ -1,6 +1,6 @@
+import { DivIcon, LatLngBounds, type DragEndEvent, type LatLngExpression, type LeafletPointerEvent, type Marker as LeafletMarker } from 'leaflet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents, Polyline } from 'react-leaflet';
-import L, { type LatLngExpression } from 'leaflet';
 import { Crosshair, Maximize2, Minimize2, Navigation, Plus, Minus, RotateCcw } from 'lucide-react';
 import { locateWalkingRoute } from './routing.js';
 import type { RouteStep } from './routing.js';
@@ -8,8 +8,8 @@ import type { PropertyListing } from './listingsApi.js';
 import './propertyMap.css';
 
 const DEFAULT_CENTER: LatLngExpression = [13.6218, 123.1948];
-const markerIcon = L.divIcon({ className: 'homelane-map-marker', html: '<span></span>', iconSize: [24, 24], iconAnchor: [12, 12] });
-const pinIcon = L.divIcon({ className: 'homelane-map-pin', html: '<span></span>', iconSize: [30, 30], iconAnchor: [15, 29] });
+const markerIcon = new DivIcon({ className: 'homelane-map-marker', html: '<span></span>', iconSize: [24, 24], iconAnchor: [12, 12] });
+const pinIcon = new DivIcon({ className: 'homelane-map-pin', html: '<span></span>', iconSize: [30, 30], iconAnchor: [15, 29] });
 export interface MapPin { latitude: number; longitude: number }
 const AVAILABLE_RADII = new Set([0, 2, 5, 10, 25]);
 export function normalizeRadiusKm(radiusKm: number) {
@@ -23,7 +23,7 @@ interface Props {
 }
 
 function MapEvents({ mode, onPinChange, onMove }: { mode: Props['mode']; onPinChange?: Props['onPinChange']; onMove?: () => void }) {
-  useMapEvents({ click(event) { if (mode === 'pick') onPinChange?.({ latitude: event.latlng.lat, longitude: event.latlng.lng }); }, moveend() { onMove?.(); } });
+  useMapEvents({ click(event: LeafletPointerEvent) { if (mode === 'pick') onPinChange?.({ latitude: event.latlng.lat, longitude: event.latlng.lng }); }, moveend() { onMove?.(); } });
   return null;
 }
 function Recenter({ center, scopeKey }: { center: LatLngExpression; scopeKey: string }) {
@@ -59,7 +59,7 @@ function RadiusViewport({ position, radiusKm, listings, fullscreen, panelCollaps
       if (radiusKm > 0) {
         map.flyToBounds(radiusBounds(position, radiusKm), { paddingTopLeft, paddingBottomRight, maxZoom: zoomTargetForRadius(radiusKm), duration: .8 });
       } else if (listings.length > 1) {
-        map.flyToBounds(L.latLngBounds(listings.map((item) => [item.latitude, item.longitude])), { paddingTopLeft, paddingBottomRight, duration: .8 });
+        map.flyToBounds(new LatLngBounds(listings.map((item) => [item.latitude, item.longitude])), { paddingTopLeft, paddingBottomRight, duration: .8 });
       } else if (listings.length === 1) {
         map.flyTo([listings[0].latitude, listings[0].longitude], 12, { duration: .8 });
       } else {
@@ -81,7 +81,7 @@ function MapControls({ listings, fullscreen, onLocate, onToggleTracking, hasUser
     return () => document.removeEventListener('fullscreenchange', update);
   }, []);
   const reset = () => {
-    if (listings.length > 1) map.fitBounds(L.latLngBounds(listings.map((item) => [item.latitude, item.longitude])), { padding: [60, 60], maxZoom: 15 });
+    if (listings.length > 1) map.fitBounds(new LatLngBounds(listings.map((item) => [item.latitude, item.longitude])), { padding: [60, 60], maxZoom: 15 });
     else if (listings.length === 1) map.flyTo([listings[0].latitude, listings[0].longitude], 14);
     else map.flyTo(DEFAULT_CENTER, 12);
   };
@@ -164,7 +164,7 @@ export default function PropertyMap({ listings, mode = 'browse', pin, onPinChang
       <InvalidateMapSize />
       <MapControls listings={filtered} fullscreen={fullscreen} onLocate={locate} onToggleTracking={track} hasUserPosition={Boolean(userPosition)} watching={watching} />
       {filtered.map((listing) => <Marker key={listing.id} position={[listing.latitude, listing.longitude]} icon={markerIcon} eventHandlers={{ click: () => { setSelected(listing); onListingSelect?.(listing); } }}><Popup><div className="property-map__popup"><strong>{listing.title}</strong><span>{listing.location}</span><b>₱ {Number(listing.price).toLocaleString('en-PH')}</b>{listing.status !== 'active' && <small>{listing.status}</small>}{allowRoute && userPosition && <button type="button" onClick={() => { setSelected(listing); onListingSelect?.(listing); }}>Walking directions</button>}</div></Popup></Marker>)}
-      {pin && mode === 'pick' && <Marker position={[pin.latitude, pin.longitude]} icon={pinIcon} draggable eventHandlers={{ dragend: (event) => { const point = event.target.getLatLng(); onPinChange?.({ latitude: point.lat, longitude: point.lng }); } }} />}
+      {pin && mode === 'pick' && <Marker position={[pin.latitude, pin.longitude]} icon={pinIcon} draggable eventHandlers={{ dragend: (event: DragEndEvent) => { const point = (event.target as LeafletMarker).getLatLng(); onPinChange?.({ latitude: point.lat, longitude: point.lng }); } }} />}
       {userPosition && <><Marker position={[userPosition.latitude, userPosition.longitude]} />{radiusKm > 0 && <AnimatedRadiusCircle center={userPosition} radiusKm={radiusKm} />}</>}
       {route.length > 0 && <Polyline positions={route} pathOptions={{ color: '#4b47c5', weight: 5, opacity: .85 }} />}
     </MapContainer>
@@ -191,7 +191,7 @@ function radiusBounds(center: MapPin, radiusKm: number) {
   const radiusMeters = radiusKm * 1000;
   const latitudeDelta = radiusMeters / 111_320;
   const longitudeDelta = radiusMeters / (111_320 * Math.max(0.01, Math.cos(center.latitude * Math.PI / 180)));
-  return L.latLngBounds(
+  return new LatLngBounds(
     [center.latitude - latitudeDelta, center.longitude - longitudeDelta],
     [center.latitude + latitudeDelta, center.longitude + longitudeDelta],
   );

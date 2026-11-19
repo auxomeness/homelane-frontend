@@ -41,43 +41,168 @@
 
 /* --------- Admin Navigation ------------ */
 
+.admin-page-content {
+    min-width: 0;
+    padding-bottom: 6rem;
+}
+
 #admin-nav {
-    background: rgba(255, 255, 255, 0.45);
+    position: fixed;
+    z-index: 50;
+    bottom: max(.85rem, env(safe-area-inset-bottom));
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(42rem, calc(100% - 1.5rem));
+    padding: .55rem .65rem;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, .78);
     backdrop-filter: blur(1rem);
     -webkit-backdrop-filter: blur(1rem);
-
-    border: 0.0625rem solid rgba(255, 255, 255, 0.35);
-    border-radius: 0.875rem;
-
-    box-shadow:
-        0 0.5rem 2rem rgba(31, 38, 135, 0.12),
-        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.6);
-
-    padding: 1.5rem 2rem;
-    margin-top: 2rem;
-
-    display: flex;
-    justify-content: space-between;
+    border: .0625rem solid rgba(255, 255, 255, .48);
+    border-radius: 999px;
+    box-shadow: 0 .6rem 2.2rem rgba(31, 38, 135, .2), inset 0 .0625rem 0 rgba(255, 255, 255, .85);
 }
 
-.nav-title {
-    opacity: 40%;
-    letter-spacing: 0.2rem;
+.admin-nav-title {
+    display: none;
+    color: #777582;
+    letter-spacing: .18em;
+    text-transform: uppercase;
 }
 
-.nav-panel {
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
+.admin-nav-title h3 {
+    font-size: .8rem;
     font-weight: 600;
 }
 
-.nav-panel:hover {
-    cursor: pointer;
+.admin-nav-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    gap: .15rem;
 }
 
-.nav:hover {
-    border-bottom: 2px solid var(--main-color);
+.admin-nav-item {
+    display: grid;
+    min-width: 0;
+    min-height: 3rem;
+    flex: 1;
+    padding: .45rem;
+    place-items: center;
+    border-radius: 999px;
+    color: #1e1b4b;
+}
+
+.admin-nav-item__label {
+    display: none;
+}
+
+.admin-nav-item:hover,
+.admin-nav-item.is-active {
+    background: rgba(30, 27, 75, .1);
+}
+
+.admin-nav-item:focus-visible {
+    outline: 2px solid #1e1b4b;
+    outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+    .admin-layout .agent-filter {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .admin-layout {
+        display: grid;
+        grid-template-columns: 16rem minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        align-items: start;
+        column-gap: 1.5rem;
+    }
+
+    .admin-layout > #admin-header {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .admin-layout > #admin-nav {
+        position: sticky;
+        top: 1.5rem;
+        left: auto;
+        grid-column: 1;
+        grid-row: 2;
+        align-items: stretch;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: auto;
+        padding: 1.5rem 1rem;
+        margin-top: 2rem;
+        transform: none;
+        border-radius: .875rem;
+        background: rgba(255, 255, 255, .45);
+        box-shadow: 0 .5rem 2rem rgba(31, 38, 135, .12), inset 0 .0625rem 0 rgba(255, 255, 255, .6);
+    }
+
+    .admin-nav-title {
+        display: block;
+        padding: 0 .65rem .6rem;
+    }
+
+    .admin-nav-panel {
+        align-items: stretch;
+        flex-direction: column;
+        gap: .35rem;
+    }
+
+    .admin-nav-item {
+        display: flex;
+        min-height: auto;
+        flex: initial;
+        align-items: center;
+        justify-content: flex-start;
+        gap: .75rem;
+        padding: .8rem .9rem;
+        border-left: 3px solid transparent;
+        border-radius: .55rem;
+        text-align: left;
+    }
+
+    .admin-nav-item__label {
+        display: inline;
+        font-size: .9rem;
+        line-height: 1.2;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .admin-nav-item:hover,
+    .admin-nav-item.is-active {
+        border-left-color: #1e1b4b;
+        background: rgba(30, 27, 75, .07);
+    }
+
+    .admin-page-content {
+        grid-column: 2;
+        grid-row: 2;
+        width: 100%;
+        padding-bottom: 2rem;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1250px) {
+    .admin-page-content #admin-reviews-container {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-page-content .admin-review-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* --------- Admin Navigation ------------ */
@@ -154,3 +279,312 @@
 
 /* --------- Status ----------------- */
 
+
+
+/* --------- Agent Details View ----------------- */
+.agent-details-container {
+    min-height: 100vh;
+    padding: 1rem 2rem;
+    margin: 0 auto;
+    color: #1e1b4b;
+}
+
+.agent-details-body {
+    min-width: 0;
+    padding-top: 1.5rem;
+}
+
+.agent-details-container .details-back {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    color: #526077;
+    font-size: .8rem;
+}
+
+.agent-details-container .details-back:hover {
+    text-decoration: underline;
+}
+
+.agent-details-container .details-back:focus-visible {
+    outline: 2px solid #1e1b4b;
+    outline-offset: 3px;
+}
+
+.agent-details-container .agent-details-header {
+    margin: .55rem 0 1.35rem;
+}
+
+.agent-details-container .agent-details-header h1 {
+    margin-bottom: .35rem;
+    font-size: clamp(1.6rem, 2.6vw, 2rem);
+    line-height: 1.2;
+}
+
+.agent-details-container .agent-details-header p,
+.agent-details-container .agent-details-card > p,
+.agent-details-container .agent-details-card label {
+    color: #526077;
+    font-size: .86rem;
+    line-height: 1.5;
+}
+
+.agent-details-container .agent-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .75rem;
+    margin-bottom: 1.25rem;
+    border-radius: .75rem;
+    background: #f5f4fa;
+}
+
+.agent-details-container .agent-summary-identity {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-width: 0;
+    width: min(25rem, 100%);
+    padding: .65rem .8rem;
+}
+
+.agent-details-container .agent-profile {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #1e1b4b;
+    color: #fff;
+    font-size: .72rem;
+}
+
+.agent-details-container .agent-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.agent-details-container .agent-name {
+    min-width: 0;
+}
+
+.agent-details-container .agent-name h2 {
+    overflow-wrap: anywhere;
+    font-size: .82rem;
+}
+
+.agent-details-container .agent-name p {
+    color: #526077;
+    font-size: .75rem;
+}
+
+.agent-details-container .agent-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #596780;
+    font-size: .78rem;
+    white-space: nowrap;
+}
+
+.agent-details-container .agent-status-pill {
+    padding: .4rem .8rem;
+    border-radius: 999px;
+    text-transform: capitalize;
+}
+
+.agent-details-container .agent-status-pill--pending { 
+    background: #fff1c8; 
+    color: #9a6700; 
+}
+
+.agent-details-container .agent-status-pill--approved { 
+    background: #dcfce7; 
+    color: #166534; 
+}
+
+.agent-details-container .agent-status-pill--cancelled { 
+    background: #ffe4e6; 
+    color: #9f1239; 
+}
+
+.agent-details-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(16rem, .9fr);
+    align-items: start;
+    gap: 1.25rem;
+}
+
+.agent-details-main,
+.agent-details-side {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+.agent-details-card {
+    min-width: 0;
+    padding: 1.3rem;
+    border: 1px solid #e3e7ed;
+    border-radius: .75rem;
+    background: #fff;
+    box-shadow: 0 2px 3px rgba(31, 38, 135, .06);
+}
+
+.agent-details-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.agent-details-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem 1.5rem;
+}
+
+.agent-details-fields dt {
+    margin-bottom: .35rem;
+    color: #526077;
+    font-size: .75rem;
+}
+
+.agent-details-fields dd {
+    overflow-wrap: anywhere;
+    font-size: .85rem;
+}
+
+.agent-details-container .agent-details-muted {
+    margin-top: .85rem;
+    color: #718096;
+    font-size: .75rem;
+}
+
+.agent-certificate-button {
+    min-height: 2.4rem;
+    padding: .55rem .8rem;
+    margin-top: 1rem;
+    border: 0;
+    border-radius: .55rem;
+    background: #1e1b4b;
+    color: #fff;
+    font: inherit;
+    font-size: .78rem;
+}
+
+.agent-certificate-button:disabled {
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.agent-details-card label {
+    display: block;
+    margin-bottom: .6rem;
+}
+
+.agent-details-card textarea {
+    display: block;
+    width: 100%;
+    min-height: 7.5rem;
+    padding: .8rem;
+    resize: vertical;
+    border: 1px solid #d5deeb;
+    border-radius: .6rem;
+    background: #f8fafc;
+    color: #1e1b4b;
+    font: inherit;
+}
+
+.agent-details-card textarea:disabled {
+    opacity: 1;
+}
+
+.agent-details-card textarea::placeholder {
+    color: #65748b;
+}
+
+.agent-decision-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .6rem;
+    margin-top: .9rem;
+}
+
+.agent-decision-actions button {
+    min-height: 2.5rem;
+    padding: .5rem;
+    border: 0;
+    border-radius: .55rem;
+    font: inherit;
+    font-size: .78rem;
+}
+
+.agent-decision-actions button:disabled {
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.agent-decision-reject { 
+    background: #ffe4e6; 
+    color: #9f1239; 
+}
+
+.agent-decision-approve { 
+    background: #1e1b4b; 
+    color: #fff; 
+}
+
+.agent-details-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    margin-top: 1.25rem;
+    border-top: 1px solid #e3e7ed;
+    color: #526077;
+    font-size: .72rem;
+}
+
+.agent-details-empty {
+    padding: 1.25rem;
+    border: 1px solid #e3e7ed;
+    border-radius: .75rem;
+    background: #fff;
+}
+
+@media (max-width: 850px) {
+    .agent-details-grid { 
+        grid-template-columns: 1fr; 
+    }
+}
+
+@media (max-width: 600px) {
+    .agent-details-container { 
+        padding: 1rem 1rem 7rem; 
+    }
+
+    .agent-details-container .agent-content { 
+        align-items: stretch; 
+        flex-direction: column; 
+    }
+    .agent-details-container .agent-summary-identity {
+        width: 100%; 
+    }
+    .agent-details-container .agent-status { 
+        justify-content: space-between; 
+    }
+    .agent-details-fields { 
+        grid-template-columns: 1fr; 
+    }
+    .agent-details-footer { 
+        flex-direction: column; 
+    }
+}
+/* --------- Agent Details View ----------------- */
+
+/* --------- List Details View ----------------- */
+
+/* --------- List Details View ----------------- */
