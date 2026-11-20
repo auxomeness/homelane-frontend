@@ -60,7 +60,7 @@ export default function AdminAgentReview() {
                     image={agent.image} 
                     name={agent.name} 
                     location={agent.location} 
-                    submission={agent.name} 
+                    submission={agent.submission instanceof Date ? agent.submission.toLocaleDateString() : agent.submission} 
                     status={agent.status}/>
                 ))}
                 {filteredAgents.length === 0 && <p className="review-empty">No listings match your filters.</p>}

@@ -68,7 +68,7 @@
     grid-template-columns: auto 1fr auto;
     align-items: center;
     justify-content: start;
-    min-width: 40rem;
+    min-width: 30rem;
     
     border: 0.5px solid #615f5f8a;
     box-shadow:

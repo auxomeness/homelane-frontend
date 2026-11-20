@@ -91,10 +91,6 @@ export default function AdminListingReview() {
         </div>
         
     <section className='review-grid-container' ref={reviewGridRef}>
-      <header className="review-grid-container-header">
-          <h2>Review queue</h2>
-          <span>{listData.length} listings</span>
-      </header>
 
     <dialog className="admin-map-review" ref={reviewDialogRef}>
       <div className="admin-map-review__heading">
@@ -152,6 +148,18 @@ export default function AdminListingReview() {
 
     {message && <p className="listing-review-result" role="status">{message}</p>}
 
+      <header className="review-grid-container-header">
+          <h2>Review queue</h2>
+          <span>{listData.length} listings</span>
+      </header>
+        
+        <header className="review-grid-container-labels">
+                <span>Listing</span>
+                <span>Location</span>
+                <span>Price</span>
+                <span>Status</span>
+        </header>
+      
       {listData.map((list) => (
         <ListReviewGrid
           key={list.id}

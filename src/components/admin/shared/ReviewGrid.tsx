@@ -33,7 +33,7 @@ export function AgentReviewGrid( {
                             </div>
         
                             <div className="review-price">
-                                <p>Submitted on {submission} </p>
+                                <span> {submission} </span>
                             </div>
         
                             <div className="review-status">

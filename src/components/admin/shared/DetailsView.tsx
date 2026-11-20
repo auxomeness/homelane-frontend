@@ -11,7 +11,7 @@ import './sharedStyles.css';
 export function AdminAgentDetails() {
     const { agentId } = useParams<{ agentId: string }>();
     const agent = Agents.find((item) => item.id === agentId);
-    const submitted = agent?.submission.toLocaleDateString('en-PH', {
+    const submitted = agent?.submission.toLocaleString('en-PH', {
         year: 'numeric', month: 'long', day: 'numeric',
     });
     const initials = agent?.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase();

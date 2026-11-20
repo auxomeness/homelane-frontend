@@ -47,7 +47,7 @@ export interface list {
 }
 
 export interface agent {
-    submission: Date;
+    submission: Date | string;
     id: string;
     image: string;
     name: string;
@@ -110,7 +110,7 @@ export const Agents: agent[] = [
         title: "PRC#0029182",
         location: "Naga City, PH",
         status: "pending",
-        submission: new Date("2026-11-19"),
+        submission: "2026-11-19",
         email: "xianhumf@gmail.com",
         mobileNumber: "09284758371"
     },
@@ -121,7 +121,7 @@ export const Agents: agent[] = [
         title: "PRC#0029183",
         location: "San Fernando City, PH",
         status: "approved",
-        submission: new Date("2026-11-19"),
+        submission: "2026-11-19",
         email: "neilanlyvilla@gmail.com",
         mobileNumber: "09284758321"
     },
@@ -132,7 +132,7 @@ export const Agents: agent[] = [
         title: "PRC#0029182",
         location: "Naga City, PH",
         status: "cancelled",
-        submission: new Date("2026-11-19"),
+        submission: "2026-11-19",
         email: "drbbrnsdf@gmail.com",
         mobileNumber: "09284758374"
     },
@@ -143,7 +143,7 @@ export const Agents: agent[] = [
         title: "PRC#0029182",
         location: "Naga City, PH",
         status: "cancelled",
-        submission: new Date("2026-11-19"),
+        submission: "2026-11-19",
         email: "xianhumf@gmail.com",
         mobileNumber: "09284758371"
     },
@@ -154,7 +154,7 @@ export const Agents: agent[] = [
         title: "PRC#0029182",
         location: "Naga City, PH",
         status: "cancelled",
-        submission: new Date("2026-11-19"),
+        submission: "2026-11-19",
         email: "syxiedsebvenabelas@gmail.com",
         mobileNumber: "09284787371"
     },
