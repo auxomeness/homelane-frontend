@@ -14,7 +14,11 @@
 .agent-listing-details__facts strong { color: var(--agent-ink); }
 .agent-listing-details__description h2 { margin: 0 0 .5rem; font-size: 1rem; }
 .agent-listing-details__description p { margin: 0; color: var(--agent-muted); line-height: 1.6; white-space: pre-wrap; }
-.agent-listing-details .agent-map-preview { padding: 1rem; border: 1px solid var(--agent-border); border-radius: .75rem; background: rgba(255,255,255,.55); }
+.agent-listing-details .agent-map-preview { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: start; gap: .75rem; min-width: 0; padding: 1rem; border: 1px solid var(--agent-border); border-radius: .75rem; background: rgba(255,255,255,.55); }
+.agent-listing-details .agent-map-preview > div { display: grid; min-width: 0; gap: .2rem; }
+.agent-listing-details .agent-map-preview > div strong { color: var(--agent-ink); }
+.agent-listing-details .agent-map-preview > div span { color: var(--agent-muted); overflow-wrap: anywhere; }
+.agent-listing-details .agent-map-preview > .property-map { grid-column: 1 / -1; width: 100%; min-width: 0; }
 .agent-listing-details__actions { display: flex; justify-content: flex-end; gap: .65rem; padding-top: 1rem; }
 .agent-listing-details__actions .btn { display: inline-flex; align-items: center; gap: .45rem; }
 
@@ -24,4 +28,6 @@
   .agent-listing-details__photos img:first-child { grid-column: 1 / -1; grid-row: auto; }
   .agent-listing-details__actions { flex-direction: column; }
   .agent-listing-details__actions .btn { width: 100%; justify-content: center; }
+  .agent-listing-details .agent-map-preview { grid-template-columns: auto minmax(0,1fr); padding: .8rem; }
+  .agent-listing-details .agent-map-preview > .property-map { grid-column: 1 / -1; }
 }

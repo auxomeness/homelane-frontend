@@ -9,7 +9,7 @@ interface DiscoveryHeaderProps {
 export default function DiscoveryHeader({ onNavigate }: DiscoveryHeaderProps) {
   return (
     <header className="discovery-header">
-      <img className="discovery-header__brand" src="/assets/figma/brand-mark-header.svg" alt="" />
+      <img className="discovery-header__brand" src="/logo/Purple%20House%20Path%20Logo%20Icon.png" alt="" />
       <span className="discovery-header__wordmark">HOMELANE</span>
       <div className="discovery-header__actions">
         <button type="button" aria-label="Notifications" onClick={() => onNavigate('notifications')}>

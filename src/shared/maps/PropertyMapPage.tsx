@@ -26,12 +26,15 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
   const basePath = basePathOverride ?? `/${role}`;
   const listPath = listPathOverride ?? basePath;
   const mapPath = `${basePath}/map`;
+  const closePath = role === 'visitor' ? '/' : `${listPath}${searchParams.size ? `?${searchParams}` : ''}`;
+  const closeLabel = role === 'visitor' ? 'Back to Homelane homepage' : 'Back to property list';
   const search = searchParams.get('q') ?? '';
   const type = searchParams.get('type') ?? 'all';
   const minPrice = searchParams.get('min') ?? '';
   const maxPrice = searchParams.get('max') ?? '';
   const radiusKm = normalizeRadiusKm(Number(searchParams.get('radius') ?? '10'));
   const selectedId = searchParams.get('selected');
+  const selectedListing = listings.find((listing) => listing.id === selectedId);
 
   useEffect(() => { getPublicListings().then(setListings).catch((reason: Error) => setError(reason.message)).finally(() => setLoading(false)); }, []);
   const setParam = useCallback((key: string, value: string) => setSearchParams((current) => { const next = new URLSearchParams(current); if (value) next.set(key, value); else next.delete(key); return next; }, { replace: true }), [setSearchParams]);
@@ -48,11 +51,16 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
   };
   const filterForm = <div className="map-filter-fields"><label>Search<input value={search} onChange={(event) => setParam('q', event.target.value)} placeholder="Title or location" /></label><label>Property type<select value={type} onChange={(event) => setParam('type', event.target.value)}><option value="all">All types</option>{['House', 'Condo', 'Townhouse', 'Lot'].map((item) => <option key={item}>{item}</option>)}</select></label><PriceRangeSelect min={minPrice} max={maxPrice} onChange={setPriceRange} /></div>;
 
-  if (mode === 'map') return <main className="fullscreen-map-screen">
-    <aside className={`fullscreen-map-panel${panelOpen ? '' : ' is-collapsed'}`}><div className="fullscreen-map-panel__title"><div><span>HOMELANE · {role.toUpperCase()}</span><h1>Explore properties</h1></div><div className="fullscreen-map-panel__actions"><Link className="map-close" to={`${listPath}${searchParams.size ? `?${searchParams}` : ''}`} aria-label="Back to property list" title="Back to property list"><X size={20} /></Link><button type="button" className="map-panel-collapse" aria-expanded={panelOpen} aria-label={panelOpen ? 'Collapse results panel' : 'Expand results panel'} onClick={() => setPanelOpen((open) => !open)}>{panelOpen ? <ChevronDown size={18} /> : <ChevronUp size={18} />}</button></div></div><div className="fullscreen-map-panel__content"><nav className="fullscreen-map-panel__tabs" aria-label={`${role} property views`}><NavLink to={`${listPath}${searchParams.size ? `?${searchParams}` : ''}`} end>List</NavLink><NavLink to={`${mapPath}${searchParams.size ? `?${searchParams}` : ''}`}>Map</NavLink></nav>{filterForm}<p className="map-result-count">{mapResultsKnown ? visibleOnMap.length : filtered.length} properties in this area</p>
-      <div className="map-result-list">{loading && <p className="map-empty" role="status">Loading published properties…</p>}{(mapResultsKnown ? visibleOnMap : filtered).map((listing) => <button type="button" className={`map-result-card${selectedId === listing.id ? ' is-selected' : ''}`} key={listing.id} onClick={() => selectListing(listing)}>
-        {listing.photos[0] ? <img src={listing.photos[0]} alt="" /> : <div className="map-result-card__image">⌂</div>}<span><b>{listing.title}</b><small>{listing.location}</small><strong>₱ {Number(listing.price).toLocaleString('en-PH')}</strong></span>
-      </button>)}{!loading && !error && mapResultsKnown && !visibleOnMap.length && <p className="map-empty">No published properties in this radius.</p>}{error && <p className="map-error" role="alert">{error} Check the backend API configuration.</p>}</div></div>
+  if (mode === 'map') return <main className="fullscreen-map-screen public-map-screen">
+    <aside className={`fullscreen-map-panel${panelOpen ? '' : ' is-collapsed'}`}>
+      <div className="fullscreen-map-panel__title"><div><span>HOMELANE · {role === 'visitor' ? 'PUBLIC MAP' : 'BUYER MAP'}</span><h1>Explore homes</h1></div><div className="fullscreen-map-panel__actions"><Link className="map-close" to={closePath} viewTransition={role === 'visitor'} aria-label={closeLabel} title={closeLabel}><X size={20} /></Link><button type="button" className="map-panel-collapse" aria-expanded={panelOpen} aria-label={panelOpen ? 'Collapse results panel' : 'Expand results panel'} onClick={() => setPanelOpen((open) => !open)}>{panelOpen ? <ChevronDown size={18} /> : <ChevronUp size={18} />}</button></div></div>
+      <div className="fullscreen-map-panel__content"><nav className="fullscreen-map-panel__tabs" aria-label={`${role} property views`}><NavLink to={`${listPath}${searchParams.size ? `?${searchParams}` : ''}`} end>List</NavLink><NavLink to={`${mapPath}${searchParams.size ? `?${searchParams}` : ''}`}>Map</NavLink></nav>{filterForm}
+        {selectedListing && <article className="public-map-selected"><span className="public-map-selected__photo">{selectedListing.photos[0] ? <img src={selectedListing.photos[0]} alt="" /> : <span aria-hidden="true">⌂</span>}</span><div><span className="public-map-selected__eyebrow">SELECTED HOME</span><strong>{selectedListing.title}</strong><small>{selectedListing.location}</small><b>₱ {Number(selectedListing.price).toLocaleString('en-PH')}</b></div><button type="button" aria-label="Clear selected property" title="Clear selected property" onClick={() => setParam('selected', '')}><X size={16} /></button></article>}
+        <p className="map-result-count">{mapResultsKnown ? visibleOnMap.length : filtered.length} {filtered.length === 1 ? 'home' : 'homes'} in this area</p>
+        <div className="map-result-list">{loading && <p className="map-empty" role="status">Loading published properties…</p>}{(mapResultsKnown ? visibleOnMap : filtered).map((listing) => <button type="button" className={`map-result-card${selectedId === listing.id ? ' is-selected' : ''}`} key={listing.id} onClick={() => selectListing(listing)}>
+          {listing.photos[0] ? <img src={listing.photos[0]} alt="" /> : <div className="map-result-card__image">⌂</div>}<span><b>{listing.title}</b><small>{listing.location}</small><strong>₱ {Number(listing.price).toLocaleString('en-PH')}</strong></span>
+        </button>)}{!loading && !error && mapResultsKnown && !visibleOnMap.length && <p className="map-empty">No published homes in this radius.</p>}{!loading && !error && !filtered.length && !mapResultsKnown && <p className="map-empty">No published homes match these filters.</p>}{error && <p className="map-error" role="alert">{error} Check the backend API configuration.</p>}</div>
+      </div>
     </aside>
     <div className="fullscreen-map-canvas"><PropertyMap listings={filtered} fullscreen panelCollapsed={!panelOpen} height="100%" radiusKm={radiusKm} onRadiusChange={(value) => setParam('radius', String(value))} selectedListingId={selectedId} onListingSelect={selectListing} onVisibleListingsChange={updateVisible} /></div>
   </main>;

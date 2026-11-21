@@ -67,7 +67,7 @@ export default function AgentListings() {
           {visibleListings.map((listing) => (
             <AgentListingCard key={listing.id} listing={listing} onAction={() => navigate(`/agent/my-listings/${listing.id}`)} />
           ))}
-          {!visibleListings.length && <p className="agent-empty-state">No {filter === 'all' ? 'listings' : `${filter} listings`} yet.</p>}
+          {!loading && !error && !visibleListings.length && <p className="agent-empty-state">No {filter === 'all' ? 'listings' : `${filter} listings`} yet.</p>}
         </div>
         {pageCount > 1 && <nav className="agent-pagination" aria-label="Listing pages"><button type="button" disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button><span>Page {page} of {pageCount}</span><button type="button" disabled={page === pageCount} onClick={() => setPage(page + 1)}>Next</button></nav>}
       </section>

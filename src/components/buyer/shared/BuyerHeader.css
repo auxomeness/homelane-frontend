@@ -23,8 +23,11 @@
 
 .buyer-header__brand img {
   display: block;
-  width: 32px;
-  height: 32px;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  margin: -9px -6px -9px -12px;
+  object-fit: contain;
 }
 
 .buyer-header__actions {

@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, MapPin as MapPinIcon, UploadCloud } from 'lucide
 import { useNavigate, useSearchParams } from 'react-router';
 import Button from '../../../button.js';
 import { useAgentData } from '../../libs/AgentDataContext.js';
+import { validateListingPin, validatePhotoSelection } from '../../libs/listingWorkflow.js';
 import type { AgentListingData } from '../../libs/listData.js';
 import PropertyMap, { type MapPin as MapPinData } from '../../../../shared/maps/PropertyMap.js';
 import './addListingStyles.css';
@@ -38,7 +39,7 @@ export default function AgentAddListing() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
-  const { listings, createListing, updateListing } = useAgentData();
+  const { listings, createListing, updateListing, loading, error: loadError, reload } = useAgentData();
   const listingToEdit = listings.find((listing) => listing.id === editId);
   const [form, setForm] = useState<ListingForm>(listingToEdit ? toForm(listingToEdit) : initialForm);
   const [pin, setPin] = useState<MapPinData | null>(listingToEdit && listingToEdit.latitude != null && listingToEdit.longitude != null ? { latitude: listingToEdit.latitude, longitude: listingToEdit.longitude } : null);
@@ -56,12 +57,9 @@ export default function AgentAddListing() {
   const addPhotos = async (event: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(event.target.files ?? []);
     event.target.value = '';
-    if (selected.some((file) => file.size > 1_200_000)) {
-      setError('Each photo must be 1.2 MB or smaller.');
-      return;
-    }
-    if (form.photos.length + selected.length > 4) {
-      setError('You can add up to four photos.');
+    const validationError = validatePhotoSelection(selected, form.photos.length);
+    if (validationError) {
+      setError(validationError);
       return;
     }
     try {
@@ -85,12 +83,13 @@ export default function AgentAddListing() {
     bedrooms: form.bedrooms ? Number(form.bedrooms) : undefined,
     bathrooms: form.bathrooms ? Number(form.bathrooms) : undefined,
     floorArea: form.floorArea ? Number(form.floorArea) : undefined,
-    latitude: pin?.latitude,
-    longitude: pin?.longitude,
+    latitude: pin?.latitude ?? null,
+    longitude: pin?.longitude ?? null,
   });
 
   const save = async (submitForReview: boolean) => {
-    if (!pin) { setError('Choose the exact property pin on the map before saving.'); setStep('details'); return; }
+    const pinError = validateListingPin(submitForReview ? 'submit' : 'draft', pin);
+    if (pinError) { setError(pinError); setStep('details'); return; }
     const draft = toDraft();
     try { if (editId && listingToEdit) await updateListing(editId, draft as Parameters<typeof updateListing>[1], submitForReview); else await createListing(draft as Parameters<typeof createListing>[0], submitForReview); navigate('/agent/my-listings'); }
     catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to save the listing.'); }
@@ -107,7 +106,8 @@ export default function AgentAddListing() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (editId && !listingToEdit) return <main className="agent-add-listing"><h1>Listing not found</h1><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => navigate('/agent/my-listings')}>Back to my listings</Button></main>;
+  if (editId && !listingToEdit && loading) return <main className="agent-add-listing"><h1>Loading listing…</h1></main>;
+  if (editId && !listingToEdit) return <main className="agent-add-listing"><h1>{loadError ? 'Unable to load listing' : 'Listing not found'}</h1>{loadError && <p role="alert">{loadError}</p>}<Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => loadError ? void reload() : navigate('/agent/my-listings')}>{loadError ? 'Retry' : 'Back to my listings'}</Button></main>;
 
   return (
     <main className="agent-add-listing">
@@ -153,7 +153,7 @@ export default function AgentAddListing() {
           <textarea id="listing-description" className="agent-form-textarea" value={form.description} onChange={(event) => change('description', event.target.value)} minLength={20} maxLength={2000} placeholder="Describe the property, its features, and nearby amenities…" required />
         </section>
 
-        <section className="agent-form-section agent-form-facts"><h2>Exact property location <span className="agent-form-optional">Required</span></h2><p>Place the exact public map pin for this property. Click or drag the pin to adjust.</p><PropertyMap listings={[]} mode="pick" pin={pin} onPinChange={setPin} allowRoute={false} height={360} /></section>
+        <section className="agent-form-section agent-form-facts"><h2>Exact property location <span className="agent-form-optional">Required before submission</span></h2><p>Place the exact public map pin before submitting for review. Drafts can be saved without a pin.</p><PropertyMap listings={[]} mode="pick" pin={pin} onPinChange={setPin} allowRoute={false} height={360} /></section>
         {error && <p className="agent-form-error" role="alert">{error}</p>}
         <div className="agent-add-listing__actions"><Button className="agent-button agent-button--secondary" variant="secondary" type="button" onClick={() => save(false)}>Save draft</Button><Button className="agent-button agent-button--primary agent-add-listing__next" size="medium" type="submit"><span>Continue to map and preview</span><ArrowRight size={17} /></Button></div>
       </form> : <div className="agent-add-listing__form agent-listing-preview">
