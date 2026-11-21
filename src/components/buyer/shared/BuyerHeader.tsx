@@ -6,7 +6,7 @@ export default function BuyerHeader() {
   return (
     <header className="buyer-header">
       <Link className="buyer-header__brand" to="/buyer/home" aria-label="Homelane buyer home">
-        <img src="/assets/figma/brand-mark-header.svg" alt="" />
+        <img src="/logo/Purple%20House%20Path%20Logo%20Icon.png" alt="" />
         <span>HOMELANE</span>
       </Link>
 

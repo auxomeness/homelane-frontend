@@ -1,4 +1,4 @@
-import type { SeearchFilterProps } from "../admin/libs/listData";
+import type { SeearchFilterProps } from "./admin/libs/listData";
 
 import "./searchFilter.css"
 

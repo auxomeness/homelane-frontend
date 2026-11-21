@@ -2,15 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import AdminHeader from '../../shared/AdminHeader';
 import AdminNavigation from '../../shared/AdminNavigation';
-import PropertyMap, { type MapPin } from '../../../../shared/maps/PropertyMap.js';
-import { getStaffListings, reviewListing, type ListingStatus, type PropertyListing } from '../../../../shared/maps/listingsApi.js';
+import { type MapPin } from '../../../../shared/maps/PropertyMap.js';
+import { getStaffListings, reviewListing, type ListingStatus, type StaffPropertyListing } from '../../../../shared/maps/listingsApi.js';
 import PriceRangeSelect from '../../../../shared/maps/PriceRangeSelect.js';
 import './adminListingReviewStyles.css';
 import { ListReviewGrid } from '../../shared/ReviewGrid.js';
 import { listData } from '../../libs/listData.js';
 
 export default function AdminListingReview() {
-  const [listings, setListings] = useState<PropertyListing[]>([]); 
+  const [listings, setListings] = useState<StaffPropertyListing[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [params, setParams] = useSearchParams();
   const [pin, setPin] = useState<MapPin | null>(null); 
@@ -29,7 +29,7 @@ export default function AdminListingReview() {
   const pending = useMemo(() => listings.filter((item) => item.status === 'pending' || item.status === 'rejected'), [listings]);
   useEffect(() => { getStaffListings().then((data) => { setListings(data); setSelectedId(data.find((item) => item.status === 'pending')?.id ?? data[0]?.id ?? ''); }).catch((reason: Error) => setError(reason.message)); }, []);
   useEffect(() => { if (selectedId && !filtered.some((item) => item.id === selectedId)) setSelectedId(filtered[0]?.id ?? ''); }, [filtered, selectedId]);
-  useEffect(() => { if (selected) { setPin({ latitude: selected.latitude, longitude: selected.longitude }); setStatus(selected.status === 'rejected' ? 'rejected' : 'active'); } }, [selectedId]);
+  useEffect(() => { if (selected) { setPin(selected.latitude != null && selected.longitude != null ? { latitude: selected.latitude, longitude: selected.longitude } : null); setStatus(selected.status === 'rejected' ? 'rejected' : 'active'); } }, [selectedId]);
   const save = async () => {
     if (!selected || !pin) return;
     setMessage(''); setError('');

@@ -17,11 +17,16 @@ import PropertyMapPage from "./shared/maps/PropertyMapPage";
 import StaffGate from "./shared/maps/StaffGate";
 import StaffMapPage from "./shared/maps/StaffMapPage";
 import { AdminAgentDetails, AdminListingDetails } from "./components/admin/shared/DetailsView";
+import AuthLogin from "./auth/AuthLogin";
 
 const AppRoutes = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/auth/login",
+    Component: AuthLogin,
   },
   {
     path: "/admin",

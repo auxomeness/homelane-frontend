@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 import { AgentDataProvider } from './libs/AgentDataContext.js';
 import AgentHeader from './shared/AgentHeader.js';
@@ -13,6 +13,10 @@ const paths: Record<AgentScreen, string> = {
   map: '/agent/map',
   addListing: '/agent/add-listings',
   viewings: '/agent/viewings',
+  inquiries: '/agent/inquiries',
+  messages: '/agent/messages',
+  activity: '/agent/activity',
+  profile: '/agent/profile',
 };
 
 function screenFromPath(path: string): AgentScreen | null {
@@ -21,6 +25,10 @@ function screenFromPath(path: string): AgentScreen | null {
   if (path.endsWith('/map')) return 'map';
   if (path.endsWith('/add-listings')) return 'addListing';
   if (path.endsWith('/viewings')) return 'viewings';
+  if (path.endsWith('/inquiries')) return 'inquiries';
+  if (path.endsWith('/messages')) return 'messages';
+  if (path.endsWith('/activity')) return 'activity';
+  if (path.endsWith('/profile')) return 'profile';
   return null;
 }
 
@@ -34,16 +42,22 @@ export default function AgentApp() {
   const location = useLocation();
   const navigate = useNavigate();
   const screen = screenFromPath(location.pathname);
+  const [sessionVersion, setSessionVersion] = useState(0);
+
+  useEffect(() => {
+    const refreshSession = () => setSessionVersion((version) => version + 1);
+    window.addEventListener('homelane:session-expired', refreshSession);
+    return () => window.removeEventListener('homelane:session-expired', refreshSession);
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);
 
-  if (!isLocalAdminDev() && (!getStaffToken() || getStaffRole() !== 'agent')) return <StaffLogin role="agent" />;
-  if (location.pathname === '/agent/map') return <AgentDataProvider><Outlet /></AgentDataProvider>;
+  if (!isLocalAdminDev() && (!getStaffToken() || getStaffRole() !== 'agent')) return <StaffLogin key={sessionVersion} role="agent" />;
   return (
     <AgentDataProvider>
-      <div className="agent-app">
+      <div className={`agent-app${location.pathname === '/agent/map' ? ' agent-app--map' : ''}`}>
         <AgentHeader />
         <AgentNavigation screen={screen} onNavigate={(next) => navigate(paths[next])} />
         <Outlet />

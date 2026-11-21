@@ -8,10 +8,11 @@ import PropertyMap from '../../../../shared/maps/PropertyMap.js';
 export default function AgentListingDetails() {
   const { listingId } = useParams();
   const navigate = useNavigate();
-  const { listings, deleteListing } = useAgentData();
+  const { listings, deleteListing, loading, error, reload } = useAgentData();
   const listing = listings.find((item) => item.id === listingId);
 
-  if (!listing) return <main className="agent-listing-details"><h1>Listing not found</h1><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => navigate('/agent/my-listings')}>Back to my listings</Button></main>;
+  if (loading && !listing) return <main className="agent-listing-details"><h1>Loading listing…</h1></main>;
+  if (!listing) return <main className="agent-listing-details"><h1>{error ? 'Unable to load listing' : 'Listing not found'}</h1>{error && <p role="alert">{error}</p>}<Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => error ? void reload() : navigate('/agent/my-listings')}>{error ? 'Retry' : 'Back to my listings'}</Button></main>;
 
   const editListing = () => navigate(`/agent/add-listings?edit=${encodeURIComponent(listing.id)}`);
   const removeListing = async () => {
@@ -29,7 +30,7 @@ export default function AgentListingDetails() {
         {listing.photos?.length ? <div className="agent-listing-details__photos">{listing.photos.map((photo, index) => <img key={`${listing.id}-photo-${index}`} src={photo} alt={`${listing.title} property photo ${index + 1}`} />)}</div> : <div className={`agent-listing-details__photo-placeholder is-${listing.status}`}><span>Property photos will appear here</span></div>}
         <div className="agent-listing-details__facts"><div><small>Price</small><strong>{listing.price}</strong></div><div><small>Property type</small><strong>{listing.propertyType ?? 'House'}</strong></div>{listing.bedrooms !== undefined && <div><small>Bedrooms</small><strong>{listing.bedrooms}</strong></div>}{listing.bathrooms !== undefined && <div><small>Bathrooms</small><strong>{listing.bathrooms}</strong></div>}{listing.floorArea !== undefined && <div><small>Floor area</small><strong>{listing.floorArea} m²</strong></div>}</div>
         <div className="agent-listing-details__description"><h2>About this property</h2><p>{listing.description || 'No description has been added yet.'}</p></div>
-        <section className="agent-map-preview"><MapPin size={22} /><div><strong>Exact location preview</strong><span>{listing.location}</span><span>{listing.latitude?.toFixed(6)}, {listing.longitude?.toFixed(6)}</span></div><PropertyMap listings={[{ id: listing.id, title: listing.title, location: listing.location, price: Number(listing.price.replace(/[^\d.]/g, '')), propertyType: listing.propertyType ?? 'House', description: listing.description ?? '', photos: listing.photos ?? [], bedrooms: listing.bedrooms ?? null, bathrooms: listing.bathrooms ?? null, floorArea: listing.floorArea ?? null, latitude: listing.latitude ?? 13.6218, longitude: listing.longitude ?? 123.1948, status: listing.status, createdAt: '', updatedAt: '' }]} allowRoute={false} height={300} /></section>
+        <section className="agent-map-preview"><MapPin size={22} /><div><strong>Exact location preview</strong><span>{listing.location}</span>{listing.latitude != null && listing.longitude != null ? <span>{listing.latitude.toFixed(6)}, {listing.longitude.toFixed(6)}</span> : <span>This draft has no exact map pin. Add one before submitting for review.</span>}</div>{listing.latitude != null && listing.longitude != null && <PropertyMap listings={[{ id: listing.id, title: listing.title, location: listing.location, price: Number(listing.price.replace(/[^\d.]/g, '')), propertyType: listing.propertyType ?? 'House', description: listing.description ?? '', photos: listing.photos ?? [], bedrooms: listing.bedrooms ?? null, bathrooms: listing.bathrooms ?? null, floorArea: listing.floorArea ?? null, latitude: listing.latitude, longitude: listing.longitude, status: listing.status, createdAt: '', updatedAt: '' }]} allowRoute={false} height={300} />}</section>
       </section>
       <div className="agent-listing-details__actions">
         <Button className="agent-button agent-button--primary" size="medium" onClick={editListing}><Pencil size={16} />{listing.status === 'rejected' ? 'Fix and resubmit' : listing.status === 'draft' ? 'Continue editing' : 'Edit listing'}</Button>

@@ -1,7 +1,7 @@
 import type {
   CategoryStatus,
   CategoryFilterProps,
-} from "../admin/libs/listData";
+} from "./admin/libs/listData";
 
 import "./categoryFilter.css";
 

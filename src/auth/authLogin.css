@@ -1,0 +1,29 @@
+.auth-login {
+  display: grid;
+  min-height: 100svh;
+  padding: 24px;
+  place-items: center;
+  background: #faf9fb;
+  color: #211b4d;
+  font-family: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, sans-serif;
+}
+.auth-login__chooser { width: min(100%, 188px); }
+.auth-login__chooser h1 { margin: 0 0 13px; font-size: 2.15rem; font-weight: 700; letter-spacing: -.055em; line-height: 1.12; white-space: nowrap; }
+.auth-login__choices { display: grid; gap: 7px; }
+.auth-login__primary { display: flex; min-height: 33px; align-items: center; justify-content: center; padding: 7px 16px; border: 0; border-radius: 5px; background: #211b4d; color: #fff; font: inherit; font-size: .78rem; text-align: center; text-decoration: none; cursor: pointer; transition: background .16s ease, transform .16s ease; }
+.auth-login__primary:hover { background: #382d70; }
+.auth-login__primary:active { transform: translateY(1px); }
+.auth-login__primary:disabled { cursor: wait; opacity: .7; }
+.auth-login__visitor { display: block; padding: 7px 0 0; color: #211b4d; font-size: .78rem; text-align: center; text-decoration: none; }
+.auth-login__visitor:hover { text-decoration: underline; text-underline-offset: 3px; }
+.auth-login__form-wrap { width: min(100%, 360px); }
+.auth-login__back { color: #211b4d; font-size: 1.25rem; font-weight: 800; letter-spacing: -.06em; text-decoration: none; }
+.auth-login__form-wrap h1 { margin: 30px 0 5px; font-size: 1.75rem; letter-spacing: -.05em; }
+.auth-login__form-wrap > p { margin: 0 0 24px; color: #716c80; font-size: .9rem; }
+.auth-login__form-wrap form { display: grid; gap: 14px; }
+.auth-login__form-wrap label { display: grid; gap: 6px; color: #38334f; font-size: .8rem; font-weight: 600; }
+.auth-login__form-wrap input { box-sizing: border-box; width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid #e1ddeb; border-radius: 6px; background: #fff; color: #211b4d; font: inherit; }
+.auth-login__form-wrap input:focus { border-color: #6351a5; outline: 3px solid #6351a522; }
+.auth-login__error { margin: 0; color: #a32945; font-size: .8rem; }
+.auth-login__form-wrap .auth-login__visitor { margin-top: 8px; }
+@media (prefers-reduced-motion: reduce) { .auth-login__primary { transition: none; } }
