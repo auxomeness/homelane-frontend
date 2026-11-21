@@ -36,7 +36,7 @@
 
 .buyer-inbox__count {
   color: var(--buyer-muted);
-  font-size: 10px;
+  font-size: 11.2px;
   white-space: nowrap;
 }
 
@@ -69,7 +69,7 @@
 .buyer-conversation:hover, .buyer-conversation.is-selected {
   border-color: #b8c2d9;
   background: var(--buyer-surface);
-  box-shadow: 0 3px 9px rgba(31,39,71,.05);
+  box-shadow: 0 3px 9px rgba(43,33,92,.05);
 }
 
 .buyer-conversation__avatar, .buyer-thread__avatar {
@@ -79,7 +79,7 @@
   border-radius: 50%;
   background: var(--buyer-primary);
   color: #fff;
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 600;
 }
 
@@ -106,7 +106,7 @@
 .buyer-conversation__topline strong {
   overflow: hidden;
   color: var(--buyer-ink);
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -115,13 +115,13 @@
 .buyer-conversation__topline time {
   flex: none;
   color: var(--buyer-muted);
-  font-size: 10px;
+  font-size: 11.2px;
 }
 
 .buyer-conversation__property {
   overflow: hidden;
   color: var(--buyer-body);
-  font-size: 11px;
+  font-size: 12.3px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -129,7 +129,7 @@
 .buyer-conversation__preview {
   overflow: hidden;
   color: var(--buyer-muted);
-  font-size: 10px;
+  font-size: 11.2px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -148,14 +148,14 @@
   border-radius: 50%;
   background: var(--buyer-primary);
   color: #fff;
-  font-size: 10px;
+  font-size: 11.2px;
   font-weight: 600;
 }
 
 .buyer-inbox__no-results {
   margin: 20px 10px;
   color: var(--buyer-muted);
-  font-size: 12px;
+  font-size: 13.4px;
   text-align: center;
 }
 
@@ -192,7 +192,7 @@
 .buyer-empty-state h2 {
   margin: 0;
   color: var(--buyer-ink);
-  font-size: 15px;
+  font-size: 16.8px;
   line-height: 1.4;
   font-weight: 700;
 }
@@ -201,7 +201,7 @@
   max-width: 300px;
   margin: 7px 0 20px;
   color: var(--buyer-body);
-  font-size: 12px;
+  font-size: 13.4px;
   line-height: 1.55;
 }
 
@@ -213,7 +213,7 @@
   border-radius: var(--buyer-radius-control);
   background: var(--buyer-primary);
   color: #fff;
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 500;
 }
 
@@ -263,7 +263,7 @@
 .buyer-thread__identity strong {
   overflow: hidden;
   color: var(--buyer-ink);
-  font-size: 12px;
+  font-size: 13.4px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -271,7 +271,7 @@
 .buyer-thread__identity span {
   overflow: hidden;
   color: var(--buyer-muted);
-  font-size: 10px;
+  font-size: 11.2px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -284,7 +284,7 @@
   background: var(--buyer-surface);
   color: var(--buyer-primary);
   font: inherit;
-  font-size: 10px;
+  font-size: 11.2px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -310,12 +310,12 @@
   background: var(--buyer-surface);
   color: var(--buyer-muted);
   text-align: center;
-  font-size: 10px;
+  font-size: 11.2px;
 }
 
 .buyer-thread__property-note strong {
   color: var(--buyer-ink);
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-message {
@@ -341,9 +341,9 @@
   border-radius: var(--buyer-radius-card);
   background: var(--buyer-surface);
   color: var(--buyer-ink);
-  font-size: 12px;
+  font-size: 13.4px;
   line-height: 1.5;
-  box-shadow: 0 1px 3px rgba(31,39,71,.08);
+  box-shadow: 0 1px 3px rgba(43,33,92,.08);
 }
 
 .buyer-message--buyer p {
@@ -359,7 +359,7 @@
 
 .buyer-message time, .buyer-message__sender {
   color: var(--buyer-muted);
-  font-size: 9px;
+  font-size: 10.1px;
 }
 
 .buyer-message__sender {
@@ -386,12 +386,12 @@
   background: var(--buyer-page);
   color: var(--buyer-ink);
   font: inherit;
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-composer input:focus {
   border-color: #9ba7c2;
-  box-shadow: 0 0 0 3px rgba(33,28,80,.08);
+  box-shadow: 0 0 0 3px rgba(48,36,94,.08);
 }
 
 .buyer-app .buyer-composer__send.btn {
@@ -405,7 +405,7 @@
   border-radius: 22px;
   background: var(--buyer-primary);
   color: #fff;
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-app .buyer-composer__send.btn:disabled {
@@ -441,13 +441,13 @@
     height: 40px;
   }
   .buyer-conversation__topline strong {
-    font-size: 11px;
+    font-size: 12.3px;
   }
   .buyer-conversation__property {
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-conversation__preview {
-    font-size: 9px;
+    font-size: 10.1px;
   }
   .buyer-thread {
     display: none;
@@ -470,11 +470,11 @@
   .buyer-thread__avatar {
     width: 36px;
     height: 36px;
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-thread__property-link {
     padding: 7px 9px;
-    font-size: 9px;
+    font-size: 10.1px;
   }
   .buyer-thread__timeline {
     gap: 13px;
@@ -484,7 +484,7 @@
     max-width: 88%;
   }
   .buyer-message p {
-    font-size: 11px;
+    font-size: 12.3px;
   }
   .buyer-composer {
     gap: 7px;
@@ -493,7 +493,7 @@
   .buyer-composer input {
     height: 38px;
     padding: 0 12px;
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-app .buyer-composer__send.btn {
     min-width: 42px;

@@ -89,7 +89,7 @@ export default function BuyerHome() {
             <Link
               className="buyer-home__property-link"
               key={listing.id}
-              to={`/buyer/properties?q=${encodeURIComponent(listing.location)}`}
+              to={`/buyer/properties/${listing.id}`}
             >
               <Card
                 className="buyer-property-card"

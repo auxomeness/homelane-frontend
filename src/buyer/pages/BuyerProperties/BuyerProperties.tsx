@@ -2,7 +2,7 @@ import './BuyerProperties.css';
 import { useMemo, useState, type ChangeEvent } from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
 import Card from '../../components/PropertyCard.js';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { buyerListings, type PropertyType } from '../../data/listings.js';
 
 type PriceRange = 'all' | 'under-5m' | '5m-10m' | 'over-10m';
@@ -115,20 +115,21 @@ export default function BuyerProperties() {
       {filteredListings.length > 0 ? (
         <div className="buyer-properties__grid">
           {filteredListings.map((listing) => (
-            <Card
-              key={listing.id}
-              className="buyer-property-card"
-              placeholderText="Property photo"
-              status="For sale"
-              price={listing.price}
-              title={listing.title}
-              location={listing.location}
-              bedrooms={listing.bedrooms}
-              bathrooms={listing.bathrooms}
-              area={listing.area}
-              areaUnit="m²"
-              showSaveAction={false}
-            />
+            <Link className="buyer-properties__card-link" key={listing.id} to={`/buyer/properties/${listing.id}`} aria-label={`View ${listing.title}`}>
+              <Card
+                className="buyer-property-card"
+                placeholderText="Property photo"
+                status="For sale"
+                price={listing.price}
+                title={listing.title}
+                location={listing.location}
+                bedrooms={listing.bedrooms}
+                bathrooms={listing.bathrooms}
+                area={listing.area}
+                areaUnit="m²"
+                showSaveAction={false}
+              />
+            </Link>
           ))}
         </div>
       ) : (

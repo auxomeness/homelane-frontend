@@ -50,7 +50,7 @@
   border-radius: 50%;
   background: var(--buyer-primary);
   color: #fff;
-  font-size: 11px;
+  font-size: 12.3px;
   font-weight: 600;
 }
 
@@ -59,7 +59,7 @@
   flex-direction: column;
   gap: 3px;
   color: var(--buyer-ink);
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-profile__summary-copy strong {
@@ -81,7 +81,7 @@
   background: none;
   color: var(--buyer-primary);
   font: inherit;
-  font-size: 10px;
+  font-size: 11.2px;
   cursor: pointer;
 }
 
@@ -105,7 +105,7 @@
 .buyer-profile__section-heading h2 {
   margin: 0;
   color: var(--buyer-ink);
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.3;
   font-weight: 600;
 }
@@ -113,7 +113,7 @@
 .buyer-profile__section-heading p {
   margin: 5px 0 0;
   color: var(--buyer-muted);
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-profile__form {
@@ -127,7 +127,7 @@
   flex-direction: column;
   gap: 6px;
   color: var(--buyer-ink);
-  font-size: 10px;
+  font-size: 11.2px;
   font-weight: 500;
 }
 
@@ -141,13 +141,13 @@
   background: var(--buyer-surface);
   color: var(--buyer-body);
   font: inherit;
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 400;
 }
 
 .buyer-profile__field input:focus {
   border-color: #9ba7c2;
-  box-shadow: 0 0 0 3px rgba(33,28,80,.08);
+  box-shadow: 0 0 0 3px rgba(48,36,94,.08);
 }
 
 .buyer-profile__field input[readonly] {
@@ -156,7 +156,7 @@
 
 .buyer-profile__field small {
   color: var(--buyer-body);
-  font-size: 9px;
+  font-size: 10.1px;
   font-weight: 400;
 }
 
@@ -173,7 +173,7 @@
   border: 0;
   border-radius: var(--buyer-radius-control);
   font: inherit;
-  font-size: 11px;
+  font-size: 12.3px;
   cursor: pointer;
 }
 
@@ -200,7 +200,7 @@
   background: var(--buyer-rejected);
   color: #9f1239;
   font: inherit;
-  font-size: 11px;
+  font-size: 12.3px;
   cursor: pointer;
 }
 
@@ -211,7 +211,7 @@
 .buyer-profile__notice {
   margin: 12px 0 0;
   color: var(--buyer-muted);
-  font-size: 10px;
+  font-size: 11.2px;
 }
 
 .buyer-profile__modal-backdrop {
@@ -236,14 +236,14 @@
 .buyer-profile__modal h2 {
   margin: 0;
   color: var(--buyer-ink);
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 700;
 }
 
 .buyer-profile__modal p {
   margin: 7px 0 21px;
   color: var(--buyer-body);
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-profile__modal-actions {
@@ -259,7 +259,7 @@
     margin: 0 0 15px;
   }
   .buyer-profile__heading h1 {
-    font-size: 19px;
+    font-size: 21.3px;
   }
   .buyer-profile__layout {
     display: flex;
@@ -276,13 +276,13 @@
   .buyer-profile__avatar {
     width: 36px;
     height: 36px;
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-profile__summary-copy {
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-profile__edit-link {
-    font-size: 9px;
+    font-size: 10.1px;
   }
   .buyer-profile__details {
     width: 100%;
@@ -296,7 +296,7 @@
     margin-bottom: 12px;
   }
   .buyer-profile__section-heading h2 {
-    font-size: 17px;
+    font-size: 19px;
   }
   .buyer-profile__section-heading p {
     display: none;
@@ -306,15 +306,15 @@
   }
   .buyer-profile__field {
     gap: 6px;
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-profile__field input {
     min-height: 40px;
     border-radius: var(--buyer-radius-control);
-    font-size: 11px;
+    font-size: 12.3px;
   }
   .buyer-profile__field small {
-    font-size: 9px;
+    font-size: 10.1px;
   }
   .buyer-profile__logout-button {
     min-height: 40px;
@@ -324,7 +324,7 @@
     padding: 20px 16px 18px;
   }
   .buyer-profile__modal h2 {
-    font-size: 15px;
+    font-size: 16.8px;
   }
   .buyer-profile__modal-actions > button {
     min-width: 0;

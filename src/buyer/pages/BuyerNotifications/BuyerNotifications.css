@@ -34,7 +34,7 @@
   background: transparent;
   color: var(--buyer-body);
   font: inherit;
-  font-size: 11px;
+  font-size: 12.3px;
   cursor: pointer;
 }
 
@@ -67,7 +67,7 @@
   background: var(--buyer-surface);
   color: var(--buyer-ink);
   font: inherit;
-  font-size: 12px;
+  font-size: 13.4px;
   text-align: left;
   cursor: pointer;
 }
@@ -112,7 +112,7 @@
   background: transparent;
   color: var(--buyer-ink);
   font: inherit;
-  font-size: 12px;
+  font-size: 13.4px;
   text-align: left;
   cursor: pointer;
 }
@@ -127,7 +127,7 @@
 
 .buyer-notifications__count {
   color: var(--buyer-muted);
-  font-size: 10px;
+  font-size: 11.2px;
   white-space: nowrap;
 }
 
@@ -155,7 +155,7 @@
 .buyer-notification:hover {
   border-color: #c4cde0;
   background: var(--buyer-surface);
-  box-shadow: 0 3px 9px rgba(31,39,71,.05);
+  box-shadow: 0 3px 9px rgba(43,33,92,.05);
 }
 
 .buyer-notification.is-unread {
@@ -171,7 +171,7 @@
   border-radius: 50%;
   background: var(--buyer-lavender);
   color: var(--buyer-primary);
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 700;
 }
 
@@ -197,20 +197,20 @@
 
 .buyer-notification__title-row strong {
   color: var(--buyer-ink);
-  font-size: 12px;
+  font-size: 13.4px;
   font-weight: 700;
 }
 
 .buyer-notification__title-row time {
   flex: none;
   color: var(--buyer-muted);
-  font-size: 10px;
+  font-size: 11.2px;
 }
 
 .buyer-notification__description {
   overflow: hidden;
   color: var(--buyer-body);
-  font-size: 11px;
+  font-size: 12.3px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -218,7 +218,7 @@
 .buyer-notification__category {
   display: none;
   color: var(--buyer-muted);
-  font-size: 9px;
+  font-size: 10.1px;
 }
 
 .buyer-notification__unread-dot {
@@ -233,7 +233,7 @@
   margin: 0;
   padding: 40px 20px;
   color: var(--buyer-muted);
-  font-size: 12px;
+  font-size: 13.4px;
   text-align: center;
 }
 
@@ -276,15 +276,15 @@
   .buyer-notification__avatar {
     width: 38px;
     height: 38px;
-    font-size: 11px;
+    font-size: 12.3px;
   }
   .buyer-notification__description {
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-notification__title-row strong {
-    font-size: 11px;
+    font-size: 12.3px;
   }
   .buyer-notification__title-row time {
-    font-size: 9px;
+    font-size: 10.1px;
   }
 }

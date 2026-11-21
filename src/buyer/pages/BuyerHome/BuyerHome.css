@@ -20,7 +20,7 @@
 .buyer-home__announcements .buyer-eyebrow {
   margin-bottom: var(--buyer-space-2);
   color: var(--buyer-primary);
-  font-size: 10px;
+  font-size: 11.2px;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -38,7 +38,7 @@
   max-width: 620px;
   margin: var(--buyer-space-2) 0 var(--buyer-space-3);
   color: var(--buyer-body);
-  font-size: 12px;
+  font-size: 13.4px;
   line-height: 1.55;
 }
 
@@ -47,7 +47,7 @@
   align-items: center;
   gap: 6px;
   color: var(--buyer-primary);
-  font-size: 11px;
+  font-size: 12.3px;
   font-weight: 600;
   text-decoration: none;
 }
@@ -69,7 +69,7 @@
 
 .buyer-home__search > label {
   color: var(--buyer-body);
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-home__search-field {
@@ -94,7 +94,7 @@
   background: transparent;
   color: var(--buyer-ink);
   font: inherit;
-  font-size: 11px;
+  font-size: 12.3px;
 }
 
 .buyer-home__search-field input::placeholder {
@@ -114,7 +114,7 @@
   background: var(--buyer-primary);
   color: #fff;
   font: inherit;
-  font-size: 10px;
+  font-size: 11.2px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -143,7 +143,7 @@
 .buyer-home__section-heading h2, .buyer-home__about h2 {
   margin: 0;
   color: var(--buyer-ink);
-  font-size: 18px;
+  font-size: 20.2px;
   line-height: 1.35;
   font-weight: 700;
 }
@@ -188,7 +188,7 @@
   border-radius: 50%;
   background: var(--buyer-lavender);
   color: var(--buyer-primary);
-  font-size: 15px;
+  font-size: 16.8px;
   font-weight: 700;
 }
 
@@ -215,7 +215,7 @@
 .buyer-home__shortcut-copy strong {
   overflow: hidden;
   color: var(--buyer-ink);
-  font-size: 11px;
+  font-size: 12.3px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -224,7 +224,7 @@
 .buyer-home__shortcut-copy > span {
   overflow: hidden;
   color: var(--buyer-body);
-  font-size: 9px;
+  font-size: 10.1px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -256,20 +256,20 @@
 .buyer-home__about .buyer-eyebrow {
   margin-bottom: var(--buyer-space-2);
   color: var(--buyer-primary);
-  font-size: 10px;
+  font-size: 11.2px;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
 
 .buyer-home__about h2 {
-  font-size: 17px;
+  font-size: 19px;
 }
 
 .buyer-home__about > p:last-child {
   max-width: 580px;
   margin: var(--buyer-space-2) 0 0;
   color: var(--buyer-body);
-  font-size: 11px;
+  font-size: 12.3px;
   line-height: 1.5;
 }
 
@@ -282,16 +282,16 @@
     padding: var(--buyer-space-4);
   }
   .buyer-home__announcements h1 {
-    font-size: 20px;
+    font-size: 22.4px;
   }
   .buyer-home__announcements > p:not(.buyer-eyebrow) {
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-home__search {
     padding: 12px;
   }
   .buyer-home__search > label {
-    font-size: 10px;
+    font-size: 11.2px;
   }
   .buyer-home__search-field {
     min-height: 38px;
@@ -299,10 +299,10 @@
   .buyer-home__search-field button {
     min-width: 66px;
     min-height: 30px;
-    font-size: 9px;
+    font-size: 10.1px;
   }
   .buyer-home__section-heading h2 {
-    font-size: 14px;
+    font-size: 15.7px;
   }
   .buyer-home__shortcut-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -316,13 +316,13 @@
   .buyer-home__shortcut-icon {
     width: 32px;
     height: 32px;
-    font-size: 12px;
+    font-size: 13.4px;
   }
   .buyer-home__shortcut-copy strong {
-    font-size: 9px;
+    font-size: 10.1px;
   }
   .buyer-home__shortcut-copy > span {
-    font-size: 7px;
+    font-size: 7.8px;
   }
   .buyer-home__shortcut-arrow {
     width: 13px;
@@ -333,9 +333,9 @@
     padding: var(--buyer-space-4);
   }
   .buyer-home__about h2 {
-    font-size: 14px;
+    font-size: 15.7px;
   }
   .buyer-home__about > p:last-child {
-    font-size: 9px;
+    font-size: 10.1px;
   }
 }

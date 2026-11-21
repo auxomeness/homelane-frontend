@@ -1,8 +1,9 @@
 import './BuyerMessages.css';
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { ArrowLeft, MessageSquare, Send } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import Button from '../../../components/button.js';
+import { buyerListings } from '../../data/listings.js';
 
 type Message = {
   id: number;
@@ -13,6 +14,7 @@ type Message = {
 
 type Conversation = {
   id: string;
+  propertyId?: string;
   initials: string;
   agent: string;
   property: string;
@@ -86,6 +88,8 @@ type MessageFilter = 'all' | 'unread';
 
 export default function BuyerMessages() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const inquiryPropertyId = searchParams.get('property');
   const [conversations, setConversations] = useState(starterConversations);
   const [filter, setFilter] = useState<MessageFilter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -96,6 +100,33 @@ export default function BuyerMessages() {
     [conversations, filter],
   );
   const selectedConversation = conversations.find((conversation) => conversation.id === selectedId) ?? null;
+
+  useEffect(() => {
+    const listing = buyerListings.find((item) => item.id === inquiryPropertyId);
+    if (!listing) return;
+    const conversationId = `property-${listing.id}`;
+    const newConversation: Conversation = {
+        id: conversationId,
+        propertyId: listing.id,
+        initials: 'KA',
+        agent: 'Real estate agent KA',
+        property: listing.title,
+        location: listing.location,
+        time: 'Now',
+        preview: 'Start an inquiry about this home.',
+        unreadCount: 0,
+        messages: [],
+      };
+    setConversations((current) => current.some((conversation) => conversation.propertyId === listing.id)
+      ? current
+      : [newConversation, ...current]);
+    setSelectedId(conversationId);
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      next.delete('property');
+      return next;
+    }, { replace: true });
+  }, [inquiryPropertyId, setSearchParams]);
 
   const selectConversation = (id: string) => {
     setSelectedId(id);

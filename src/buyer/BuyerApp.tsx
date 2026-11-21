@@ -1,6 +1,5 @@
 import { Navigate, Outlet } from 'react-router';
 import BuyerHeader from './shared/BuyerHeader.js';
-import BuyerNavigation from './shared/BuyerNavigation.js';
 import './base.css';
 
 export default function BuyerApp() {
@@ -8,7 +7,6 @@ export default function BuyerApp() {
     <div className="buyer-app">
       <div className="buyer-shell">
         <BuyerHeader />
-        <BuyerNavigation />
         <main className="buyer-main">
           <Outlet />
         </main>
@@ -30,4 +28,3 @@ export function BuyerRoutePlaceholder({ title }: { title: string }) {
 export function BuyerIndexRedirect() {
   return <Navigate to="home" replace />;
 }
-
