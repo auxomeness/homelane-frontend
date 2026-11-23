@@ -39,6 +39,8 @@ async function getAllListingPages<T>(path: string, staff = false): Promise<T[]> 
   let offset = 0;
   while (true) {
     const page = await request<{ listings: T[]; pagination: { limit: number; hasMore: boolean } }>(`${path}${path.includes('?') ? '&' : '?'}limit=100&offset=${offset}`, {}, staff);
+    // A static host (or a wrong VITE_API_URL) can answer with a web page instead of the API, so check the shape first.
+    if (!Array.isArray(page?.listings)) throw new Error('The listings service is not reachable.');
     listings.push(...page.listings);
     if (!page.pagination?.hasMore) return listings;
     offset += page.pagination.limit;

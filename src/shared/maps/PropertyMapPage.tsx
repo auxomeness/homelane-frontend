@@ -36,7 +36,16 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
   const selectedId = searchParams.get('selected');
   const selectedListing = listings.find((listing) => listing.id === selectedId);
 
-  useEffect(() => { getPublicListings().then(setListings).catch((reason: Error) => setError(reason.message)).finally(() => setLoading(false)); }, []);
+  const [reloadKey, setReloadKey] = useState(0);
+  useEffect(() => {
+    let current = true;
+    setLoading(true); setError('');
+    getPublicListings().then((next) => { if (current) setListings(next); }).catch((reason: Error) => { console.error(reason); if (current) setError(reason.message); }).finally(() => { if (current) setLoading(false); });
+    return () => { current = false; };
+  }, [reloadKey]);
+  // Friendly message for visitors and buyers. The technical reason is only written to the browser console.
+  const errorNotice = <div className="map-error" role="alert"><p>We could not load the properties right now. Please check your connection and try again.</p><button type="button" className="map-retry" onClick={() => setReloadKey((key) => key + 1)}>Try again</button></div>;
+  const noListingsText = listings.length ? 'No published properties match these filters.' : 'No properties have been published yet. Please check back soon.';
   const setParam = useCallback((key: string, value: string) => setSearchParams((current) => { const next = new URLSearchParams(current); if (value) next.set(key, value); else next.delete(key); return next; }, { replace: true }), [setSearchParams]);
   const setPriceRange = useCallback((min: string, max: string) => setSearchParams((current) => { const next = new URLSearchParams(current); min ? next.set('min', min) : next.delete('min'); max ? next.set('max', max) : next.delete('max'); return next; }, { replace: true }), [setSearchParams]);
   const filtered = useMemo(() => listings.filter((listing) => {
@@ -59,15 +68,15 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
         <p className="map-result-count">{mapResultsKnown ? visibleOnMap.length : filtered.length} {filtered.length === 1 ? 'home' : 'homes'} in this area</p>
         <div className="map-result-list">{loading && <p className="map-empty" role="status">Loading published properties…</p>}{(mapResultsKnown ? visibleOnMap : filtered).map((listing) => <button type="button" className={`map-result-card${selectedId === listing.id ? ' is-selected' : ''}`} key={listing.id} onClick={() => selectListing(listing)}>
           {listing.photos[0] ? <img src={listing.photos[0]} alt="" /> : <div className="map-result-card__image">⌂</div>}<span><b>{listing.title}</b><small>{listing.location}</small><strong>₱ {Number(listing.price).toLocaleString('en-PH')}</strong></span>
-        </button>)}{!loading && !error && mapResultsKnown && !visibleOnMap.length && <p className="map-empty">No published homes in this radius.</p>}{!loading && !error && !filtered.length && !mapResultsKnown && <p className="map-empty">No published homes match these filters.</p>}{error && <p className="map-error" role="alert">{error} Check the backend API configuration.</p>}</div>
+        </button>)}{!loading && !error && mapResultsKnown && !visibleOnMap.length && <p className="map-empty">No published homes in this radius.</p>}{!loading && !error && !filtered.length && !mapResultsKnown && <p className="map-empty">{noListingsText}</p>}{error && errorNotice}</div>
       </div>
     </aside>
     <div className="fullscreen-map-canvas"><PropertyMap listings={filtered} fullscreen panelCollapsed={!panelOpen} height="100%" radiusKm={radiusKm} onRadiusChange={(value) => setParam('radius', String(value))} selectedListingId={selectedId} onListingSelect={selectListing} onVisibleListingsChange={updateVisible} /></div>
   </main>;
 
-  return <main className={`property-list-page${embedded ? ' property-list-page--embedded' : ''}`}>{!embedded && <header className="property-list-header"><div><p>HOMELANE · {role.toUpperCase()}</p><h1>Find your place</h1><span>Explore verified properties across the map.</span></div><nav aria-label={`${role} property views`}><NavLink to={listPath} end>List</NavLink><NavLink to={`${mapPath}${searchParams.size ? `?${searchParams}` : ''}`}>Map</NavLink></nav></header>}<section className="property-list-filters">{filterForm}</section>
-    {loading && <p className="map-empty">Loading properties…</p>}{error && <p className="map-error" role="alert">{error} Check the backend API configuration.</p>}
+  return <main className={`property-list-page${embedded ? ' property-list-page--embedded' : ''}`}>{!embedded && <header className="property-list-header"><div><p>HOMELANE · {role.toUpperCase()}</p><h1>Find your place</h1><span>Explore verified properties across the map.</span>{role === 'visitor' && <div className="property-list-auth"><Link to="/">Back to Homelane</Link><Link to="/auth/login">Sign in</Link><Link to="/auth/login?mode=signup">Create an account</Link></div>}</div><nav aria-label={`${role} property views`}><NavLink to={listPath} end>List</NavLink><NavLink to={`${mapPath}${searchParams.size ? `?${searchParams}` : ''}`}>Map</NavLink></nav></header>}<section className="property-list-filters">{filterForm}</section>
+    {loading && <p className="map-empty">Loading properties…</p>}{error && errorNotice}
     <section className="property-list-grid">{filtered.map((listing) => <article className="property-list-card" key={listing.id}>{listing.photos[0] ? <img src={listing.photos[0]} alt={`${listing.title}`} /> : <div className="property-list-card__image">⌂</div>}<div><span>{listing.propertyType}</span><h2>{listing.title}</h2><p>{listing.location}</p><strong>₱ {Number(listing.price).toLocaleString('en-PH')}</strong><button type="button" onClick={() => goToMap(listing)}>Show on map</button></div></article>)}</section>
-    {!loading && !error && !filtered.length && <p className="map-empty">No published properties match these filters.</p>}
+    {!loading && !error && !filtered.length && <p className="map-empty">{noListingsText}</p>}
   </main>;
 }
