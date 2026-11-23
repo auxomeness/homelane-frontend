@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, useNavigate, useSearchParams } from 'react-router';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { getPublicListings, type PropertyListing } from './listingsApi.js';
 import PropertyMap, { normalizeRadiusKm } from './PropertyMap.js';
 import PriceRangeSelect from './PriceRangeSelect.js';
@@ -74,7 +74,7 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
     <div className="fullscreen-map-canvas"><PropertyMap listings={filtered} fullscreen panelCollapsed={!panelOpen} height="100%" radiusKm={radiusKm} onRadiusChange={(value) => setParam('radius', String(value))} selectedListingId={selectedId} onListingSelect={selectListing} onVisibleListingsChange={updateVisible} /></div>
   </main>;
 
-  return <main className={`property-list-page${embedded ? ' property-list-page--embedded' : ''}`}>{!embedded && <header className="property-list-header"><div><p>HOMELANE · {role.toUpperCase()}</p><h1>Find your place</h1><span>Explore verified properties across the map.</span>{role === 'visitor' && <div className="property-list-auth"><Link to="/">Back to Homelane</Link><Link to="/auth/login">Sign in</Link><Link to="/auth/login?mode=signup">Create an account</Link></div>}</div><nav aria-label={`${role} property views`}><NavLink to={listPath} end>List</NavLink><NavLink to={`${mapPath}${searchParams.size ? `?${searchParams}` : ''}`}>Map</NavLink></nav></header>}<section className="property-list-filters">{filterForm}</section>
+  return <main className={`property-list-page${embedded ? ' property-list-page--embedded' : ''}`}>{!embedded && role === 'visitor' && <div className="property-list-topbar"><Link className="property-list-back" to="/"><ArrowLeft size={16} /> Back to Homelane</Link><div className="property-list-auth"><Link className="property-list-auth__signin" to="/auth/login">Sign in</Link><Link className="property-list-auth__signup" to="/auth/login?mode=signup">Create an account</Link></div></div>}{!embedded && <header className="property-list-header"><div><p>HOMELANE · {role.toUpperCase()}</p><h1>Find your place</h1><span>Explore verified properties across the map.</span></div><nav aria-label={`${role} property views`}><NavLink to={listPath} end>List</NavLink><NavLink to={`${mapPath}${searchParams.size ? `?${searchParams}` : ''}`}>Map</NavLink></nav></header>}<section className="property-list-filters">{filterForm}</section>
     {loading && <p className="map-empty">Loading properties…</p>}{error && errorNotice}
     <section className="property-list-grid">{filtered.map((listing) => <article className="property-list-card" key={listing.id}>{listing.photos[0] ? <img src={listing.photos[0]} alt={`${listing.title}`} /> : <div className="property-list-card__image">⌂</div>}<div><span>{listing.propertyType}</span><h2>{listing.title}</h2><p>{listing.location}</p><strong>₱ {Number(listing.price).toLocaleString('en-PH')}</strong><button type="button" onClick={() => goToMap(listing)}>Show on map</button></div></article>)}</section>
     {!loading && !error && !filtered.length && <p className="map-empty">{noListingsText}</p>}

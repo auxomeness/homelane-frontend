@@ -28,9 +28,16 @@
 .map-error p { margin: 0 0 12px; }
 .map-retry { padding: 9px 18px; border: 0; border-radius: 10px; background: #241d4d; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 .map-retry:hover { background: #3a2f78; }
-.property-list-auth { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; font-size: .88rem; font-weight: 700; }
-.property-list-auth a { color: #74568f; text-decoration: none; }
-.property-list-auth a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.property-list-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 1440px; margin: 0 auto 28px; }
+.property-list-back { display: inline-flex; align-items: center; gap: 8px; color: #706d7d; font-size: .83rem; text-decoration: none; }
+.property-list-back:hover { color: #168c83; }
+.property-list-auth { display: flex; align-items: center; gap: 10px; }
+.property-list-auth a { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 18px; border-radius: 10px; font-size: .86rem; font-weight: 700; text-decoration: none; transition: background .2s, color .2s; }
+.property-list-auth__signin { border: 1px solid #d9d4e6; background: #fff; color: #241d4d; }
+.property-list-auth__signin:hover { background: #f1eef8; }
+.property-list-auth__signup { border: 1px solid #241d4d; background: #241d4d; color: #fff; }
+.property-list-auth__signup:hover { background: #3a2f78; }
+@media (max-width: 480px) { .property-list-auth a { padding: 0 12px; font-size: .8rem; } }
 
 .fullscreen-map-screen { position: fixed; z-index: 200; inset: 0; overflow: hidden; height: 100vh; height: 100dvh; background: #eeeaf2; color: #241d4d; }
 .fullscreen-map-header { position: absolute; z-index: 1300; top: max(12px,env(safe-area-inset-top)); right: 16px; left: 16px; display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 20px; padding: 7px 12px 7px 18px; border: 1px solid #ffffffbb; border-radius: 16px; background: #ffffffdf; box-shadow: 0 10px 32px #241d4d20; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
