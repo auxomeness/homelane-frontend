@@ -605,3 +605,6 @@
   color: #fff;
 }
 .landing-category:hover .landing-category__arrow { background: rgba(255,255,255,.24); color: #fff; }
+
+/* Keep the capped guide panel centered instead of anchoring it to the left. */
+.landing-guide { margin-inline:auto; }
