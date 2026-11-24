@@ -1,120 +1,580 @@
-.buyer-property-details { display: grid; gap: 18px; }
-
-.buyer-property-details__back { display: inline-flex; width: fit-content; align-items: center; gap: 7px; color: var(--buyer-muted); font-size: 12px; font-weight: 600; text-decoration: none; }
-
-.buyer-property-details__back:hover { color: var(--buyer-primary); }
-
-.buyer-property-details__top-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(340px, .88fr); align-items: stretch; gap: 20px; }
-
-.buyer-property-details__gallery { position: relative; display: grid; min-height: 470px; grid-template-columns: minmax(0, 1.65fr) minmax(150px, .75fr); grid-template-rows: 1fr 1fr; gap: 12px; overflow: hidden; border-radius: var(--buyer-radius-card); }
-
-.buyer-property-details__photo { display: grid; place-items: center; border: 1px solid var(--buyer-border); background: #e2e8f0; color: var(--buyer-body); font-size: 13px; }
-
-.buyer-property-details__photo--main { grid-row: span 2; min-height: 100%; border-radius: var(--buyer-radius-card); font-size: 16px; }
-
-.buyer-property-details__photo--side { min-height: 0; border-radius: 14px; }
-
-.buyer-property-details__photo-count { position: absolute; right: 12px; bottom: 12px; padding: 7px 10px; border: 1px solid rgba(255,255,255,.75); border-radius: var(--buyer-radius-pill); background: rgba(255,255,255,.9); color: var(--buyer-ink); font-size: 10px; }
-
-.buyer-property-details__summary { display: flex; flex-direction: column; align-items: stretch; padding: 24px; border: 1px solid var(--buyer-border); border-radius: var(--buyer-radius-card); background: var(--buyer-surface); box-shadow: var(--buyer-card-shadow); }
-
-.buyer-property-details__summary-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-
-.buyer-property-details__type { color: var(--buyer-primary); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-
-.buyer-property-details__save { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--buyer-border); border-radius: 50%; background: var(--buyer-surface); color: var(--buyer-ink); cursor: pointer; }
-
-.buyer-property-details__save:hover,.buyer-property-details__save.is-saved { border-color: var(--buyer-primary); background: var(--buyer-lavender); color: var(--buyer-primary); }
-
-.buyer-property-details__summary h1 { margin: 12px 0 4px; color: var(--buyer-ink); font-size: clamp(24px, 2vw, 32px); font-weight: 700; letter-spacing: -.04em; line-height: 1.15; }
-
-.buyer-property-details__price { margin: 6px 0 0; color: var(--buyer-ink); font-size: 22px; font-weight: 700; }
-
-.buyer-property-details__location { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; color: var(--buyer-muted); font-size: 12.3px; }
-
-.buyer-property-details__location svg { flex: none; color: var(--buyer-primary); }
-
-.buyer-property-details__quick-facts { display: flex; flex-wrap: wrap; gap: 9px 15px; padding: 15px 0; margin-top: 8px; border-bottom: 1px solid var(--buyer-border); color: var(--buyer-body); }
-
-.buyer-property-details__quick-facts span { display: inline-flex; align-items: center; gap: 6px; font-size: 11.2px; }
-
-.buyer-property-details__quick-facts svg { color: var(--buyer-primary); }
-
-.buyer-property-details__agent { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
-
-.buyer-property-details__avatar { display: grid; width: 44px; height: 44px; flex: none; place-items: center; border-radius: 50%; background: var(--buyer-deep-purple); color: #fff; font-size: 12px; font-weight: 700; }
-
-.buyer-property-details__agent-info { display: grid; gap: 3px; }
-
-.buyer-property-details__agent-info strong { color: var(--buyer-ink); font-size: 12.3px; }
-
-.buyer-property-details__agent-info button { width: fit-content; padding: 0; border: 0; background: transparent; color: var(--buyer-primary); font: inherit; font-size: 10px; cursor: pointer; }
-
-.buyer-property-details__contact { color: var(--buyer-muted); font-size: 10px; }
-
-.buyer-property-details__saved-note { display: inline-flex; align-items: center; gap: 6px; margin: 12px 0 0; color: #047857; font-size: 10.5px; }
-
-.buyer-property-details__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 19px; }
-
-.buyer-property-details__action { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; padding: 0 12px; border: 1px solid var(--buyer-border); border-radius: var(--buyer-radius-control); font-size: 11.2px; font-weight: 600; text-decoration: none; transition: background .15s ease, transform .15s ease; }
-
-.buyer-property-details__action:hover { transform: translateY(-1px); }
-
-.buyer-property-details__action--secondary { background: var(--buyer-lavender); color: var(--buyer-primary); }
-
-.buyer-property-details__action--secondary:hover { background: #e5e0f3; }
-
-.buyer-property-details__action--primary { grid-column: 1 / -1; border-color: var(--buyer-deep-purple); background: var(--buyer-deep-purple); color: #fff; }
-
-.buyer-property-details__action--primary:hover { background: var(--buyer-primary); }
-
-.buyer-property-details__disclaimer { margin: 12px 0 0; color: var(--buyer-muted); font-size: 9.5px; line-height: 1.45; }
-
-.buyer-property-details__lower-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-
-.buyer-property-details__info-panel { min-height: 190px; padding: 22px; border: 1px solid var(--buyer-border); border-radius: var(--buyer-radius-card); background: var(--buyer-surface); }
-
-.buyer-property-details__info-panel h2 { margin: 0; color: var(--buyer-ink); font-size: 17px; font-weight: 700; }
-
-.buyer-property-details__features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px 18px; padding: 0; margin: 22px 0 0; list-style: none; }
-
-.buyer-property-details__features li { display: flex; align-items: center; gap: 9px; color: var(--buyer-body); font-size: 11.2px; }
-
-.buyer-property-details__features svg { flex: none; color: #047857; }
-
-.buyer-property-details__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 18px 0 0; }
-
-.buyer-property-details__facts > div { display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--buyer-page); }
-
-.buyer-property-details__facts dt { display: inline-flex; align-items: center; gap: 7px; color: var(--buyer-muted); font-size: 10.5px; }
-
-.buyer-property-details__facts dt svg { color: var(--buyer-primary); }
-
-.buyer-property-details__facts dd { margin: 0; color: var(--buyer-ink); font-size: 11.2px; font-weight: 700; text-align: right; }
-
-@media (max-width: 920px) {
-  .buyer-property-details__top-grid { grid-template-columns: minmax(0, 1.25fr) minmax(290px, .9fr); gap: 14px; }
-  .buyer-property-details__gallery { min-height: 380px; }
-  .buyer-property-details__summary { padding: 18px; }
-  .buyer-property-details__quick-facts { gap: 8px 11px; }
+.buyer-property-details {
+  display: grid;
+  gap: 18px;
 }
 
-@media (max-width: 760px) {
-  .buyer-property-details { gap: 13px; }
-  .buyer-property-details__top-grid { grid-template-columns: 1fr; }
-  .buyer-property-details__gallery { min-height: 330px; }
-  .buyer-property-details__summary { padding: 18px; }
-  .buyer-property-details__lower-grid { grid-template-columns: 1fr; gap: 12px; }
-  .buyer-property-details__info-panel { min-height: auto; padding: 18px; }
-  .buyer-property-details__features { grid-template-columns: 1fr; gap: 12px; margin-top: 17px; }
+.buyer-property-details__back {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  color: var(--buyer-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-@media (max-width: 500px) {
-  .buyer-property-details__gallery { min-height: 250px; grid-template-columns: minmax(0, 1.4fr) minmax(76px, .7fr); gap: 7px; }
-  .buyer-property-details__photo--side { border-radius: 10px; }
-  .buyer-property-details__photo--main { border-radius: 14px; }
-  .buyer-property-details__summary h1 { font-size: 23px; }
-  .buyer-property-details__price { font-size: 18px; }
-  .buyer-property-details__summary { padding: 15px; }
-  .buyer-property-details__facts { grid-template-columns: 1fr; }
+.buyer-property-details__back:hover {
+  color: var(--buyer-primary);
+}
+
+.buyer-property-details__top-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(340px, .88fr);
+  align-items: stretch;
+  gap: 20px;
+}
+
+.buyer-property-details__gallery {
+  position: relative;
+  display: grid;
+  min-height: 470px;
+  grid-template-columns: minmax(0, 1.65fr) minmax(150px, .75fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  overflow: hidden;
+  border-radius: var(--buyer-radius-card);
+}
+
+.buyer-property-details__photo {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--buyer-border);
+  background: #e2e8f0;
+  color: var(--buyer-body);
+  font-size: 13px;
+}
+
+.buyer-property-details__photo--main {
+  grid-row: span 2;
+  min-height: 100%;
+  border-radius: var(--buyer-radius-card);
+  font-size: 16px;
+}
+
+.buyer-property-details__photo--side {
+  min-height: 0;
+  border-radius: 14px;
+}
+
+.buyer-property-details__photo-count {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,.75);
+  border-radius: var(--buyer-radius-pill);
+  background: rgba(255,255,255,.9);
+  color: var(--buyer-ink);
+  font-size: 10px;
+}
+
+.buyer-property-details__summary {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 24px;
+  border: 1px solid var(--buyer-border);
+  border-radius: var(--buyer-radius-card);
+  background: var(--buyer-surface);
+  box-shadow: var(--buyer-card-shadow);
+}
+
+.buyer-property-details__summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.buyer-property-details__type {
+  color: var(--buyer-primary);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.buyer-property-details__save {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--buyer-border);
+  border-radius: 50%;
+  background: var(--buyer-surface);
+  color: var(--buyer-ink);
+  cursor: pointer;
+}
+
+.buyer-property-details__save:hover,.buyer-property-details__save.is-saved {
+  border-color: var(--buyer-primary);
+  background: var(--buyer-lavender);
+  color: var(--buyer-primary);
+}
+
+.buyer-property-details__summary h1 {
+  margin: 12px 0 4px;
+  color: var(--buyer-ink);
+  font-size: clamp(24px, 2vw, 32px);
+  font-weight: 700;
+  letter-spacing: -.04em;
+  line-height: 1.15;
+}
+
+.buyer-property-details__price {
+  margin: 6px 0 0;
+  color: var(--buyer-ink);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.buyer-property-details__location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  color: var(--buyer-muted);
+  font-size: 12.3px;
+}
+
+.buyer-property-details__location svg {
+  flex: none;
+  color: var(--buyer-primary);
+}
+
+.buyer-property-details__quick-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 15px;
+  padding: 15px 0;
+  margin-top: 8px;
+  border-bottom: 1px solid var(--buyer-border);
+  color: var(--buyer-body);
+}
+
+.buyer-property-details__quick-facts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.2px;
+}
+
+.buyer-property-details__quick-facts svg {
+  color: var(--buyer-primary);
+}
+
+.buyer-property-details__agent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.buyer-property-details__avatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--buyer-deep-purple);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.buyer-property-details__agent-info {
+  display: grid;
+  gap: 3px;
+}
+
+.buyer-property-details__agent-info strong {
+  color: var(--buyer-ink);
+  font-size: 12.3px;
+}
+
+.buyer-property-details__agent-info button {
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--buyer-primary);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.buyer-property-details__contact {
+  color: var(--buyer-muted);
+  font-size: 10px;
+}
+
+.buyer-property-details__saved-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  color: #047857;
+  font-size: 10.5px;
+}
+
+.buyer-property-details__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 19px;
+}
+
+.buyer-property-details__action {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid var(--buyer-border);
+  border-radius: var(--buyer-radius-control);
+  font-size: 11.2px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s ease, transform .15s ease;
+}
+
+.buyer-property-details__action-button {
+  background: transparent;
+  font: inherit;
+  font-size: 11.2px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.buyer-property-details__action:hover {
+  transform: translateY(-1px);
+}
+
+.buyer-property-details__action--secondary {
+  background: var(--buyer-lavender);
+  color: var(--buyer-primary);
+}
+
+.buyer-property-details__action--secondary:hover {
+  background: #e5e0f3;
+}
+
+.buyer-property-details__action--primary {
+  grid-column: 1 / -1;
+  border-color: var(--buyer-deep-purple);
+  background: var(--buyer-deep-purple);
+  color: #fff;
+}
+
+.buyer-property-details__action--primary:hover {
+  background: var(--buyer-primary);
+}
+
+.buyer-property-details__offer-success {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  margin: 12px 0 0;
+  padding: 7px 12px;
+  border-radius: var(--buyer-radius-pill);
+  background: var(--buyer-approved);
+  color: #047857;
+  font-size: 11.2px;
+  font-weight: 600;
+}
+
+.buyer-property-details__offer-backdrop {
+  position: fixed;
+  z-index: 1100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(22, 19, 45, .38);
+  backdrop-filter: blur(5px);
+}
+
+.buyer-property-details__offer-dialog {
+  width: min(100%, 420px);
+  padding: 22px;
+  border: 1px solid var(--buyer-border);
+  border-radius: var(--buyer-radius-card);
+  background: var(--buyer-surface);
+  box-shadow: 0 24px 80px rgba(27, 22, 60, .22);
+}
+
+.buyer-property-details__offer-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.buyer-property-details__offer-heading h2 {
+  margin: 0;
+  color: var(--buyer-ink);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.buyer-property-details__offer-heading p {
+  margin: 5px 0 0;
+  color: var(--buyer-muted);
+  font-size: 12px;
+}
+
+.buyer-property-details__offer-close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--buyer-page);
+  color: var(--buyer-ink);
+  cursor: pointer;
+}
+
+.buyer-property-details__offer-form {
+  display: grid;
+  gap: 8px;
+}
+
+.buyer-property-details__offer-form label {
+  color: var(--buyer-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.buyer-property-details__offer-input-wrap {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--buyer-border);
+  border-radius: var(--buyer-radius-control);
+  background: var(--buyer-surface);
+  color: var(--buyer-body);
+}
+
+.buyer-property-details__offer-input-wrap:focus-within {
+  outline: 2px solid var(--buyer-primary);
+  outline-offset: 2px;
+}
+
+.buyer-property-details__offer-input-wrap input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--buyer-ink);
+  font: inherit;
+  font-size: 12.3px;
+}
+
+.buyer-property-details__offer-input-wrap input::placeholder {
+  color: var(--buyer-muted);
+}
+
+.buyer-property-details__offer-form small {
+  color: var(--buyer-muted);
+  font-size: 10px;
+}
+
+.buyer-property-details__offer-dialog .buyer-property-details__offer-submit {
+  min-height: 40px;
+  margin-top: 6px;
+  background: var(--buyer-deep-purple);
+  font: inherit;
+  font-size: 11.2px;
+  font-weight: 600;
+}
+
+.buyer-property-details__offer-dialog .buyer-property-details__offer-submit:hover {
+  background: var(--buyer-primary);
+}
+
+.buyer-property-details__offer-disclaimer {
+  margin: 12px 0 0;
+  color: var(--buyer-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.buyer-property-details__disclaimer {
+  margin: 12px 0 0;
+  color: var(--buyer-muted);
+  font-size: 9.5px;
+  line-height: 1.45;
+}
+
+.buyer-property-details__lower-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.buyer-property-details__info-panel {
+  min-height: 190px;
+  padding: 22px;
+  border: 1px solid var(--buyer-border);
+  border-radius: var(--buyer-radius-card);
+  background: var(--buyer-surface);
+}
+
+.buyer-property-details__info-panel h2 {
+  margin: 0;
+  color: var(--buyer-ink);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.buyer-property-details__features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px 18px;
+  padding: 0;
+  margin: 22px 0 0;
+  list-style: none;
+}
+
+.buyer-property-details__features li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--buyer-body);
+  font-size: 11.2px;
+}
+
+.buyer-property-details__features svg {
+  flex: none;
+  color: #047857;
+}
+
+.buyer-property-details__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 0;
+}
+
+.buyer-property-details__facts > div {
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--buyer-page);
+}
+
+.buyer-property-details__facts dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--buyer-muted);
+  font-size: 10.5px;
+}
+
+.buyer-property-details__facts dt svg {
+  color: var(--buyer-primary);
+}
+
+.buyer-property-details__facts dd {
+  margin: 0;
+  color: var(--buyer-ink);
+  font-size: 11.2px;
+  font-weight: 700;
+  text-align: right;
+}
+
+@media (max-width: 920px) {.buyer-property-details__top-grid {
+  grid-template-columns: minmax(0, 1.25fr) minmax(290px, .9fr);
+  gap: 14px;
+}
+
+.buyer-property-details__gallery {
+  min-height: 380px;
+}
+
+.buyer-property-details__summary {
+  padding: 18px;
+}
+
+.buyer-property-details__quick-facts {
+  gap: 8px 11px;
+}
+}
+
+@media (max-width: 760px) {.buyer-property-details {
+  gap: 13px;
+}
+
+.buyer-property-details__top-grid {
+  grid-template-columns: 1fr;
+}
+
+.buyer-property-details__gallery {
+  min-height: 330px;
+}
+
+.buyer-property-details__summary {
+  padding: 18px;
+}
+
+.buyer-property-details__lower-grid {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.buyer-property-details__info-panel {
+  min-height: auto;
+  padding: 18px;
+}
+
+.buyer-property-details__features {
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 17px;
+}
+}
+
+@media (max-width: 500px) {.buyer-property-details__gallery {
+  min-height: 250px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(76px, .7fr);
+  gap: 7px;
+}
+
+.buyer-property-details__photo--side {
+  border-radius: 10px;
+}
+
+.buyer-property-details__photo--main {
+  border-radius: 14px;
+}
+
+.buyer-property-details__summary h1 {
+  font-size: 23px;
+}
+
+.buyer-property-details__price {
+  font-size: 18px;
+}
+
+.buyer-property-details__summary {
+  padding: 15px;
+}
+
+.buyer-property-details__facts {
+  grid-template-columns: 1fr;
+}
 }

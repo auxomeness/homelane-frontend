@@ -19,6 +19,7 @@ import BuyerNotifications from './buyer/pages/BuyerNotifications/BuyerNotificati
 import BuyerProfile from './buyer/pages/BuyerProfile/BuyerProfile.js';
 import BuyerProperties from './buyer/pages/BuyerProperties/BuyerProperties.js';
 import BuyerPropertyDetails from './buyer/pages/BuyerPropertyDetails/BuyerPropertyDetails.js';
+import BuyerSaved from './buyer/pages/BuyerSaved/BuyerSaved.js';
 import BuyerViewings from './buyer/pages/BuyerViewings/BuyerViewings.js';
 import PropertyMapPage from './shared/maps/PropertyMapPage.js';
 import StaffGate from './shared/maps/StaffGate.js';
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
       { path: 'viewings', element: <BuyerViewings /> },
       { path: 'properties', element: <BuyerProperties /> },
       { path: 'properties/:propertyId', element: <BuyerPropertyDetails /> },
+      { path: 'saved', element: <BuyerSaved /> },
       { path: 'offers', element: <BuyerRoutePlaceholder title="Offers" /> },
       { path: 'notifications', element: <BuyerNotifications /> },
       { path: 'profile', element: <BuyerProfile /> },

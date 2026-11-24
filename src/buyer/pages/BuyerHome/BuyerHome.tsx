@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { ArrowRight, Search } from 'lucide-react';
 import Card from '../../components/PropertyCard.js';
 import { buyerListings, type PropertyType } from '../../data/listings.js';
+import { useSavedProperties } from '../../hooks/useSavedProperties.js';
 
 const searchShortcuts: { title: string; type: PropertyType; description: string }[] = [
   { title: 'Houses', type: 'House', description: 'Room to make yourself at home' },
@@ -15,6 +16,7 @@ const searchShortcuts: { title: string; type: PropertyType; description: string 
 export default function BuyerHome() {
   const navigate = useNavigate();
   const [locationQuery, setLocationQuery] = useState('');
+  const { savedPropertyIds, toggleSavedProperty } = useSavedProperties();
 
   function searchProperties(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -86,11 +88,7 @@ export default function BuyerHome() {
         </div>
         <div className="buyer-properties__grid">
           {buyerListings.slice(0, 6).map((listing) => (
-            <Link
-              className="buyer-home__property-link"
-              key={listing.id}
-              to={`/buyer/properties/${listing.id}`}
-            >
+            <div className="buyer-home__property-link" key={listing.id}>
               <Card
                 className="buyer-property-card"
                 placeholderText="Property photo"
@@ -102,9 +100,11 @@ export default function BuyerHome() {
                 bathrooms={listing.bathrooms}
                 area={listing.area}
                 areaUnit="m²"
-                showSaveAction={false}
+                saved={savedPropertyIds.includes(listing.id)}
+                onSave={() => toggleSavedProperty(listing.id)}
               />
-            </Link>
+              <Link className="buyer-home__property-open" to={`/buyer/properties/${listing.id}`} aria-label={`View ${listing.title}`} />
+            </div>
           ))}
         </div>
       </section>

@@ -1,8 +1,11 @@
 import './BuyerPropertyDetails.css';
-import { useState, type ReactNode } from 'react';
-import { ArrowLeft, Bath, BedDouble, Bookmark, Check, MapPin, Ruler } from 'lucide-react';
+import { useState, type FormEvent, type ReactNode } from 'react';
+import { ArrowLeft, Bath, BedDouble, Bookmark, Check, MapPin, Ruler, X } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router';
+import Button from '../../../components/button.js';
 import { buyerListings } from '../../data/listings.js';
+import { savePreviewNotification } from '../../data/previewNotifications.js';
+import { useSavedProperties } from '../../hooks/useSavedProperties.js';
 
 const featureSamples: Record<string, string[]> = {
   'pacol-family': ['Garden area', 'Covered parking', 'Gated entry', 'Near schools and shops'],
@@ -16,11 +19,38 @@ const featureSamples: Record<string, string[]> = {
 
 export default function BuyerPropertyDetails() {
   const { propertyId } = useParams();
-  const [isSaved, setIsSaved] = useState(false);
+  const { savedPropertyIds, toggleSavedProperty } = useSavedProperties();
   const [showContact, setShowContact] = useState(false);
+  const [isOfferOpen, setIsOfferOpen] = useState(false);
+  const [offerAmount, setOfferAmount] = useState('');
+  const [offerNotice, setOfferNotice] = useState('');
   const listing = buyerListings.find((item) => item.id === propertyId);
+  const isSaved = listing ? savedPropertyIds.includes(listing.id) : false;
 
   if (!listing) return <Navigate to="/buyer/properties" replace />;
+
+  function submitOffer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const offerListing = listing;
+    if (!offerListing) return;
+    const amount = Number(offerAmount);
+    if (!Number.isFinite(amount) || amount <= 0) return;
+
+    const formattedAmount = new Intl.NumberFormat('en-PH', { maximumFractionDigits: 0 }).format(amount);
+    savePreviewNotification({
+      id: `offer-${Date.now()}`,
+      category: 'Offers',
+      title: 'Offer submitted',
+      description: `Preview offer: ₱${formattedAmount} for ${offerListing.title}. It has not been sent to the agent.`,
+      time: 'Just now',
+      initials: '₱',
+      destination: `/buyer/properties/${offerListing.id}`,
+      unread: true,
+    });
+    setOfferNotice('Offer submitted in this preview.');
+    setOfferAmount('');
+    setIsOfferOpen(false);
+  }
 
   const facts: { label: string; value: string; icon?: ReactNode }[] = [
     { label: 'Property type', value: listing.type },
@@ -50,7 +80,7 @@ export default function BuyerPropertyDetails() {
               type="button"
               aria-pressed={isSaved}
               aria-label={isSaved ? 'Remove from saved homes' : 'Save this home'}
-              onClick={() => setIsSaved((saved) => !saved)}
+              onClick={() => toggleSavedProperty(listing.id)}
             >
               <Bookmark size={19} fill={isSaved ? 'currentColor' : 'none'} aria-hidden="true" />
             </button>
@@ -75,13 +105,24 @@ export default function BuyerPropertyDetails() {
             </div>
           </div>
 
-          {isSaved && <p className="buyer-property-details__saved-note" role="status"><Check size={15} aria-hidden="true" /> Saved in this preview</p>}
+          {isSaved && <p className="buyer-property-details__saved-note" role="status"><Check size={15} aria-hidden="true" /> Saved in this browser</p>}
 
           <div className="buyer-property-details__actions">
             <Link className="buyer-property-details__action buyer-property-details__action--secondary" to={`/buyer/messages?property=${encodeURIComponent(listing.id)}`}>Inquire</Link>
-            <Link className="buyer-property-details__action buyer-property-details__action--secondary" to={`/buyer/offers?property=${encodeURIComponent(listing.id)}`}>Offer</Link>
+            <button
+              className="buyer-property-details__action buyer-property-details__action--secondary buyer-property-details__action-button"
+              type="button"
+              onClick={() => {
+                setOfferAmount('');
+                setOfferNotice('');
+                setIsOfferOpen(true);
+              }}
+            >
+              Offer
+            </button>
             <Link className="buyer-property-details__action buyer-property-details__action--primary" to={`/buyer/viewings?property=${encodeURIComponent(listing.id)}&request=1`}>Request a viewing</Link>
           </div>
+          {offerNotice && <p className="buyer-property-details__offer-success" role="status"><Check size={15} aria-hidden="true" /> {offerNotice}</p>}
           <p className="buyer-property-details__disclaimer">Property and agent information shown here is fictional preview content.</p>
         </aside>
       </div>
@@ -106,6 +147,46 @@ export default function BuyerPropertyDetails() {
           </dl>
         </section>
       </div>
+
+      {isOfferOpen && (
+        <div className="buyer-property-details__offer-backdrop" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setIsOfferOpen(false);
+        }}>
+          <section className="buyer-property-details__offer-dialog" role="dialog" aria-modal="true" aria-labelledby="buyer-property-offer-title">
+            <div className="buyer-property-details__offer-heading">
+              <div>
+                <h2 id="buyer-property-offer-title">Send an offer to KA?</h2>
+                <p>Input your proposed amount in PHP.</p>
+              </div>
+              <button className="buyer-property-details__offer-close" type="button" aria-label="Close offer form" onClick={() => setIsOfferOpen(false)}>
+                <X size={18} aria-hidden="true" />
+              </button>
+            </div>
+            <form className="buyer-property-details__offer-form" onSubmit={submitOffer}>
+              <label htmlFor="buyer-offer-amount">Offer Amount</label>
+              <div className="buyer-property-details__offer-input-wrap">
+                <span aria-hidden="true">₱</span>
+                <input
+                  id="buyer-offer-amount"
+                  type="number"
+                  min="1"
+                  step="1"
+                  inputMode="numeric"
+                  placeholder="Price"
+                  required
+                  value={offerAmount}
+                  onChange={(event) => setOfferAmount(event.target.value)}
+                />
+              </div>
+              <small>Currently listed price is ₱{listing.price.toLocaleString('en-PH')}.</small>
+              <Button className="buyer-property-details__offer-submit" type="submit" size="small" shape="pill" fullWidth>
+                Send Offer
+              </Button>
+            </form>
+            <p className="buyer-property-details__offer-disclaimer">This offer is a non-binding preview and will not be sent to an agent.</p>
+          </section>
+        </div>
+      )}
     </section>
   );
 }

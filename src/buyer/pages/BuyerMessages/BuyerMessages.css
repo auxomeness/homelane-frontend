@@ -412,101 +412,121 @@
   opacity: .48;
 }
 
-@media (max-width: 820px) {
-  .buyer-messages__layout {
-    display: block;
-    height: calc(100dvh - 214px);
-    min-height: 440px;
-    border-radius: var(--buyer-radius-card);
-  }
-  .buyer-inbox {
-    height: 100%;
-    border-right: 0;
-  }
-  .buyer-inbox__toolbar {
-    min-height: 57px;
-    padding: 10px 13px;
-  }
-  .buyer-inbox__list {
-    gap: 9px;
-    padding: 12px;
-  }
-  .buyer-conversation {
-    min-height: 78px;
-    gap: 11px;
-    padding: 10px;
-  }
-  .buyer-conversation__avatar {
-    width: 40px;
-    height: 40px;
-  }
-  .buyer-conversation__topline strong {
-    font-size: 12.3px;
-  }
-  .buyer-conversation__property {
-    font-size: 11.2px;
-  }
-  .buyer-conversation__preview {
-    font-size: 10.1px;
-  }
-  .buyer-thread {
-    display: none;
-    height: 100%;
-  }
-  .buyer-messages--conversation-open .buyer-inbox {
-    display: none;
-  }
-  .buyer-messages--conversation-open .buyer-thread {
-    display: flex;
-  }
-  .buyer-thread__header {
-    min-height: 66px;
-    gap: 8px;
-    padding: 9px 11px;
-  }
-  .buyer-thread__back {
-    display: grid;
-  }
-  .buyer-thread__avatar {
-    width: 36px;
-    height: 36px;
-    font-size: 11.2px;
-  }
-  .buyer-thread__property-link {
-    padding: 7px 9px;
-    font-size: 10.1px;
-  }
-  .buyer-thread__timeline {
-    gap: 13px;
-    padding: 15px 12px;
-  }
-  .buyer-message {
-    max-width: 88%;
-  }
-  .buyer-message p {
-    font-size: 12.3px;
-  }
-  .buyer-composer {
-    gap: 7px;
-    padding: 10px;
-  }
-  .buyer-composer input {
-    height: 38px;
-    padding: 0 12px;
-    font-size: 11.2px;
-  }
-  .buyer-app .buyer-composer__send.btn {
-    min-width: 42px;
-    min-height: 38px;
-    padding: 0 11px;
-  }
-  .buyer-app .buyer-composer__send span {
-    display: none;
-  }
+@media (max-width: 820px) {.buyer-messages__layout {
+  display: block;
+  height: calc(100dvh - 214px);
+  min-height: 440px;
+  border-radius: var(--buyer-radius-card);
 }
 
-@media (max-width: 390px) {
-  .buyer-inbox__count {
-    display: none;
-  }
+.buyer-inbox {
+  height: 100%;
+  border-right: 0;
+}
+
+.buyer-inbox__toolbar {
+  min-height: 57px;
+  padding: 10px 13px;
+}
+
+.buyer-inbox__list {
+  gap: 9px;
+  padding: 12px;
+}
+
+.buyer-conversation {
+  min-height: 78px;
+  gap: 11px;
+  padding: 10px;
+}
+
+.buyer-conversation__avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.buyer-conversation__topline strong {
+  font-size: 12.3px;
+}
+
+.buyer-conversation__property {
+  font-size: 11.2px;
+}
+
+.buyer-conversation__preview {
+  font-size: 10.1px;
+}
+
+.buyer-thread {
+  display: none;
+  height: 100%;
+}
+
+.buyer-messages--conversation-open .buyer-inbox {
+  display: none;
+}
+
+.buyer-messages--conversation-open .buyer-thread {
+  display: flex;
+}
+
+.buyer-thread__header {
+  min-height: 66px;
+  gap: 8px;
+  padding: 9px 11px;
+}
+
+.buyer-thread__back {
+  display: grid;
+}
+
+.buyer-thread__avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 11.2px;
+}
+
+.buyer-thread__property-link {
+  padding: 7px 9px;
+  font-size: 10.1px;
+}
+
+.buyer-thread__timeline {
+  gap: 13px;
+  padding: 15px 12px;
+}
+
+.buyer-message {
+  max-width: 88%;
+}
+
+.buyer-message p {
+  font-size: 12.3px;
+}
+
+.buyer-composer {
+  gap: 7px;
+  padding: 10px;
+}
+
+.buyer-composer input {
+  height: 38px;
+  padding: 0 12px;
+  font-size: 11.2px;
+}
+
+.buyer-app .buyer-composer__send.btn {
+  min-width: 42px;
+  min-height: 38px;
+  padding: 0 11px;
+}
+
+.buyer-app .buyer-composer__send span {
+  display: none;
+}
+}
+
+@media (max-width: 390px) {.buyer-inbox__count {
+  display: none;
+}
 }

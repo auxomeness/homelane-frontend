@@ -1,12 +1,13 @@
 import './BuyerNotifications.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { readPreviewNotifications } from '../../data/previewNotifications.js';
 
 type NotificationCategory = 'Messages' | 'Offers' | 'Viewings' | 'Listings';
 type CategoryFilter = 'All notifications' | NotificationCategory;
 
 type BuyerNotification = {
-  id: number;
+  id: number | string;
   category: NotificationCategory;
   title: string;
   description: string;
@@ -18,7 +19,7 @@ type BuyerNotification = {
 
 const filters: CategoryFilter[] = ['All notifications', 'Messages', 'Offers', 'Viewings', 'Listings'];
 
-const notifications: BuyerNotification[] = [
+const sampleNotifications: BuyerNotification[] = [
   {
     id: 1,
     category: 'Messages',
@@ -62,6 +63,24 @@ const notifications: BuyerNotification[] = [
 export default function BuyerNotifications() {
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('All notifications');
   const [filterOpen, setFilterOpen] = useState(false);
+  const [notifications, setNotifications] = useState<BuyerNotification[]>(() => [
+    ...readPreviewNotifications(),
+    ...sampleNotifications,
+  ]);
+
+  useEffect(() => {
+    const refreshNotifications = () => setNotifications([
+      ...readPreviewNotifications(),
+      ...sampleNotifications,
+    ]);
+
+    window.addEventListener('storage', refreshNotifications);
+    window.addEventListener('homelane:preview-notifications-changed', refreshNotifications);
+    return () => {
+      window.removeEventListener('storage', refreshNotifications);
+      window.removeEventListener('homelane:preview-notifications-changed', refreshNotifications);
+    };
+  }, []);
 
   const visibleNotifications = notifications.filter((notification) =>
     activeFilter === 'All notifications' || notification.category === activeFilter,

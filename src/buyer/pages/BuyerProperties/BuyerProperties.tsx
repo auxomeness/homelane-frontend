@@ -1,16 +1,20 @@
 import './BuyerProperties.css';
 import { useMemo, useState, type ChangeEvent } from 'react';
-import { ChevronDown, Search, X } from 'lucide-react';
+import { Bookmark, ChevronDown, Search, X } from 'lucide-react';
 import Card from '../../components/PropertyCard.js';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { buyerListings, type PropertyType } from '../../data/listings.js';
+import { useSavedProperties } from '../../hooks/useSavedProperties.js';
+import Button from '../../../components/button.js';
 
 type PriceRange = 'all' | 'under-5m' | '5m-10m' | 'over-10m';
 type TypeFilter = 'all' | PropertyType;
 type BedroomRange = 'any' | '1+' | '2+' | '3+' | '4+';
 
 export default function BuyerProperties() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { savedPropertyIds, toggleSavedProperty } = useSavedProperties();
   const initialType = searchParams.get('type') as TypeFilter | null;
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '');
   const [priceRange, setPriceRange] = useState<PriceRange>('all');
@@ -109,13 +113,19 @@ export default function BuyerProperties() {
             </select>
           </label>
         </div>
-        <span className="buyer-properties__result-count" aria-live="polite">{filteredListings.length} results</span>
+        <div className="buyer-properties__toolbar-actions">
+          <Button className="buyer-properties__saved-button" size="small" shape="pill" onClick={() => navigate('/buyer/saved')}>
+            <Bookmark size={15} aria-hidden="true" />
+            Saved homes{savedPropertyIds.length ? ` (${savedPropertyIds.length})` : ''}
+          </Button>
+          <span className="buyer-properties__result-count" aria-live="polite">{filteredListings.length} results</span>
+        </div>
       </div>
 
       {filteredListings.length > 0 ? (
         <div className="buyer-properties__grid">
           {filteredListings.map((listing) => (
-            <Link className="buyer-properties__card-link" key={listing.id} to={`/buyer/properties/${listing.id}`} aria-label={`View ${listing.title}`}>
+            <div className="buyer-properties__card-link" key={listing.id}>
               <Card
                 className="buyer-property-card"
                 placeholderText="Property photo"
@@ -127,9 +137,11 @@ export default function BuyerProperties() {
                 bathrooms={listing.bathrooms}
                 area={listing.area}
                 areaUnit="m²"
-                showSaveAction={false}
+                saved={savedPropertyIds.includes(listing.id)}
+                onSave={() => toggleSavedProperty(listing.id)}
               />
-            </Link>
+              <Link className="buyer-properties__card-open" to={`/buyer/properties/${listing.id}`} aria-label={`View ${listing.title}`} />
+            </div>
           ))}
         </div>
       ) : (
