@@ -10,6 +10,7 @@ import './propertyMap.css';
 const DEFAULT_CENTER: LatLngExpression = [13.6218, 123.1948];
 const markerIcon = new DivIcon({ className: 'homelane-map-marker', html: '<span></span>', iconSize: [24, 24], iconAnchor: [12, 12] });
 const pinIcon = new DivIcon({ className: 'homelane-map-pin', html: '<span></span>', iconSize: [30, 30], iconAnchor: [15, 29] });
+const userLocationIcon = new DivIcon({ className: 'homelane-map-user-location', html: '<span><i></i></span>', iconSize: [30, 36], iconAnchor: [15, 34] });
 export interface MapPin { latitude: number; longitude: number }
 const AVAILABLE_RADII = new Set([0, 2, 5, 10, 25]);
 export function normalizeRadiusKm(radiusKm: number) {
@@ -221,7 +222,7 @@ export default function PropertyMap({ listings, mode = 'browse', pin, onPinChang
       <MapControls listings={filtered} fullscreen={fullscreen} onLocate={locate} onToggleTracking={track} hasUserPosition={Boolean(userPosition)} watching={watching} />
       {filtered.map((listing) => <Marker key={listing.id} position={[listing.latitude, listing.longitude]} icon={markerIcon} eventHandlers={{ click: () => { setSelected(listing); onListingSelect?.(listing); } }}><Popup><div className="property-map__popup"><strong>{listing.title}</strong><span>{listing.location}</span><b>₱ {Number(listing.price).toLocaleString('en-PH')}</b>{listing.status !== 'active' && <small>{listing.status}</small>}{allowRoute && userPosition && <button type="button" onClick={() => { setSelected(listing); onListingSelect?.(listing); }}>Walking directions</button>}</div></Popup></Marker>)}
       {pin && mode === 'pick' && <Marker position={[pin.latitude, pin.longitude]} icon={pinIcon} draggable eventHandlers={{ dragend: (event: DragEndEvent) => { const point = (event.target as LeafletMarker).getLatLng(); onPinChange?.({ latitude: point.lat, longitude: point.lng }); } }} />}
-      {userPosition && <><Marker position={[userPosition.latitude, userPosition.longitude]} />{radiusKm > 0 && <AnimatedRadiusCircle center={userPosition} radiusKm={radiusKm} />}</>}
+      {userPosition && <><Marker position={[userPosition.latitude, userPosition.longitude]} icon={userLocationIcon} />{radiusKm > 0 && <AnimatedRadiusCircle center={userPosition} radiusKm={radiusKm} />}</>}
       {route.length > 0 && <Polyline positions={route} pathOptions={{ color: '#4b47c5', weight: 5, opacity: .85 }} />}
       {route.length > 1 && <RouteDirectionArrows positions={route} />}
     </MapContainer>

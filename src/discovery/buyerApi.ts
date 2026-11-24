@@ -34,10 +34,15 @@ async function allPages<T>(path: string, key: string): Promise<T[]> {
   const items: T[] = [];
   let offset = 0;
   while (true) {
-    const page = await request<Record<string, T[]> & { pagination: { limit: number; hasMore: boolean } }>(`${path}${path.includes('?') ? '&' : '?'}limit=100&offset=${offset}`);
+    // Let the API use its default page size; this also works with older deployed API
+    // instances whose maximum page size may be lower than this client expects.
+    const url = offset === 0 ? path : `${path}${path.includes('?') ? '&' : '?'}offset=${offset}`;
+    const page = await request<Record<string, T[]> & { pagination: { limit: number; hasMore: boolean } }>(url);
     items.push(...(page[key] ?? []));
     if (!page.pagination?.hasMore) return items;
-    offset += page.pagination.limit;
+    const pageSize = Number(page.pagination.limit);
+    if (!Number.isSafeInteger(pageSize) || pageSize < 1) throw new Error('The service returned invalid pagination data.');
+    offset += pageSize;
   }
 }
 
@@ -45,7 +50,8 @@ export const getBuyerProfile = async () => (await request<{ user: BuyerProfile }
 export const updateBuyerProfile = async (profile: Pick<BuyerProfile, 'name' | 'email'>) => (await request<{ user: BuyerProfile }>('/buyer/profile', { method: 'PUT', body: JSON.stringify(profile) })).user;
 export const getBuyerInquiries = () => allPages<BuyerInquiry>('/buyer/inquiries', 'inquiries');
 export const getBuyerMessages = (id: string) => allPages<BuyerMessage>(`/buyer/inquiries/${encodeURIComponent(id)}/messages`, 'messages');
-export const createBuyerInquiry = async (listingId: string, body: string) => request<{ inquiry: { id: string; listingId: string }; message: BuyerMessage }>('/buyer/inquiries', { method: 'POST', body: JSON.stringify({ listingId, body }) });
+// The backend's inquiry validator calls the initial message `message`.
+export const createBuyerInquiry = async (listingId: string, message: string) => request<{ inquiry: { id: string; listingId: string }; message: BuyerMessage }>('/buyer/inquiries', { method: 'POST', body: JSON.stringify({ listingId, message }) });
 export const markBuyerInquiryRead = async (id: string) => (await request<{ inquiry: { id: string; read: boolean } }>(`/buyer/inquiries/${encodeURIComponent(id)}/read`, { method: 'PATCH' })).inquiry;
 export const sendBuyerMessage = async (id: string, body: string) => (await request<{ message: BuyerMessage }>(`/buyer/inquiries/${encodeURIComponent(id)}/messages`, { method: 'POST', body: JSON.stringify({ body }) })).message;
 export const sendBuyerOffer = async (id: string, amount: number, note = '') => (await request<{ message: BuyerMessage }>(`/buyer/inquiries/${encodeURIComponent(id)}/offers`, { method: 'POST', body: JSON.stringify({ amount, note }) })).message;
