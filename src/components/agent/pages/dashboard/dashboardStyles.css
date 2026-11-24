@@ -43,3 +43,76 @@
   .agent-inquiry { grid-template-columns: 2.5rem minmax(0,1fr); }
   .agent-inquiry__new { grid-column: 2; justify-self: start; }
 }
+.agent-dashboard-activity { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem 0; border: 0; border-bottom: 1px solid var(--agent-border); background: transparent; color: var(--agent-ink); text-align: left; cursor: pointer; }
+.agent-dashboard-activity span { display: grid; gap: .3rem; }
+.agent-dashboard-activity strong { font-size: .88rem; font-weight: 600; }
+.agent-dashboard-activity small { color: var(--agent-muted); font-size: .75rem; }
+
+/* Dashboard gets a confident welcome block and a more scannable metric row. */
+.agent-dashboard .agent-page-heading { margin: 2.1rem 0 1.65rem; }
+.agent-dashboard .agent-page-heading h1 { font-size: clamp(2.15rem,3.4vw,3rem); letter-spacing: -.065em; }
+.agent-dashboard .agent-page-heading p { font-size: 1rem; }
+.agent-dashboard .agent-page-heading .agent-button { min-height: 3rem; padding-inline: 1.2rem; border-radius: .85rem; }
+.agent-profile-card {
+  position: relative;
+  min-height: 112px;
+  overflow: hidden;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgba(255,255,255,.22);
+  background: linear-gradient(112deg,#21194f 0%,#382d72 56%,#6857a6 100%);
+  box-shadow: 0 18px 42px rgba(44,33,98,.22);
+}
+.agent-profile-card::after {
+  position: absolute;
+  top: -5.5rem;
+  right: 4%;
+  width: 15rem;
+  height: 15rem;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2rem rgba(255,255,255,.035), 0 0 0 4rem rgba(255,255,255,.025);
+  content: '';
+  pointer-events: none;
+}
+.agent-profile-card > img { z-index: 1; border: 3px solid rgba(255,255,255,.65); box-shadow: 0 5px 16px rgba(12,8,38,.23); }
+.agent-profile-card__identity,.agent-profile-card__verified { position: relative; z-index: 1; }
+.agent-profile-card__identity h2 { color: #fff; font-size: 1.12rem; letter-spacing: -.02em; }
+.agent-profile-card__identity p { color: rgba(255,255,255,.78); }
+.agent-profile-card__verified { border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.14); color: #fff; }
+.agent-metrics { gap: .9rem; }
+.agent-metric-card {
+  position: relative;
+  min-height: 170px;
+  overflow: hidden;
+  padding: 1.25rem 1.35rem;
+  border-color: #e5e0ef;
+  background: #fff;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.agent-metric-card:hover { transform: translateY(-3px); box-shadow: 0 18px 38px rgba(43,33,92,.12); }
+.agent-metric-card::after { position: absolute; right: -2.2rem; bottom: -3rem; width: 8rem; height: 8rem; border-radius: 50%; background: rgba(93,73,157,.045); content: ''; }
+.agent-metric-card__label { color: #615982; }
+.agent-metric-card__label svg { box-sizing: content-box; padding: .55rem; border-radius: .75rem; background: #f0edfa; color: #493a86; opacity: 1; }
+.agent-metric-card__label h2 { font-size: .86rem; }
+.agent-metric-card__value { margin-top: 1rem; color: #241c55; font-size: clamp(2.3rem,3.7vw,3.1rem); letter-spacing: -.065em; }
+.agent-metric-card p { color: #777287; }
+.agent-dashboard-grid { gap: 1.15rem; margin-top: 1.2rem; }
+.agent-panel { padding: 1.4rem; }
+.agent-panel__heading h2 { letter-spacing: -.035em; }
+.agent-panel__heading > a,.agent-text-action { color: #4c3b8a; }
+.agent-inquiry { border-color: #ece8f4; border-radius: .95rem; background: #fbfaff; transition: border-color .18s, transform .18s, box-shadow .18s; }
+.agent-inquiry:hover { border-color: #d7cfee; transform: translateY(-1px); box-shadow: 0 8px 18px rgba(43,33,92,.07); }
+.agent-inquiry__avatar { background: #eeeafa; color: #3b2f75; }
+.agent-inquiry__new { background: #eeeafa; color: #4c3b8a; }
+.agent-dashboard-activity { transition: color .16s, background .16s; }
+.agent-dashboard-activity:hover { padding-inline: .65rem; border-radius: .7rem; background: #f7f5fb; color: #403477; }
+.agent-dashboard .agent-empty-state { border: 1px dashed #e5e0ef; background: #fbfaff; }
+
+@media (max-width: 560px) {
+  .agent-dashboard .agent-page-heading { margin: 1.4rem 0 1.1rem; }
+  .agent-profile-card { min-height: 96px; padding: .9rem; }
+  .agent-profile-card > img { width: 3rem; height: 3rem; }
+  .agent-profile-card__identity h2 { font-size: .95rem; }
+  .agent-profile-card__identity p { font-size: .78rem; }
+  .agent-metric-card { min-height: 142px; }
+}

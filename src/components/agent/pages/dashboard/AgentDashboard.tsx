@@ -1,43 +1,20 @@
 import { ArrowRight, CircleAlert, Clock3, House, Layers3 } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Button from '../../../button.js';
 import AgentMetricCard from '../../dashboard/AgentMetricCard.js';
-import AgentListingCard from '../../listings/AgentListingCard.js';
-import type { AgentListingData } from '../../libs/listData.js';
-import { getAgentDashboard, type AgentDashboardData } from '../../../../shared/agent/dashboardApi.js';
+import { useAgentData } from '../../libs/AgentDataContext.js';
 import './dashboardStyles.css';
-
-function asCardListing(listing: AgentDashboardData['recentListings'][number]): AgentListingData {
-  const labels = {
-    active: ['Active / Live', 'View listing'],
-    pending: ['Pending review', 'View listing'],
-    rejected: ['Action required', 'Edit listing'],
-    draft: ['Draft', 'Edit listing'],
-  };
-  const [statusLabel, actionLabel] = labels[listing.status];
-  return { ...listing, price: `₱ ${listing.price.toLocaleString('en-PH')}`, statusLabel, actionLabel };
-}
 
 export default function AgentDashboard() {
   const navigate = useNavigate();
-  const [dashboard, setDashboard] = useState<AgentDashboardData | null>(null);
-  const [error, setError] = useState('');
-  const [refresh, setRefresh] = useState(0);
-  useEffect(() => {
-    let active = true;
-    getAgentDashboard()
-      .then((data) => { if (active) { setDashboard(data); setError(''); } })
-      .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : 'Unable to load dashboard.'); });
-    return () => { active = false; };
-  }, [refresh]);
-  const counts = dashboard?.counts;
-  const displayCount = (value?: number) => value === undefined ? error ? '—' : '…' : String(value);
+  const { listings, inquiries, profile, dashboard, activity, loading, error, reload } = useAgentData();
+  const activeListings = listings.filter((listing) => listing.status === 'active');
+  const totalValue = activeListings.reduce((sum, listing) => sum + Number(listing.price.replace(/[^\d]/g, '')), 0);
   const metrics = [
-    { label: 'Managed properties', value: displayCount(counts?.managedProperties), detail: 'Across your portfolio', icon: Layers3 },
-    { label: 'Active listings', value: displayCount(counts?.activeListings), detail: counts ? `₱ ${(counts.activeTotalValue / 1_000_000).toFixed(1)}M total value` : 'Total value unavailable', icon: House },
-    { label: 'Pending review', value: displayCount(counts?.pendingReview), detail: 'Awaiting admin review', icon: Clock3 },
-    { label: 'Needs attention', value: displayCount(counts?.needsAttention), detail: 'Update and resubmit', icon: CircleAlert },
+    { label: 'Managed properties', value: String(dashboard?.listings.total ?? listings.length), detail: 'Across your portfolio', icon: Layers3 },
+    { label: 'Active listings', value: String(dashboard?.listings.byStatus.active ?? activeListings.length), detail: `₱ ${(totalValue / 1_000_000).toFixed(1)}M total value`, icon: House },
+    { label: 'Pending review', value: String(dashboard?.listings.byStatus.pending ?? listings.filter((listing) => listing.status === 'pending').length), detail: 'Awaiting admin review', icon: Clock3 },
+    { label: 'Needs attention', value: String(dashboard?.listings.byStatus.rejected ?? listings.filter((listing) => listing.status === 'rejected').length), detail: 'Update and resubmit', icon: CircleAlert },
   ];
   return (
     <main className="agent-dashboard">
@@ -51,15 +28,15 @@ export default function AgentDashboard() {
         </Button>
       </div>
 
-      {error && <p className="agent-empty-state" role="alert">{error} <button type="button" onClick={() => { setError(''); setRefresh((value) => value + 1); }}>Retry</button></p>}
+      {error && <div className="agent-workspace-error" role="alert">{error}<button type="button" onClick={() => void reload()}>Retry</button></div>}
 
       <section className="agent-profile-card" aria-label="Agent profile summary">
         <img src="/assets/figma/avatar.svg" alt="" />
         <div className="agent-profile-card__identity">
-          <h2>{dashboard?.profile.name ?? (error ? 'Profile unavailable' : 'Loading profile…')}</h2>
-          {dashboard && <p>{dashboard.profile.credential}{dashboard.profile.city && <> <span>·</span> {dashboard.profile.city}</>}</p>}
+          <h2>{profile.name || 'Your agent workspace'}</h2>
+          <p>{[profile.credential, profile.city].filter(Boolean).join(' · ') || 'Complete your profile to help buyers get to know you.'}</p>
         </div>
-        {dashboard?.profile.verified && <span className="agent-profile-card__verified">Verified agent</span>}
+        {profile.verified && <span className="agent-profile-card__verified">Verified agent</span>}
       </section>
 
       <section className="agent-metrics" aria-label="Listing metrics">
@@ -78,11 +55,9 @@ export default function AgentDashboard() {
             </button>
           </div>
           <div className="agent-dashboard-listings__items">
-            {dashboard?.recentListings.map((listing) => (
-              <AgentListingCard key={listing.id} listing={asCardListing(listing)} onAction={() => navigate(`/agent/my-listings/${listing.id}`)} />
-            ))}
-            {!dashboard && !error && <p className="agent-empty-state" role="status">Loading listings…</p>}
-            {dashboard && !dashboard.recentListings.length && <p className="agent-empty-state">No listings yet. Add your first property to get started.</p>}
+            {activity.slice(0, 4).map((event) => <button type="button" className="agent-dashboard-activity" key={event.id} onClick={() => event.entityType === 'listing' && navigate(`/agent/my-listings/${event.entityId}`)}><span><strong>{event.summary}</strong><small>{new Date(event.createdAt).toLocaleString()}</small></span><ArrowRight size={16} /></button>)}
+            {loading && !activity.length && <p className="agent-empty-state">Loading activity…</p>}
+            {!loading && !activity.length && <p className="agent-empty-state">No activity yet. Add a listing or reply to a buyer to get started.</p>}
           </div>
         </section>
 
@@ -96,7 +71,12 @@ export default function AgentDashboard() {
               View all <ArrowRight size={16} />
             </button>
           </div>
-          <p className="agent-empty-state">No buyer inquiries yet.</p>
+          {inquiries.slice(0, 3).map((inquiry) => <button type="button" className="agent-inquiry agent-inquiry--button" key={inquiry.id} onClick={() => navigate(`/agent/messages?inquiry=${inquiry.id}`)}>
+            <div className="agent-inquiry__avatar">{inquiry.name.split(' ').map((part) => part[0]).join('').slice(0, 2)}</div>
+            <div><h3>{inquiry.name}</h3><p>{inquiry.property} · “{inquiry.message}”</p></div>
+            {inquiry.status === 'new' && <span className="agent-inquiry__new">New</span>}
+          </button>)}
+          {!inquiries.length && <p className="agent-empty-state">No buyer inquiries yet.</p>}
         </section>
       </div>
     </main>

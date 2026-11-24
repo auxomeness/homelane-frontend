@@ -25,3 +25,18 @@
   .agent-listing-filters--fields { grid-template-columns: 1fr 1fr; }
   .agent-listing-filters--fields label:first-child { grid-column: 1/-1; }
 }
+
+@media (max-width: 700px) {
+  .agent-listings .agent-page-heading { gap: .75rem; margin: 1.25rem 0 1rem; }
+  .agent-listings .agent-page-heading > div { min-width: 0; }
+  .agent-listings .agent-page-heading p { font-size: .92rem; }
+  .agent-listings .agent-page-heading > .btn { min-height: 2.85rem; padding: .65rem 1rem; font-size: .95rem; }
+  .agent-listings-panel__top { min-width: 0; }
+  .agent-listings-panel__top > p { align-self: flex-end; }
+  .agent-listings-panel__top .agent-listing-filters:not(.agent-listing-filters--fields) { width: calc(100% + 2rem); flex-wrap: nowrap; gap: .2rem; overflow-x: auto; padding: .1rem 1rem .4rem; margin: 0 -1rem; scrollbar-width: none; }
+  .agent-listings-panel__top .agent-listing-filters:not(.agent-listing-filters--fields)::-webkit-scrollbar { display: none; }
+  .agent-listings-panel__top .agent-listing-filters:not(.agent-listing-filters--fields) button { flex: 0 0 auto; white-space: nowrap; }
+  .agent-listing-filters--fields { min-width: 0; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: .65rem; }
+  .agent-listing-filters--fields label { min-width: 0; }
+  .agent-listing-filters--fields input,.agent-listing-filters--fields select { min-width: 0; font-size: .88rem; }
+}

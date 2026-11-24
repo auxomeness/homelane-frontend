@@ -22,6 +22,8 @@
 @media (max-width: 640px) {
   .agent-listing-row { grid-template-columns: 3.5rem minmax(0, 1fr); gap: .75rem; padding: .85rem; }
   .agent-listing-row__thumb { width: 3.5rem; height: 3.5rem; }
-  .agent-listing-row__title-line h2 { font-size: .92rem; }
-  .agent-listing-row__action.btn { grid-column: 2; justify-self: start; }
+  .agent-listing-row__title-line { align-items: flex-start; gap: .35rem .5rem; }
+  .agent-listing-row__title-line h2 { min-width: 0; font-size: .92rem; line-height: 1.3; }
+  .agent-listing-row__title-line .agent-status-pill { max-width: 100%; font-size: .68rem; white-space: normal; }
+  .agent-listing-row__action.btn { grid-column: 2; justify-self: start; min-height: 2.7rem; }
 }

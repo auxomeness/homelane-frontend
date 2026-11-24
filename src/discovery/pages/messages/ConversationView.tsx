@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import type { Conversation, Property } from '../../types.js';
 import { getProperty } from '../../utils.js';
 import OfferCard from '../../shared/OfferCard.js';
@@ -8,21 +8,25 @@ interface ConversationViewProps {
   properties: Property[];
   viewerId: string;
   onBack: () => void;
+  onSend: (body: string) => Promise<void>;
+  onOffer: (amount: number, note: string) => Promise<void>;
+  onOfferDecision: (offerId: string, status: 'accepted' | 'declined') => Promise<void>;
 }
 
-export default function ConversationView({ conversation, properties, viewerId, onBack }: ConversationViewProps) {
+export default function ConversationView({ conversation, properties, viewerId, onBack, onSend, onOffer, onOfferDecision }: ConversationViewProps) {
   const [draft, setDraft] = useState('');
-  const [sent, setSent] = useState<{ id: string; text: string }[]>([]);
+  const [offerOpen, setOfferOpen] = useState(false); const [amount, setAmount] = useState(''); const [note, setNote] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   const property = getProperty(properties, conversation.propertyId);
   const otherName = conversation.participantIds[0] === viewerId ? conversation.agentName : conversation.buyerName;
 
-  const send = (event: React.FormEvent) => {
+  const send = async (event: FormEvent) => {
     event.preventDefault();
     const text = draft.trim();
-    if (!text) return;
-    setSent((current) => [...current, { id: `local-${current.length}`, text }]);
-    setDraft('');
+    if (!text || busy) return;
+    setBusy(true); setError('');
+    try { await onSend(text); setDraft(''); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to send message.'); } finally { setBusy(false); }
   };
+  const submitOffer = async (event: FormEvent) => { event.preventDefault(); const value = Number(amount); if (!Number.isFinite(value) || value <= 0 || busy) return; setBusy(true); setError(''); try { await onOffer(value, note.trim()); setAmount(''); setNote(''); setOfferOpen(false); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to send offer.'); } finally { setBusy(false); } };
 
   return (
     <section className="conversation-view" aria-label={`Conversation with ${otherName}`}>
@@ -35,25 +39,19 @@ export default function ConversationView({ conversation, properties, viewerId, o
       </header>
 
       <div className="conversation-view__messages">
-        {conversation.messages.length === 0 && sent.length === 0 && (
+        {conversation.messages.length === 0 && (
           <p className="composer__note">No messages yet. Say hello below.</p>
         )}
         {conversation.messages.map((message) => {
           const mine = message.senderId === viewerId;
           return (
             <div key={message.id} className={`message${mine ? ' is-mine' : ''}`}>
-              {message.offer && <OfferCard {...message.offer} mine={mine} />}
+              {message.offer && <><OfferCard {...message.offer} mine={mine} />{!mine && message.offer.status === 'Pending' && message.offer.id && <div className="offer-response"><button type="button" disabled={busy} onClick={async () => { setBusy(true); setError(''); try { await onOfferDecision(message.offer!.id!, 'accepted'); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to accept offer.'); } finally { setBusy(false); } }}>Accept</button><button type="button" disabled={busy} onClick={async () => { setBusy(true); setError(''); try { await onOfferDecision(message.offer!.id!, 'declined'); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to decline offer.'); } finally { setBusy(false); } }}>Decline</button></div>}</>}
               {message.text && <p className="message__bubble">{message.text}</p>}
               <time>{message.time}</time>
             </div>
           );
         })}
-        {sent.map((message) => (
-          <div key={message.id} className="message is-mine">
-            <p className="message__bubble">{message.text}</p>
-            <time>Just now</time>
-          </div>
-        ))}
       </div>
 
       <form className="composer" onSubmit={send}>
@@ -64,8 +62,11 @@ export default function ConversationView({ conversation, properties, viewerId, o
           placeholder="Type your message"
           aria-label="Message"
         />
-        <button type="submit" aria-label="Send message">Send</button>
+        <button type="submit" aria-label="Send message" disabled={busy}>Send</button>
       </form>
+      <button type="button" className="composer__offer-toggle" onClick={() => setOfferOpen((open) => !open)}>Make an offer</button>
+      {offerOpen && <form className="composer composer--offer" onSubmit={submitOffer}><input type="number" min="0.01" step="0.01" value={amount} onChange={(event) => setAmount(event.target.value)} placeholder="Offer amount (PHP)" aria-label="Offer amount" required /><input type="text" maxLength={1000} value={note} onChange={(event) => setNote(event.target.value)} placeholder="Optional note" aria-label="Offer note" /><button type="submit" disabled={busy}>Send offer</button></form>}
+      {error && <p role="alert" className="composer__error">{error}</p>}
       <p className="composer__note">Offers in this chat are non-binding.</p>
     </section>
   );

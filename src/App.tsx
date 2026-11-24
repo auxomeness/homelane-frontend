@@ -1,8 +1,5 @@
+import LandingPage from './landing/LandingPage.js';
+
 export default function App() {
-  return (
-    // lagay auth role/endpoint agadz if okay na lahat na pages
-    <>
-    <h1>HELLOOOOO</h1> 
-    </>
-  );
+  return <LandingPage />;
 }
