@@ -241,7 +241,13 @@
   height: 3rem;
   border-radius: 1rem;
   background-color: var(--main-color);
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 700;
+  overflow: hidden;
 }
+
+.review-name-image img { width: 100%; height: 100%; object-fit: cover; }
 
 .review-details {
     display: flex;
@@ -275,6 +281,24 @@
 .status-container.cancelled {
     color: #9F1239;
     background-color: #FFE4E6;
+}
+
+.status-container.active,
+.listing-details-status--active {
+    color: #065F46;
+    background-color: #D1FAE5;
+}
+
+.status-container.rejected,
+.listing-details-status--rejected {
+    color: #9F1239;
+    background-color: #FFE4E6;
+}
+
+.status-container.draft,
+.listing-details-status--draft {
+    color: #4b5563;
+    background-color: #f3f4f6;
 }
 
 /* --------- Status ----------------- */
@@ -410,6 +434,11 @@
 .agent-details-container .agent-status-pill--cancelled { 
     background: #ffe4e6; 
     color: #9f1239; 
+}
+
+.agent-details-container .agent-status-pill--rejected {
+    color: #9f1239;
+    background: #ffe4e6;
 }
 
 .agent-details-grid {
@@ -765,33 +794,55 @@
     line-height: 1.5;
 }
 
-.listing-decision-actions {
+.listing-review-options {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: .6rem;
     margin-top: 1rem;
 }
 
-.listing-decision-actions button {
-    min-height: 2.5rem;
-    padding: .5rem;
-    border: 0;
+.listing-review-options label {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    min-height: 2.6rem;
+    padding: .6rem .7rem;
+    border: 1px solid #e3e7ed;
     border-radius: .55rem;
-    font: inherit;
+    background: #fff;
+    color: #526077;
     font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-.listing-decision-actions button:disabled { 
-    cursor: not-allowed; 
-    opacity: .7; 
+.listing-review-options label.is-selected {
+    border-color: #1e1b4b;
+    background: #f2eff8;
+    color: #1e1b4b;
 }
-.listing-decision-reject { 
-    background: #ffe4e6; 
-    color: #9f1239; 
+
+.listing-review-options input {
+    accent-color: #1e1b4b;
 }
-.listing-decision-approve { 
-    background: #1e1b4b; 
-    color: #fff; 
+
+.listing-review-save {
+    width: 100%;
+    min-height: 2.65rem;
+    padding: .55rem .8rem;
+    margin-top: .75rem;
+    border: 0;
+    border-radius: .55rem;
+    background: #1e1b4b;
+    color: #fff;
+    font: inherit;
+    font-size: .8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.listing-review-save:disabled {
+    cursor: not-allowed;
+    opacity: .6;
 }
 
 .listing-details-empty {

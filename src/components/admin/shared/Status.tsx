@@ -1,6 +1,6 @@
 import './sharedStyles.css'
 
-export type StatusType =  "pending" | "approved" | "cancelled";
+export type StatusType = "draft" | "pending" | "active" | "rejected" | "approved" | "cancelled";
 
 
 interface StatusProps {

@@ -23,7 +23,7 @@ export function AgentReviewGrid( {
         <section className="review-container">
                         <div className="review-name">
                             <div className="review-name-image">
-                            {image}
+                            {image ? <img src={image} alt="" /> : name.split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase()}
                             </div>
                             <h3>{name}</h3>
                         </div>
@@ -63,14 +63,11 @@ export function ListReviewGrid({
     ).format(intPrice)
 
     return(
-        <Link 
-            key={id} 
-            to={`/admin/listing-reviews/${id}`}>
-            
+        <Link to={`/admin/listing-reviews/${id}`}>
             <section className="review-container">
                 <div className="review-name">
                     <div className="review-name-image">
-                    {image}
+                    {image ? <img src={image} alt="" /> : title.slice(0, 1).toUpperCase()}
                     </div>
                     <h3>{title}</h3>
                 </div>
@@ -86,7 +83,6 @@ export function ListReviewGrid({
                     <div className="review-status">
                         <Status status={status}/>
                     </div>
-
             </section>
         </Link>
     );

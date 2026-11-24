@@ -8,10 +8,14 @@ import PropertyMap from '../../../../shared/maps/PropertyMap.js';
 export default function AgentListingDetails() {
   const { listingId } = useParams();
   const navigate = useNavigate();
-  const { listings, deleteListing } = useAgentData();
+  const { listings, loading, error, reload, deleteListing } = useAgentData();
   const listing = listings.find((item) => item.id === listingId);
 
-  if (!listing) return <main className="agent-listing-details"><h1>Listing not found</h1><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => navigate('/agent/my-listings')}>Back to my listings</Button></main>;
+  if (!listing) return <main className="agent-listing-details">
+    <h1>{loading ? 'Loading listing…' : error ? 'Unable to load listing' : 'Listing not found'}</h1>
+    {error && <p role="alert">{error} <button type="button" onClick={() => void reload()}>Retry</button></p>}
+    <Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => navigate('/agent/my-listings')}>Back to my listings</Button>
+  </main>;
 
   const editListing = () => navigate(`/agent/add-listings?edit=${encodeURIComponent(listing.id)}`);
   const removeListing = async () => {

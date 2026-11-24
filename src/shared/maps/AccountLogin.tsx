@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { loginAccount, setAccountToken } from './listingsApi.js';
 import './accountLogin.css';
 
@@ -69,6 +69,7 @@ export default function AccountLogin({ role }: { role: 'agent' | 'admin' }) {
       'Signing in…' : 'Sign in'
       }
       </button>
+      {role === 'agent' && <p>New agent? <Link to="/apply/agent">Apply here</Link></p>}
     </form>
   </main>
     );

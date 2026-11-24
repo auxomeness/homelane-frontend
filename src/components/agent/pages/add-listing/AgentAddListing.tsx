@@ -38,7 +38,7 @@ export default function AgentAddListing() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
-  const { listings, createListing, updateListing } = useAgentData();
+  const { listings, loading, error: loadError, reload, createListing, updateListing } = useAgentData();
   const listingToEdit = listings.find((listing) => listing.id === editId);
   const [form, setForm] = useState<ListingForm>(listingToEdit ? toForm(listingToEdit) : initialForm);
   const [pin, setPin] = useState<MapPinData | null>(listingToEdit && listingToEdit.latitude != null && listingToEdit.longitude != null ? { latitude: listingToEdit.latitude, longitude: listingToEdit.longitude } : null);
@@ -107,7 +107,11 @@ export default function AgentAddListing() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (editId && !listingToEdit) return <main className="agent-add-listing"><h1>Listing not found</h1><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => navigate('/agent/my-listings')}>Back to my listings</Button></main>;
+  if (editId && !listingToEdit) return <main className="agent-add-listing">
+    <h1>{loading ? 'Loading listing…' : loadError ? 'Unable to load listing' : 'Listing not found'}</h1>
+    {loadError && <p role="alert">{loadError} <button type="button" onClick={() => void reload()}>Retry</button></p>}
+    <Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => navigate('/agent/my-listings')}>Back to my listings</Button>
+  </main>;
 
   return (
     <main className="agent-add-listing">

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import AdminDashboard from "./components/admin/pages/dashboard/AdminDashboard"; 
 import App from "./App";
 import AdminListingReview from "./components/admin/pages/listing-review/AdminListingReview";
+import AdminAddListing from "./components/admin/pages/listing-review/AdminAddListing";
 import AdminAgentReview from "./components/admin/pages/agent-review/AdminAgentReview";
 import AgentApp, { AgentIndexRedirect } from "./components/agent/AgentApp";
 import AgentDashboard from "./components/agent/pages/dashboard/AgentDashboard";
@@ -16,6 +17,7 @@ import Viewings from "./discovery/pages/Viewings";
 import PropertyMapPage from "./shared/maps/PropertyMapPage";
 import RoleGate from "./shared/maps/RoleGate";
 import RoleMapPage from "./shared/maps/RoleMapPage";
+import AgentApplicationPage from "./shared/agents/AgentApplicationPage";
 import { AdminAgentDetails, AdminListingDetails } from "./components/admin/shared/DetailsView";
 
 const AppRoutes = createBrowserRouter([
@@ -31,6 +33,7 @@ const AppRoutes = createBrowserRouter([
       { index: true, Component: AdminDashboard },
       { path: "map", Component: () => <RoleMapPage role="admin" /> },
       { path: "listing-reviews", Component: AdminListingReview },
+      { path: "add-listing", Component: AdminAddListing },
       { path: "listing-reviews/:listId", Component: AdminListingDetails },
 
       { path: "agent-reviews", Component: AdminAgentReview },
@@ -83,6 +86,10 @@ const AppRoutes = createBrowserRouter([
       { path: "messages", Component: AgentWorkspacePage },
       { path: "profile", Component: AgentWorkspacePage },
     ],
+  },
+  {
+    path: "/apply/agent",
+    Component: AgentApplicationPage,
   },
 ]);
 

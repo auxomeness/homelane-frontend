@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 interface StatCardProps {
     label: string;
-    value: number;
+    value: number | string;
     href: string;
     icon: LucideIcon;
 }

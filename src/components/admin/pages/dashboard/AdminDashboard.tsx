@@ -1,4 +1,5 @@
 import { ListCheck, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import StatCard from '../../dashboard/StatCard';
 import AdminHeader from '../../shared/AdminHeader'
 import AdminNavigation from '../../shared/AdminNavigation';
@@ -7,12 +8,21 @@ import './dashboardPageStyles.css'
 
 import AgentGrid from '../../dashboard/AgentGrid';
 import ListGrid from '../../dashboard/ListGrid';
-import { Agents, listData } from '../../libs/listData';
+import { getAdminDashboard, type AdminDashboardData } from '../../../../shared/admin/dashboardApi.js';
 
 import { Link, Outlet } from 'react-router';
 
 
 export default function AdminDashboard() {
+    const [dashboard, setDashboard] = useState<AdminDashboardData | null>(null);
+    const [error, setError] = useState('');
+    useEffect(() => {
+        let active = true;
+        getAdminDashboard()
+            .then((result) => { if (active) setDashboard(result); })
+            .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : 'Unable to load dashboard.'); });
+        return () => { active = false; };
+    }, []);
     return(
         <main className='admin-container admin-layout'>
             <AdminHeader/>
@@ -25,48 +35,51 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="admin-stat">
-                    <StatCard label={'Agent Reviews'} value={Agents.length} href={'agent-reviews'} icon={User}/>
-                    <StatCard label={'Listing Reviews'} value={listData.length} href={'listing-reviews'} icon={ListCheck}/>
+                    <StatCard label={'Pending agent reviews'} value={dashboard?.counts.pendingAgentApplications ?? (error ? '—' : '…')} href={'agent-reviews'} icon={User}/>
+                    <StatCard label={'Pending listing reviews'} value={dashboard?.counts.pendingListings ?? (error ? '—' : '…')} href={'listing-reviews?status=pending'} icon={ListCheck}/>
                 </div>
 
+                {error && <p className="review-empty" role="alert">{error}</p>}
                 <article id='admin-reviews-container'>
                     <section className='admin-reviews'>
                         <div>
-                            <h2>Agent reviews</h2>
+                            <h2>Recent pending agent reviews</h2>
 
-                            {Agents.map((agent) => (
+                            {!dashboard && !error && <p className="review-empty" role="status">Loading agent reviews…</p>}
+                            {dashboard?.recent.agentApplications.map((agent) => (
                                 <Link 
-                                    key={agent.name} 
-                                    to="/admin/agent-reviews" 
+                                    key={agent.id}
+                                    to={'/admin/agent-reviews/' + agent.id}
                                     className='card-list'>
                                 <AgentGrid 
-                                    image={ agent.image } 
-                                    name={ agent.name } 
-                                    title={ agent.title } 
-                                    location={ agent.location } 
+                                    image={ agent.fullName.slice(0, 1) }
+                                    name={ agent.fullName }
+                                    title={ agent.licenseNumber }
+                                    location={ agent.city }
                                     status={ agent.status }/>
                                 </Link>
                             ))}
 
-                            {(Agents.length as number) === 0 && <p className="review-empty">No agent reviews pending.</p>}
+                            {dashboard?.counts.pendingAgentApplications === 0 && <p className="review-empty">No agent reviews pending.</p>}
 
                         </div>
                     </section>
 
                     <section className='admin-reviews'>
                         <article>
-                            <h2>Listing reviews</h2>
+                            <h2>Recent pending listing reviews</h2>
 
 
-                            {listData.map((list) => (
+                            {!dashboard && !error && <p className="review-empty" role="status">Loading listing reviews…</p>}
+                            {dashboard?.recent.listings.map((list) => (
 
-                                <Link key={list.title} to="/admin/listing-reviews" className='card-list'>
-                                <ListGrid image={ list.image } name={ list.title } title={ list.title } location={ list.location } status={ list.status }/>
+                                <Link key={list.id} to={'/admin/listing-reviews/' + list.id} className='card-list'>
+                                <ListGrid image={list.propertyType.slice(0, 1)} name={list.title} title={list.propertyType} location={list.location} status={list.status}/>
                                 </Link>
 
                             ))}
                             
-                            {listData.length === 0 && <p className="review-empty">No listing reviews pending.</p>}
+                            {dashboard?.counts.pendingListings === 0 && <p className="review-empty">No listing reviews pending.</p>}
 
                         </article>
                     </section>

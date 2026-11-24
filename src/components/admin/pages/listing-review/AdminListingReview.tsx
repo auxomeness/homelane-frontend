@@ -1,177 +1,96 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useSearchParams } from 'react-router';
 import AdminHeader from '../../shared/AdminHeader';
 import AdminNavigation from '../../shared/AdminNavigation';
-import { getAdminListings, reviewListing, type ListingStatus, type PropertyListing } from '../../../../shared/maps/listingsApi.js';
-import './adminListingReviewStyles.css';
+import { getAdminListingsPage, type AdminListingsPage } from '../../../../shared/maps/listingsApi.js';
 import { ListReviewGrid } from '../../shared/ReviewGrid.js';
-import { listData } from '../../libs/listData.js';
+import './adminListingReviewStyles.css';
 
+const pageSize = 20;
 export default function AdminListingReview() {
-  const [listings, setListings] = useState<PropertyListing[]>([]);
-  const [selectedId, setSelectedId] = useState('');
-  const [params] = useSearchParams();
-  const [status, setStatus] = useState<ListingStatus>('active');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [params, setParams] = useSearchParams();
+  const location = useLocation();
+  const statusParam = params.get('status');
+  const queueStatus = statusParam === 'pending' || statusParam === 'active' || statusParam === 'rejected' || statusParam === 'draft' ? statusParam : 'all';
+  const searchQuery = params.get('q') ?? '';
+  const requestedPage = Number(params.get('page') ?? '1');
+  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const [queue, setQueue] = useState<AdminListingsPage | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const reviewDialogRef = useRef<HTMLDialogElement>(null);
-  const reviewGridRef = useRef<HTMLElement>(null);
-  const selected = listings.find((item) => item.id === selectedId) ?? null;
+  const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const message = (location.state as { message?: string } | null)?.message ?? '';
+  const pageCount = Math.max(1, Math.ceil((queue?.total ?? 0) / pageSize));
 
-  const pendingCount = listings.filter((item) => item.status === 'pending' || item.status === 'rejected').length;
-  
   useEffect(() => {
     let active = true;
-    getAdminListings()
-      .then((data) => {
-        if (!active) return;
-        setListings(data);
-        setSelectedId(data.find((item) => item.status === 'pending')?.id ?? data[0]?.id ?? '');
-      })
-      .catch((reason: unknown) => {
-        if (active) setError(reason instanceof Error ? reason.message : 'Unable to load listings.');
-      })
+    setLoading(true);
+    getAdminListingsPage({ status: queueStatus, q: searchQuery.trim().slice(0, 100), page, pageSize })
+      .then((result) => { if (active) { setQueue(result); setError(''); } })
+      .catch((reason: unknown) => { if (active) { setQueue(null); setError(reason instanceof Error ? reason.message : 'Unable to load listings.'); } })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, []);
+  }, [page, queueStatus, searchQuery, refreshKey]);
 
-  useEffect(() => {
-    if (selected) setStatus(selected.status === 'rejected' ? 'rejected' : 'active');
-  }, [selectedId]);
-
-  const save = async () => {
-    if (!selected || saving) return;
-    setMessage('');
-    setError('');
-    setSaving(true);
-
-    try {
-      const updated = await reviewListing(selected.id, status, selected.latitude, selected.longitude);
-      setListings((current) => current.map((item) => item.id === updated.id ? updated : item));
-      setMessage(`Review and submitted pin saved for ${updated.title}.`);
-      reviewDialogRef.current?.close();
-
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Unable to save review.');
-    } finally {
-      setSaving(false);
-    }
+  const updatePage = (value: string) => {
+    setParams((old) => {
+      const next = new URLSearchParams(old);
+      next.set('page', value);
+      return next;
+    });
   };
 
-  const openReview = () => {
-    const dialog = reviewDialogRef.current;
-    if (!dialog || dialog.open) return;
-    const bounds = reviewGridRef.current?.getBoundingClientRect();
-    if (bounds) {
-      const top = Math.min(Math.max(16, bounds.top + 16), Math.max(16, window.innerHeight - 480));
-      const right = Math.max(16, window.innerWidth - bounds.right + 16);
-      dialog.style.setProperty('--admin-review-top', `${top}px`);
-      dialog.style.setProperty('--admin-review-right', `${right}px`);
-    }
-    dialog.showModal();
-  };
-  
-  return (
-  <div className="listing-container admin-layout">
-      <AdminHeader/>
-      <AdminNavigation/>
+  const updateFilter = (key: 'status' | 'q', value: string) => setParams((old) => {
+    const next = new URLSearchParams(old);
+    if (value && value !== 'all') next.set(key, value);
+    else next.delete(key);
+    next.delete('page');
+    return next;
+  });
 
-      <main className="admin-page-content">
-      
-      <div id="listing-header">
-        <h1>Listing reviews</h1>
-        <p>Review property details and verify exact map pins.</p>
-      </div>
-    
-        <div className="listing-review-actions">
-          <Link to={`/admin/map${params.size ? `?${params}` : ''}`}>Map</Link>
-          <button type="button" onClick={openReview}>Review listing</button>
-        </div>
-        
-    <section className='review-grid-container' ref={reviewGridRef}>
-
-    <dialog className="admin-map-review" ref={reviewDialogRef}>
-      <div className="admin-map-review__heading">
-        <div>
-          <h2>Review listing</h2>
-          <p>Choose a listing, confirm its submitted pin, then record a decision.</p>
-        </div>
-        <button type="button" onClick={() => reviewDialogRef.current?.close()}>Close</button>
+  return <div className="listing-container admin-layout">
+    <AdminHeader />
+    <AdminNavigation />
+    <main className="admin-page-content">
+      <div id="listing-header"><h1>Listing reviews</h1>
+      <p>Review property details and verify exact map pins.</p>
       </div>
 
-      <div className="admin-review-step">
-        <div className="admin-review-step__heading"><span>1</span><h3>Choose a listing</h3></div>
-        <label htmlFor="review-listing">Listing to review</label>
-        <select id="review-listing" value={selectedId} onChange={(event) => setSelectedId(event.target.value)} disabled={loading || !listings.length}>
-          <option value="">{loading ? 'Loading listings…' : 'Choose a listing'}</option>
-          {listings.map((item) => <option value={item.id} key={item.id}>{item.title} · {item.status}</option>)}
-        </select>
-        {!loading && !listings.length && <p className="admin-review-hint">No submitted listings are available to review.</p>}
+      <div className="listing-review-actions">
+        <Link to={'/admin/map' + (params.size ? '?' + params : '')}>Map</Link>
+        <Link className="listing-review-actions__primary" to="/admin/add-listing">+ Add listing</Link>
       </div>
-
-      {selected && <>
-        <div className="admin-review-step">
-          <div className="admin-review-step__heading"><span>2</span><h3>Confirm the submitted pin</h3></div>
-          <div className="admin-review-property">
-            <strong>{selected.title}</strong>
-            <span>{selected.location} · ₱ {Number(selected.price).toLocaleString('en-PH')}</span>
-          </div>
-          <dl className="admin-review-coordinates">
-            <div><dt>Latitude</dt><dd>{selected.latitude.toFixed(6)}</dd></div>
-            <div><dt>Longitude</dt><dd>{selected.longitude.toFixed(6)}</dd></div>
-          </dl>
-          <p className="admin-review-hint">These coordinates will be saved with your decision. To move the pin, close this panel and use Map.</p>
-        </div>
-
-        <div className="admin-review-step">
-          <div className="admin-review-step__heading"><span>3</span><h3>Record a decision</h3></div>
-          <label htmlFor="review-status">Decision</label>
-          <select id="review-status" value={status} onChange={(event) => setStatus(event.target.value as ListingStatus)}>
-            <option value="active">Approve and publish</option>
-            <option value="rejected">Request correction</option>
-            <option value="pending">Keep pending</option>
-          </select>
-        </div>
-      </>}
-
-      {error && <p className="account-login-error" role="alert">{error}</p>}
-
-      <div className="admin-review-footer">
-        <p>{pendingCount} pending or correction listings · {listings.length} total</p>
-        <button type="button" className="admin-map-review__save" onClick={save} disabled={!selected || saving}>
-          {saving ? 'Saving review…' : 'Save review and exact pin'}
-        </button>
+      <div className="listing-filter">
+        <label>Status <select value={queueStatus} onChange={(event) => updateFilter('status', event.target.value)}>
+          <option value="all">All</option><option value="pending">Pending</option><option value="active">Active</option>
+          <option value="rejected">Rejected</option><option value="draft">Draft</option>
+        </select></label>
+        <label>Search <input value={searchQuery} maxLength={100} onChange={(event) => updateFilter('q', event.target.value)} placeholder="Title or location" /></label>
       </div>
-    </dialog>
+      {message && <p className="listing-review-result" role="status">{message}</p>}
 
-    {message && <p className="listing-review-result" role="status">{message}</p>}
+      {error && <p className="account-login-error" role="alert">{error} <button type="button" onClick={() => setRefreshKey((value) => value + 1)}>Retry</button></p>}
 
-      <header className="review-grid-container-header">
-          <h2>Review queue</h2>
-          <span>{listData.length} listings</span>
-      </header>
-        
-        <header className="review-grid-container-labels">
-                <span>Listing</span>
-                <span>Location</span>
-                <span>Price</span>
-                <span>Status</span>
+      <section className="review-grid-container">
+        <header className="review-grid-container-header"><div><h2>Review queue</h2><p>Select a listing to view its details and record a decision.</p></div>
+        <span>{queue ? `${queue.total} listings` : loading ? 'Loading…' : 'Unavailable'}</span>
         </header>
-      
-      {listData.map((list) => (
-        <ListReviewGrid
-          key={list.id}
-          id={Number(list.id)}
-          image={list.image}
-          title={list.title}
-          location={list.location}
-          intPrice={list.intPrice}
-          status={list.status}
-        />
-      ))}
-    </section>
-      </main>
-  </div>);
+
+        <header className="review-grid-container-labels"><span>Listing</span>
+        <span>Location</span>
+        <span>Price</span>
+        <span>Status</span></header>
+        {loading ? <p className="review-empty" role="status">Loading listings…</p> : error ? null :
+          queue?.listings.length ? queue.listings.map((listing) => <ListReviewGrid
+            key={listing.id} id={listing.id} image={listing.photos[0] ?? ''} title={listing.title}
+            location={listing.location} intPrice={listing.price} status={listing.status}
+          />) : <p className="review-empty">No listings match these filters.</p>}
+        {queue && pageCount > 1 && <nav className="listing-queue-pages" aria-label="Listing pages">
+          <button type="button" disabled={page <= 1} onClick={() => updatePage(String(page - 1))}>Previous</button>
+          <span>Page {page} of {pageCount}</span>
+          <button type="button" disabled={page >= pageCount} onClick={() => updatePage(String(page + 1))}>Next</button>
+        </nav>}
+      </section>
+    </main>
+  </div>;
 }

@@ -28,7 +28,7 @@ export function AgentDataProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AgentDataValue>(() => ({
     listings, inquiries, profile, loading, error, reload,
     createListing: async (draft, submit) => { const listing = await createListingRequest({ ...draft, status: submit ? 'pending' : 'draft' }); setListings((current) => [adaptListing(listing), ...current]); },
-    updateListing: async (id, draft, submit = false) => { const previous = listings.find((listing) => listing.id === id); const listing = await updateListingRequest(id, { ...draft, status: submit ? 'pending' : previous?.status ?? 'draft' }); setListings((current) => current.map((item) => item.id === id ? adaptListing(listing) : item)); },
+    updateListing: async (id, draft, submit = false) => { const listing = await updateListingRequest(id, { ...draft, status: submit ? 'pending' : 'draft' }); setListings((current) => current.map((item) => item.id === id ? adaptListing(listing) : item)); },
     deleteListing: async (id) => { await deleteListingRequest(id); setListings((current) => current.filter((listing) => listing.id !== id)); },
     updateProfile: setProfile,
     markInquiryRead: (id) => setInquiries((current) => current.map((item) => item.id === id && item.status === 'new' ? { ...item, status: 'read' } : item)),

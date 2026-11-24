@@ -15,7 +15,12 @@
     margin-top: 2rem;
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
+
+.listing-filter label { display: flex; align-items: center; gap: .5rem; color: #575656; font-size: .85rem; }
+.listing-filter input, .listing-filter select { min-height: 2.5rem; padding: .5rem .7rem; border: 1px solid #ded9e7; border-radius: .5rem; background: #fff; font: inherit; }
 
 .review-grid-container {
     margin: 2rem 0;
@@ -34,6 +39,12 @@
 
 .review-grid-container-header h2 {
     font-weight: 600;
+}
+
+.review-grid-container-header p {
+    margin-top: .3rem;
+    color: #77717e;
+    font-size: .8rem;
 }
 
 .review-grid-container-header span {
@@ -63,6 +74,7 @@
 .listing-review-actions {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: .6rem;
 }
 
@@ -83,9 +95,9 @@
     cursor: pointer;
 }
 
-.listing-review-actions button {
+.listing-review-actions .listing-review-actions__primary {
     border-color: #241d4d;
-    background: #241d4d;
+    background: #3d326e;
     color: #fff;
 }
 
@@ -100,178 +112,6 @@
     outline-offset: 2px;
 }
 
-.admin-map-review[open] {
-    position: fixed;
-    top: var(--admin-review-top, 1rem);
-    right: var(--admin-review-right, 1rem);
-    bottom: auto;
-    left: auto;
-    display: grid;
-    width: min(36rem, calc(100vw - 2rem));
-    max-height: calc(100dvh - var(--admin-review-top, 1rem) - 1rem);
-    gap: 1rem;
-    padding: 1.25rem;
-    margin: 0;
-    overflow: auto;
-    border: 1px solid #e9e6ef;
-    border-radius: 1rem;
-    background: #fff;
-    box-shadow: 0 1rem 3rem rgba(30, 27, 75, .2);
-    color: #241d4d;
-}
-
-.admin-map-review::backdrop {
-    background: rgba(20, 18, 44, .35);
-}
-
-.admin-map-review__heading {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.admin-map-review__heading h2 {
-    margin-bottom: .3rem;
-    font-size: 1.1rem;
-}
-
-.admin-map-review__heading p {
-    color: #77717e;
-    font-size: .8rem;
-    line-height: 1.4;
-}
-
-.admin-map-review__heading button {
-    padding: .4rem .65rem;
-    border: 1px solid #ded9e7;
-    border-radius: .5rem;
-    background: #fff;
-    color: #241d4d;
-    font: inherit;
-    font-size: .8rem;
-    cursor: pointer;
-}
-
-.admin-review-step {
-    display: grid;
-    gap: .65rem;
-    padding: 1rem;
-    border: 1px solid #e9e6ef;
-    border-radius: .75rem;
-    background: #fbfafd;
-}
-
-.admin-review-step__heading {
-    display: flex;
-    align-items: center;
-    gap: .6rem;
-    margin-bottom: .15rem;
-}
-
-.admin-review-step__heading span {
-    display: grid;
-    width: 1.5rem;
-    height: 1.5rem;
-    flex: none;
-    place-items: center;
-    border-radius: 50%;
-    background: #241d4d;
-    color: #fff;
-    font-size: .75rem;
-    font-weight: 700;
-}
-
-.admin-review-step__heading h3 {
-    font-size: .95rem;
-}
-
-.admin-review-step label {
-    color: #514b5b;
-    font-size: .8rem;
-    font-weight: 600;
-}
-
-.admin-review-step select {
-    width: 100%;
-    min-height: 42px;
-    padding: 8px 10px;
-    border: 1px solid #ded9e7;
-    border-radius: .55rem;
-    background: #fff;
-    color: #241d4d;
-    font: inherit;
-}
-
-.admin-review-property {
-    display: grid;
-    gap: .25rem;
-    overflow-wrap: anywhere;
-}
-
-.admin-review-property strong {
-    font-size: .9rem;
-}
-
-.admin-review-property span,
-.admin-review-hint {
-    color: #77717e;
-    font-size: .8rem;
-    line-height: 1.45;
-}
-
-.admin-review-coordinates {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: .75rem;
-    padding: .65rem .75rem;
-    border-radius: .55rem;
-    background: #f0eef6;
-}
-
-.admin-review-coordinates dt {
-    margin-bottom: .2rem;
-    color: #77717e;
-    font-size: .72rem;
-}
-
-.admin-review-coordinates dd {
-    font-size: .82rem;
-    font-variant-numeric: tabular-nums;
-}
-
-.admin-review-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.admin-review-footer p {
-    color: #77717e;
-    font-size: .76rem;
-    line-height: 1.4;
-}
-
-.admin-map-review__save {
-    min-height: 42px;
-    flex: none;
-    padding: 0 18px;
-    border: 0;
-    border-radius: 10px;
-    background: #241d4d;
-    color: white;
-    font: inherit;
-    font-size: .82rem;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.admin-map-review__save:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-}
-
 .listing-review-result {
     padding: .8rem 1rem;
     margin: 0 1rem 1rem;
@@ -280,6 +120,89 @@
     background: #e8f7ee;
     color: #176b43;
     font-size: .85rem;
+}
+
+.listing-queue-pages button {
+    min-height: 2.5rem;
+    padding: .5rem .9rem;
+    border: 1px solid #241d4d;
+    border-radius: .5rem;
+    background: #241d4d;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.admin-add-listing {
+    max-width: 72rem;
+    margin: 0 auto;
+}
+
+.admin-add-listing__heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 2.5rem 0 1.5rem;
+}
+
+.admin-add-listing__heading h1 { margin-bottom: .4rem; }
+.admin-add-listing__heading p,
+.admin-add-listing__card > p,
+.admin-add-listing__footer p { color: #77717e; font-size: .88rem; line-height: 1.5; }
+.admin-add-listing__heading a { color: #3d326e; font-weight: 600; }
+.admin-add-listing__form { display: grid; gap: 1rem; }
+
+.admin-add-listing__card {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid #e9e6ef;
+    border-radius: 1rem;
+    background: #fff;
+}
+
+.admin-add-listing__card h2 { margin-bottom: 1rem; font-size: 1.1rem; }
+.admin-add-listing__card h2 span,
+.admin-add-listing__fields label span { color: #77717e; font-size: .75rem; font-weight: 400; }
+.admin-add-listing__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.admin-add-listing__fields .admin-add-listing__wide { grid-column: 1 / -1; }
+.admin-add-listing__fields label { display: grid; gap: .4rem; color: #514b5b; font-size: .82rem; font-weight: 600; }
+.admin-add-listing__fields input,
+.admin-add-listing__fields select,
+.admin-add-listing__fields textarea {
+    width: 100%;
+    min-height: 2.7rem;
+    padding: .65rem .75rem;
+    border: 1px solid #ded9e7;
+    border-radius: .55rem;
+    background: #fff;
+    color: #241d4d;
+    font: inherit;
+}
+.admin-add-listing__fields textarea { min-height: 7rem; resize: vertical; }
+.admin-add-listing__photo-input { display: grid; gap: .65rem; color: #514b5b; font-size: .85rem; }
+.admin-add-listing__photo-input input { max-width: 100%; }
+.admin-add-listing__photos { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1rem; }
+.admin-add-listing__photos figure { position: relative; width: 7rem; height: 5.5rem; overflow: hidden; border-radius: .6rem; }
+.admin-add-listing__photos img { width: 100%; height: 100%; object-fit: cover; }
+.admin-add-listing__photos button { position: absolute; top: .25rem; right: .25rem; width: 1.5rem; height: 1.5rem; border: 0; border-radius: 50%; background: #241d4d; color: #fff; cursor: pointer; }
+.admin-add-listing__card > p { margin-bottom: .9rem; }
+.admin-add-listing__coordinates { margin: .7rem 0 0 !important; font-variant-numeric: tabular-nums; }
+.admin-add-listing__footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .25rem 0 2rem; }
+.admin-add-listing__footer button { min-height: 2.7rem; padding: .6rem 1.2rem; border: 0; border-radius: .6rem; background: #241d4d; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.admin-add-listing__footer button:disabled { opacity: .5; cursor: not-allowed; }
+
+.listing-queue-pages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.listing-queue-pages button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
 }
 
 @media (max-width: 640px) {
@@ -291,25 +214,18 @@
 
     .listing-review-actions {
         width: 100%;
+        flex-wrap: wrap;
     }
 
     .listing-review-actions > * {
         flex: 1;
     }
 
-    .admin-map-review[open] {
-        top: 1rem;
-        right: 1rem;
-        max-height: calc(100dvh - 2rem);
-        padding: .9rem;
-    }
+    .admin-add-listing__fields { grid-template-columns: 1fr; }
 
-    .admin-review-footer {
-        align-items: stretch;
-        flex-direction: column;
-    }
+    .admin-add-listing__heading,
+    .admin-add-listing__footer { align-items: flex-start; flex-direction: column; }
 
-    .admin-review-coordinates {
-        grid-template-columns: 1fr;
-    }
+    .admin-add-listing__footer button { width: 100%; }
+
 }

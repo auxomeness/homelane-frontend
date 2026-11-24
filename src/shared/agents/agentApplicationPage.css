@@ -1,0 +1,40 @@
+.agent-application-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+  background: #f7f5fa;
+  color: #241d4d;
+}
+.agent-application-card {
+  width: min(100%, 42rem);
+  padding: 2rem;
+  border: 1px solid #e9e6ef;
+  border-radius: 1rem;
+  background: #fff;
+}
+.agent-application-eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .08em; }
+.agent-application-card h1 { margin: .5rem 0; }
+.agent-application-card > p { margin-bottom: 1.25rem; }
+.agent-application-card form { display: grid; gap: 1rem; }
+.agent-application-card label { display: grid; gap: .35rem; font-weight: 600; }
+.agent-application-card input {
+  width: 100%;
+  min-height: 2.6rem;
+  padding: .5rem .7rem;
+  border: 1px solid #ccc7d7;
+  border-radius: .5rem;
+  font: inherit;
+}
+.agent-application-card button {
+  min-height: 2.7rem;
+  border: 0;
+  border-radius: .5rem;
+  background: #241d4d;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.agent-application-card button:disabled { opacity: .6; cursor: not-allowed; }
+.agent-application-error { color: #9f1239; }

@@ -1,4 +1,4 @@
-import { DivIcon, LatLngBounds, type DragEndEvent, type LatLngExpression, type LeafletPointerEvent, type Marker as LeafletMarker } from 'leaflet';
+import { DivIcon, LatLngBounds, type DragEndEvent, type LatLngExpression, type LeafletMouseEvent, type Marker as LeafletMarker } from 'leaflet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents, Polyline } from 'react-leaflet';
 import { Crosshair, Maximize2, Minimize2, Navigation, Plus, Minus, RotateCcw } from 'lucide-react';
@@ -23,7 +23,7 @@ interface Props {
 }
 
 function MapEvents({ mode, onPinChange, onMove }: { mode: Props['mode']; onPinChange?: Props['onPinChange']; onMove?: () => void }) {
-  useMapEvents({ click(event: LeafletPointerEvent) { if (mode === 'pick') onPinChange?.({ latitude: event.latlng.lat, longitude: event.latlng.lng }); }, moveend() { onMove?.(); } });
+  useMapEvents({ click(event: LeafletMouseEvent) { if (mode === 'pick') onPinChange?.({ latitude: event.latlng.lat, longitude: event.latlng.lng }); }, moveend() { onMove?.(); } });
   return null;
 }
 function Recenter({ center, scopeKey }: { center: LatLngExpression; scopeKey: string }) {
