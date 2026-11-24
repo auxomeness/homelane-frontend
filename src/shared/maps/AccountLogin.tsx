@@ -24,7 +24,7 @@ export default function AccountLogin({ role }: { role: 'agent' | 'admin' }) {
         
         throw new Error(`This account does not have the ${role} role.`);
       }
-      
+      window.dispatchEvent(new Event('homelane:session-changed'));
       navigate(location.pathname, { replace: true });
     }
     
