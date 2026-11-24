@@ -6,6 +6,8 @@ import { useAgentData } from '../../libs/AgentDataContext.js';
 import './workspaceStyles.css';
 
 const dateLabel = (date: string) => new Date(date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+const localDateValue = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+const localTimeValue = (date: Date) => `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
 export default function AgentWorkspacePage() {
   const location = useLocation(); const navigate = useNavigate();
@@ -16,7 +18,7 @@ export default function AgentWorkspacePage() {
   const [reply, setReply] = useState(''); const [busy, setBusy] = useState(false); const [formError, setFormError] = useState('');
   const [offerOpen, setOfferOpen] = useState(false); const [offerAmount, setOfferAmount] = useState(''); const [offerNote, setOfferNote] = useState('');
   const [profileForm, setProfileForm] = useState(profile); const [saved, setSaved] = useState(false);
-  const [slotForm, setSlotForm] = useState({ listingId: '', startsAt: '', endsAt: '' });
+  const [slotForm, setSlotForm] = useState({ listingId: '', date: '', startsAt: '', endsAt: '' });
   const [inquiryFilter, setInquiryFilter] = useState<'all' | 'new'>('all');
   const [conversationLoading, setConversationLoading] = useState(false);
 
@@ -34,6 +36,7 @@ export default function AgentWorkspacePage() {
   }, [activeInquiryId, section]);
   const activeInquiry = inquiries.find((inquiry) => inquiry.id === activeInquiryId);
   const visibleInquiries = inquiryFilter === 'new' ? inquiries.filter((inquiry) => inquiry.status === 'new') : inquiries;
+  const today = localDateValue(new Date());
 
   const submitReply = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); if (!activeInquiry || !reply.trim()) return;
@@ -62,8 +65,11 @@ export default function AgentWorkspacePage() {
     finally { setBusy(false); }
   };
   const submitSlot = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); setBusy(true); setFormError('');
-    try { await createSlot({ listingId: slotForm.listingId, startsAt: new Date(slotForm.startsAt).toISOString(), endsAt: new Date(slotForm.endsAt).toISOString() }); setSlotForm({ listingId: '', startsAt: '', endsAt: '' }); }
+    event.preventDefault();
+    if (!slotForm.date || !slotForm.startsAt || !slotForm.endsAt) { setFormError('Choose a date, start time, and end time.'); return; }
+    if (slotForm.endsAt <= slotForm.startsAt) { setFormError('End time must be later than start time.'); return; }
+    setBusy(true); setFormError('');
+    try { await createSlot({ listingId: slotForm.listingId, startsAt: new Date(`${slotForm.date}T${slotForm.startsAt}`).toISOString(), endsAt: new Date(`${slotForm.date}T${slotForm.endsAt}`).toISOString() }); setSlotForm({ listingId: '', date: '', startsAt: '', endsAt: '' }); }
     catch (reason) { setFormError(reason instanceof Error ? reason.message : 'Unable to create viewing time.'); }
     finally { setBusy(false); }
   };
@@ -94,9 +100,10 @@ export default function AgentWorkspacePage() {
       <div className="agent-viewing-section-title"><span className="agent-viewing-form-icon"><CalendarClock size={20} /></span><div><h2>Offer a viewing time</h2><p>Choose one of your active listings and set a time buyers can request.</p></div></div>
       <form onSubmit={submitSlot}>
         <label>Active listing<select value={slotForm.listingId} required onChange={(event) => setSlotForm({ ...slotForm, listingId: event.target.value })}><option value="">Choose a listing</option>{listings.filter((item) => item.status === 'active').map((item) => <option value={item.id} key={item.id}>{item.title}</option>)}</select></label>
-        <label>Starts<input type="datetime-local" required value={slotForm.startsAt} onChange={(event) => setSlotForm({ ...slotForm, startsAt: event.target.value })} /></label>
-        <label>Ends<input type="datetime-local" required value={slotForm.endsAt} onChange={(event) => setSlotForm({ ...slotForm, endsAt: event.target.value })} /></label>
-        <Button className="agent-button agent-button--primary" size="medium" type="submit" disabled={busy || !listings.some((item) => item.status === 'active')}><CalendarDays size={17} /> Add availability</Button>
+        <label>Date<input type="date" required min={today} value={slotForm.date} onChange={(event) => setSlotForm({ ...slotForm, date: event.target.value, startsAt: '', endsAt: '' })} /></label>
+        <label>Start time<input type="time" required step={900} min={slotForm.date === today ? localTimeValue(new Date()) : undefined} value={slotForm.startsAt} onChange={(event) => setSlotForm({ ...slotForm, startsAt: event.target.value, endsAt: slotForm.endsAt && slotForm.endsAt <= event.target.value ? '' : slotForm.endsAt })} /></label>
+        <label>End time<input type="time" required step={900} min={slotForm.startsAt || undefined} value={slotForm.endsAt} onChange={(event) => setSlotForm({ ...slotForm, endsAt: event.target.value })} /></label>
+        <Button className="agent-button agent-button--primary" size="medium" type="submit" disabled={busy || !listings.some((item) => item.status === 'active') || !slotForm.date || !slotForm.startsAt || !slotForm.endsAt || slotForm.endsAt <= slotForm.startsAt}><CalendarDays size={17} /> Add availability</Button>
       </form>
       {!listings.some((item) => item.status === 'active') && <p className="agent-viewings-hint">An active listing is needed before you can offer viewing times.</p>}
     </section>
