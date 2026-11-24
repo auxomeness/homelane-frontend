@@ -31,4 +31,7 @@
 .auth-login__toggle:focus-visible { outline: 3px solid #6351a533; }
 .auth-login__error { margin: 0; color: #a32945; font-size: .8rem; }
 .auth-login__form-wrap .auth-login__visitor { margin-top: 8px; }
+/* Buyer sign in / sign up uses the agent layout (staffLogin.css). These only style the links inside it. */
+.auth-login-buyer .staff-login__switch a { color: var(--staff-teal); font-weight: 700; text-decoration: none; }
+.auth-login-buyer .staff-login__switch a:hover { text-decoration: underline; text-underline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .auth-login__primary { transition: none; } }
