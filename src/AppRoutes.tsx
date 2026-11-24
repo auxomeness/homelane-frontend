@@ -1,94 +1,76 @@
-import { createBrowserRouter } from "react-router";
-import AdminDashboard from "./components/admin/pages/dashboard/AdminDashboard"; 
-import App from "./App";
-import AdminListingReview from "./components/admin/pages/listing-review/AdminListingReview";
-import AdminAgentReview from "./components/admin/pages/agent-review/AdminAgentReview";
-import AgentApp, { AgentIndexRedirect } from "./components/agent/AgentApp";
-import AgentDashboard from "./components/agent/pages/dashboard/AgentDashboard";
-import AgentListings from "./components/agent/pages/listings/AgentListings";
-import AgentAddListing from "./components/agent/pages/add-listing/AgentAddListing";
-import AgentListingDetails from "./components/agent/pages/listing-details/AgentListingDetails";
-import AgentWorkspacePage from "./components/agent/pages/workspace/AgentWorkspacePage";
-import DiscoveryApp, { DiscoveryIndexRedirect, DiscoveryPlaceholder } from "./discovery/DiscoveryApp";
-import Messages from "./discovery/pages/Messages";
-import Notifications from "./discovery/pages/Notifications";
-import Viewings from "./discovery/pages/Viewings";
-import PropertyMapPage from "./shared/maps/PropertyMapPage";
-import StaffGate from "./shared/maps/StaffGate";
-import StaffMapPage from "./shared/maps/StaffMapPage";
-import { AdminAgentDetails, AdminListingDetails } from "./components/admin/shared/DetailsView";
-import AuthLogin from "./auth/AuthLogin";
+import { createBrowserRouter, Navigate } from 'react-router';
+import AdminDashboard from './components/admin/pages/dashboard/AdminDashboard.js';
+import AdminListingReview from './components/admin/pages/listing-review/AdminListingReview.js';
+import AdminAgentReview from './components/admin/pages/agent-review/AdminAgentReview.js';
+import { AdminAgentDetails, AdminListingDetails } from './components/admin/shared/DetailsView.js';
+import AgentApp, { AgentIndexRedirect } from './components/agent/AgentApp.js';
+import AgentDashboard from './components/agent/pages/dashboard/AgentDashboard.js';
+import AgentListings from './components/agent/pages/listings/AgentListings.js';
+import AgentAddListing from './components/agent/pages/add-listing/AgentAddListing.js';
+import AgentListingDetails from './components/agent/pages/listing-details/AgentListingDetails.js';
+import AgentWorkspacePage from './components/agent/pages/workspace/AgentWorkspacePage.js';
+import App from './App.js';
+import AuthLogin from './auth/AuthLogin.js';
+import BuyerApp, { BuyerIndexRedirect, BuyerRoutePlaceholder } from './buyer/BuyerApp.js';
+import BuyerHome from './buyer/pages/BuyerHome/BuyerHome.js';
+import BuyerMessages from './buyer/pages/BuyerMessages/BuyerMessages.js';
+import BuyerMap from './buyer/pages/BuyerMap/BuyerMap.js';
+import BuyerNotifications from './buyer/pages/BuyerNotifications/BuyerNotifications.js';
+import BuyerProfile from './buyer/pages/BuyerProfile/BuyerProfile.js';
+import BuyerProperties from './buyer/pages/BuyerProperties/BuyerProperties.js';
+import BuyerPropertyDetails from './buyer/pages/BuyerPropertyDetails/BuyerPropertyDetails.js';
+import BuyerViewings from './buyer/pages/BuyerViewings/BuyerViewings.js';
+import PropertyMapPage from './shared/maps/PropertyMapPage.js';
+import StaffGate from './shared/maps/StaffGate.js';
+import StaffMapPage from './shared/maps/StaffMapPage.js';
 
-const AppRoutes = createBrowserRouter([
+const router = createBrowserRouter([
+  { path: '/', element: <App /> },
+  { path: '/auth/login', Component: AuthLogin },
   {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/auth/login",
-    Component: AuthLogin,
-  },
-  {
-    path: "/admin",
+    path: '/admin',
     Component: () => <StaffGate role="admin" />,
-    // Component: AdminDashboard,
     children: [
       { index: true, Component: AdminDashboard },
-      { path: "map", Component: () => <StaffMapPage role="admin" /> },
-      { path: "listing-reviews", Component: AdminListingReview },
-      { path: "listing-reviews/:listId", Component: AdminListingDetails },
-
-      { path: "agent-reviews", Component: AdminAgentReview },
-      { path: "agent-reviews/:agentId", Component: AdminAgentDetails },
+      { path: 'map', Component: () => <StaffMapPage role="admin" /> },
+      { path: 'listing-reviews', Component: AdminListingReview },
+      { path: 'listing-reviews/:listId', Component: AdminListingDetails },
+      { path: 'agent-reviews', Component: AdminAgentReview },
+      { path: 'agent-reviews/:agentId', Component: AdminAgentDetails },
     ],
   },
   {
-    path: "/visitor",
-    Component: () => <PropertyMapPage role="visitor" mode="list" />,
-  },
-  {
-    path: "/visitor/map",
-    Component: () => <PropertyMapPage role="visitor" mode="map" />,
-  },
-  {
-    path: "/buyer",
-    Component: () => <PropertyMapPage role="buyer" mode="list" />,
-  },
-  {
-    path: "/buyer/map",
-    Component: () => <PropertyMapPage role="buyer" mode="map" />,
-  },
-  {
-    path: "/discovery",
-    Component: DiscoveryApp,
+    path: '/buyer',
+    element: <BuyerApp />,
     children: [
-      { index: true, Component: DiscoveryIndexRedirect },
-      { path: "map", Component: () => <PropertyMapPage role="buyer" mode="map" basePath="/discovery" listPath="/discovery/properties" embedded /> },
-      { path: "messages", Component: Messages },
-      { path: "notifications", Component: Notifications },
-      { path: "viewings", Component: Viewings },
-      { path: "home", element: <DiscoveryPlaceholder title="Home" /> },
-      { path: "properties", Component: () => <PropertyMapPage role="buyer" mode="list" basePath="/discovery" listPath="/discovery/properties" embedded /> },
-      { path: "*", Component: DiscoveryIndexRedirect },
+      { index: true, Component: BuyerIndexRedirect },
+      { path: 'home', element: <BuyerHome /> },
+      { path: 'messages', element: <BuyerMessages /> },
+      { path: 'map', element: <BuyerMap /> },
+      { path: 'viewings', element: <BuyerViewings /> },
+      { path: 'properties', element: <BuyerProperties /> },
+      { path: 'properties/:propertyId', element: <BuyerPropertyDetails /> },
+      { path: 'offers', element: <BuyerRoutePlaceholder title="Offers" /> },
+      { path: 'notifications', element: <BuyerNotifications /> },
+      { path: 'profile', element: <BuyerProfile /> },
+      { path: '*', element: <Navigate to="/buyer/home" replace /> },
     ],
   },
-  {
-    path: "/agent",
-    Component: AgentApp,
-    children: [
-      { index: true, Component: AgentIndexRedirect },
-      { path: "dashboard", Component: AgentDashboard },
-      { path: "my-listings/:listingId", Component: AgentListingDetails },
-      { path: "my-listings", Component: AgentListings },
-      { path: "map", Component: () => <StaffMapPage role="agent" /> },
-      { path: "add-listings", Component: AgentAddListing },
-      { path: "viewings", Component: AgentWorkspacePage },
-      { path: "activity", Component: AgentWorkspacePage },
-      { path: "inquiries", Component: AgentWorkspacePage },
-      { path: "messages", Component: AgentWorkspacePage },
-      { path: "profile", Component: AgentWorkspacePage },
-    ],
-  },
+  { path: '/visitor', Component: () => <PropertyMapPage role="visitor" mode="list" /> },
+  { path: '/visitor/map', Component: () => <PropertyMapPage role="visitor" mode="map" /> },
+  { path: '/agent', Component: AgentApp, children: [
+    { index: true, Component: AgentIndexRedirect },
+    { path: 'dashboard', Component: AgentDashboard },
+    { path: 'my-listings/:listingId', Component: AgentListingDetails },
+    { path: 'my-listings', Component: AgentListings },
+    { path: 'map', Component: () => <StaffMapPage role="agent" /> },
+    { path: 'add-listings', Component: AgentAddListing },
+    { path: 'viewings', Component: AgentWorkspacePage },
+    { path: 'activity', Component: AgentWorkspacePage },
+    { path: 'inquiries', Component: AgentWorkspacePage },
+    { path: 'messages', Component: AgentWorkspacePage },
+    { path: 'profile', Component: AgentWorkspacePage },
+  ] },
 ]);
 
-export default AppRoutes;
+export default router;
