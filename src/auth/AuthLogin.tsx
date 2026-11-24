@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { ArrowLeft, ArrowRight, CalendarDays, Eye, EyeOff, KeyRound, LockKeyhole, Mail, MapPin, UserRound } from 'lucide-react';
 // Reuses the agent sign-in layout so buyers and agents share one look.
 import '../shared/maps/staffLogin.css';
@@ -9,6 +9,7 @@ const API_URL = (import.meta.env.VITE_API_URL ?? '/api').replace(/\/$/, '');
 
 export default function AuthLogin() {
   const [params] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   // /auth/login shows the buyer sign in form. /auth/login?mode=signup shows the buyer sign up form.
   const isSignup = params.get('mode') === 'signup';
@@ -32,7 +33,8 @@ export default function AuthLogin() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error ?? 'Unable to sign in. Please try again.');
       sessionStorage.setItem('homelane.buyer-token.v1', result.token);
-      navigate('/discovery', { replace: true });
+      const requestedPath = (location.state as { from?: unknown } | null)?.from;
+      navigate(typeof requestedPath === 'string' && requestedPath.startsWith('/discovery') ? requestedPath : '/discovery', { replace: true });
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Unable to continue. Please try again.');
     } finally {

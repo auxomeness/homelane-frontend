@@ -314,6 +314,19 @@
 .agent-communications-layout { grid-template-columns: minmax(0,.76fr) minmax(0,1.45fr); }
 .agent-message-thread--unselected { box-sizing: border-box; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
 .agent-message-thread--unselected > * { max-width: 100%; }
+.agent-offer-card { display: grid; gap: .35rem; min-width: min(16rem, 100%); padding: .8rem; border: 1px solid #6d5aa3; border-radius: .75rem; background: #fff; color: #211b4d; }
+.agent-offer-card > div { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.agent-offer-card > div span { padding: .15rem .55rem; border-radius: 999px; background: #f1edfa; font-size: .72rem; text-transform: capitalize; }
+.agent-offer-card > b { font-size: 1.1rem; }
+.agent-offer-card p { margin: 0; font-size: .85rem; }
+.agent-offer-card small { opacity: .72; }
+.agent-offer-card__actions { display: flex; gap: .5rem; }
+.agent-offer-card__actions button,.agent-offer-toggle { min-height: 2.25rem; padding: 0 .75rem; border: 1px solid #d8d1e8; border-radius: .6rem; background: #fff; color: #2e245e; font: inherit; font-weight: 600; cursor: pointer; }
+.agent-offer-toggle { margin: 0 1rem .25rem; align-self: flex-start; }
+.agent-offer-form { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: .65rem; padding: .75rem 1rem 1rem; }
+.agent-offer-form label { display: grid; gap: .3rem; font-size: .78rem; font-weight: 600; }
+.agent-offer-form input { min-width: 0; height: 2.55rem; padding: 0 .65rem; border: 1px solid #d8d1e8; border-radius: .55rem; font: inherit; }
+@media (max-width: 460px) { .agent-offer-form { grid-template-columns: 1fr; } }
 @media (max-width: 960px) {
   .agent-communications-layout { grid-template-columns: minmax(0,1fr); }
   .agent-communications-layout .agent-message-list { min-height: 18rem; max-height: 24rem; }

@@ -25,7 +25,7 @@ export interface ChatMessage {
   senderId: string;
   text?: string;
   time: string;
-  offer?: { kind: 'offer' | 'counteroffer'; amount: number; status: OfferStatus; note?: string };
+  offer?: { id?: string; kind: 'offer' | 'counteroffer'; amount: number; status: OfferStatus; note?: string };
 }
 
 export interface Conversation {
@@ -39,6 +39,7 @@ export interface Conversation {
   /** Short time shown in the inbox row, such as "2m ago". */
   lastTime: string;
   messages: ChatMessage[];
+  lastMessage?: string | null;
 }
 
 export type NotificationCategory = 'Messages' | 'Offers' | 'Viewings' | 'Listings';
@@ -67,7 +68,7 @@ export interface OfferSummary {
 }
 
 /** A viewing request stays "Not confirmed" until the agent responds. */
-export type ViewingStatus = 'Not confirmed' | 'Confirmed';
+export type ViewingStatus = 'Not confirmed' | 'Confirmed' | 'Declined';
 
 export interface ViewingRequest {
   id: string;

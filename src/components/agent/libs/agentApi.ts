@@ -5,7 +5,7 @@ const API_URL = (import.meta.env.VITE_API_URL ?? '/api').replace(/\/$/, '');
 export interface AgentProfile { name: string; credential: string; city: string; verified: boolean; email?: string }
 export interface AgentActivity { id: string; eventType: string; entityType: string; entityId: string; summary: string; createdAt: string }
 export interface AgentInquiry { id: string; listingId: string; buyerId: string; buyerName: string; buyerEmail: string; listingTitle: string; subject: string; status: 'new' | 'read'; createdAt: string; updatedAt: string; lastMessage: string | null }
-export interface AgentMessage { id: string; senderType: 'agent' | 'buyer'; senderId: string; body: string; createdAt: string }
+export interface AgentMessage { id: string; senderType: 'agent' | 'buyer'; senderId: string; body: string; createdAt: string; offer?: null | { id: string; kind: 'offer' | 'counteroffer'; amount: number | string; status: 'pending' | 'countered' | 'accepted' | 'declined'; note: string } }
 export interface AgentSlot { id: string; listingId: string; listingTitle: string; startsAt: string; endsAt: string; status: 'available' | 'pending' | 'confirmed' }
 export interface AgentAppointment { id: string; status: 'pending' | 'confirmed' | 'declined'; buyerNote: string; agentNote: string; createdAt: string; slotId: string; startsAt: string; endsAt: string; listingId: string; listingTitle: string; buyerId: string; buyerName: string; buyerEmail: string }
 export interface AgentNotification { id: string; eventType: string; title: string; body: string; entityType: string; entityId: string; createdAt: string; readAt: string | null }
@@ -44,6 +44,8 @@ export const getAgentInquiries = async () => getAllPages<AgentInquiry>('/staff/i
 export const markAgentInquiryRead = async (id: string) => (await request<{ inquiry: { id: string; status: 'read' } }>(`/staff/inquiries/${encodeURIComponent(id)}/read`, { method: 'PATCH' })).inquiry;
 export const getAgentMessages = async (id: string) => getAllPages<AgentMessage>(`/staff/inquiries/${encodeURIComponent(id)}/messages`, 'messages');
 export const sendAgentMessage = async (id: string, body: string) => (await request<{ message: AgentMessage }>(`/staff/inquiries/${encodeURIComponent(id)}/messages`, { method: 'POST', body: JSON.stringify({ body }) })).message;
+export const sendAgentOffer = async (id: string, amount: number, note = '') => (await request<{ message: AgentMessage }>(`/staff/inquiries/${encodeURIComponent(id)}/offers`, { method: 'POST', body: JSON.stringify({ amount, note }) })).message;
+export const respondToAgentOffer = async (id: string, status: 'accepted' | 'declined') => (await request<{ offer: { id: string; status: 'accepted' | 'declined' } }>(`/staff/offers/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ status }) })).offer;
 export const getAgentSlots = async () => getAllPages<AgentSlot>('/staff/viewing-slots', 'slots');
 export const createAgentSlot = async (input: { listingId: string; startsAt: string; endsAt: string }) => (await request<{ slot: AgentSlot }>('/staff/viewing-slots', { method: 'POST', body: JSON.stringify(input) })).slot;
 export const deleteAgentSlot = async (id: string) => request<{ ok: boolean }>(`/staff/viewing-slots/${encodeURIComponent(id)}`, { method: 'DELETE' });

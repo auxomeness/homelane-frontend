@@ -9,7 +9,7 @@ import AgentListings from "./components/agent/pages/listings/AgentListings";
 import AgentAddListing from "./components/agent/pages/add-listing/AgentAddListing";
 import AgentListingDetails from "./components/agent/pages/listing-details/AgentListingDetails";
 import AgentWorkspacePage from "./components/agent/pages/workspace/AgentWorkspacePage";
-import DiscoveryApp, { DiscoveryIndexRedirect, DiscoveryPlaceholder } from "./discovery/DiscoveryApp";
+import DiscoveryApp, { DiscoveryIndexRedirect } from "./discovery/DiscoveryApp";
 import Messages from "./discovery/pages/Messages";
 import Notifications from "./discovery/pages/Notifications";
 import Viewings from "./discovery/pages/Viewings";
@@ -18,6 +18,8 @@ import StaffGate from "./shared/maps/StaffGate";
 import StaffMapPage from "./shared/maps/StaffMapPage";
 import { AdminAgentDetails, AdminListingDetails } from "./components/admin/shared/DetailsView";
 import AuthLogin from "./auth/AuthLogin";
+import BuyerProfile from "./discovery/pages/Profile";
+import DiscoveryHome from "./discovery/pages/Home";
 
 const AppRoutes = createBrowserRouter([
   {
@@ -66,8 +68,9 @@ const AppRoutes = createBrowserRouter([
       { path: "map", Component: () => <PropertyMapPage role="buyer" mode="map" basePath="/discovery" listPath="/discovery/properties" embedded /> },
       { path: "messages", Component: Messages },
       { path: "notifications", Component: Notifications },
+      { path: "profile", Component: BuyerProfile },
       { path: "viewings", Component: Viewings },
-      { path: "home", element: <DiscoveryPlaceholder title="Home" /> },
+      { path: "home", Component: DiscoveryHome },
       { path: "properties", Component: () => <PropertyMapPage role="buyer" mode="list" basePath="/discovery" listPath="/discovery/properties" embedded /> },
       { path: "*", Component: DiscoveryIndexRedirect },
     ],

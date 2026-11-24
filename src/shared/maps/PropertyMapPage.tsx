@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, NavLink, useNavigate, useSearchParams } from 'react-router';
+import { Link, NavLink, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { ArrowLeft, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { getPublicListings, type PropertyListing } from './listingsApi.js';
 import PropertyMap, { normalizeRadiusKm } from './PropertyMap.js';
 import PriceRangeSelect from './PriceRangeSelect.js';
 import './fullscreenMap.css';
+import { bookBuyerAppointment, createBuyerInquiry, getBuyerSlots, getBuyerToken, getSavedListings, saveListing, unsaveListing, type ViewingSlot } from '../../discovery/buyerApi.js';
 
 export type BrowserRole = 'visitor' | 'buyer';
 interface Props {
@@ -22,7 +23,9 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
   const [mapResultsKnown, setMapResultsKnown] = useState(false);
   const [panelOpen, setPanelOpen] = useState(true);
   const [error, setError] = useState(''); const [loading, setLoading] = useState(true);
+  const [savedIds, setSavedIds] = useState<string[]>([]); const [slots, setSlots] = useState<ViewingSlot[]>([]); const [selectedSlot, setSelectedSlot] = useState(''); const [buyerNote, setBuyerNote] = useState(''); const [actionError, setActionError] = useState(''); const [actionBusy, setActionBusy] = useState(false); const [slotMode, setSlotMode] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const basePath = basePathOverride ?? `/${role}`;
   const listPath = listPathOverride ?? basePath;
   const mapPath = `${basePath}/map`;
@@ -41,11 +44,16 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
     let current = true;
     setLoading(true); setError('');
     getPublicListings().then((next) => { if (current) setListings(next); }).catch((reason: Error) => { console.error(reason); if (current) setError(reason.message); }).finally(() => { if (current) setLoading(false); });
+    if (role === 'buyer' && getBuyerToken()) getSavedListings().then((items) => { if (current) setSavedIds(items.map((item) => item.id)); }).catch(() => undefined);
     return () => { current = false; };
-  }, [reloadKey]);
+  }, [reloadKey, role]);
   // Friendly message for visitors and buyers. The technical reason is only written to the browser console.
   const errorNotice = <div className="map-error" role="alert"><p>We could not load the properties right now. Please check your connection and try again.</p><button type="button" className="map-retry" onClick={() => setReloadKey((key) => key + 1)}>Try again</button></div>;
   const noListingsText = listings.length ? 'No published properties match these filters.' : 'No properties have been published yet. Please check back soon.';
+  const toggleSaved = async (listing: PropertyListing) => { setActionBusy(true); setActionError(''); try { if (savedIds.includes(listing.id)) { await unsaveListing(listing.id); setSavedIds((ids) => ids.filter((id) => id !== listing.id)); } else { await saveListing(listing.id); setSavedIds((ids) => [...ids, listing.id]); } } catch (reason) { setActionError(reason instanceof Error ? reason.message : 'Unable to save this home.'); } finally { setActionBusy(false); } };
+  const contactAgent = async (listing: PropertyListing) => { if (!getBuyerToken()) { navigate('/auth/login?mode=login', { state: { from: location.pathname + location.search } }); return; } setActionBusy(true); setActionError(''); try { await createBuyerInquiry(listing.id, `Hi, I’m interested in ${listing.title}. Please share more details.`); navigate('/discovery/messages'); } catch (reason) { setActionError(reason instanceof Error ? reason.message : 'Unable to contact the agent.'); } finally { setActionBusy(false); } };
+  const openSlots = async (listing: PropertyListing) => { if (!getBuyerToken()) { navigate('/auth/login?mode=login', { state: { from: location.pathname + location.search } }); return; } setActionBusy(true); setActionError(''); setSlotMode(true); try { const results = await getBuyerSlots(listing.id); setSlots(results); setSelectedSlot(results[0]?.id ?? ''); } catch (reason) { setActionError(reason instanceof Error ? reason.message : 'Unable to load viewing times.'); } finally { setActionBusy(false); } };
+  const bookSlot = async () => { if (!selectedSlot) return; setActionBusy(true); setActionError(''); try { await bookBuyerAppointment(selectedSlot, buyerNote); setSlotMode(false); setBuyerNote(''); navigate('/discovery/viewings'); } catch (reason) { setActionError(reason instanceof Error ? reason.message : 'Unable to request this viewing.'); } finally { setActionBusy(false); } };
   const setParam = useCallback((key: string, value: string) => setSearchParams((current) => { const next = new URLSearchParams(current); if (value) next.set(key, value); else next.delete(key); return next; }, { replace: true }), [setSearchParams]);
   const setPriceRange = useCallback((min: string, max: string) => setSearchParams((current) => { const next = new URLSearchParams(current); min ? next.set('min', min) : next.delete('min'); max ? next.set('max', max) : next.delete('max'); return next; }, { replace: true }), [setSearchParams]);
   const filtered = useMemo(() => listings.filter((listing) => {
@@ -64,7 +72,10 @@ export default function PropertyMapPage({ role, mode, basePath: basePathOverride
     <aside className={`fullscreen-map-panel${panelOpen ? '' : ' is-collapsed'}`}>
       <div className="fullscreen-map-panel__title"><div><span>HOMELANE · {role === 'visitor' ? 'PUBLIC MAP' : 'BUYER MAP'}</span><h1>Explore homes</h1></div><div className="fullscreen-map-panel__actions"><Link className="map-close" to={closePath} viewTransition={role === 'visitor'} aria-label={closeLabel} title={closeLabel}><X size={20} /></Link><button type="button" className="map-panel-collapse" aria-expanded={panelOpen} aria-label={panelOpen ? 'Collapse results panel' : 'Expand results panel'} onClick={() => setPanelOpen((open) => !open)}>{panelOpen ? <ChevronDown size={18} /> : <ChevronUp size={18} />}</button></div></div>
       <div className="fullscreen-map-panel__content"><nav className="fullscreen-map-panel__tabs" aria-label={`${role} property views`}><NavLink to={`${listPath}${searchParams.size ? `?${searchParams}` : ''}`} end>List</NavLink><NavLink to={`${mapPath}${searchParams.size ? `?${searchParams}` : ''}`}>Map</NavLink></nav>{filterForm}
-        {selectedListing && <article className="public-map-selected"><span className="public-map-selected__photo">{selectedListing.photos[0] ? <img src={selectedListing.photos[0]} alt="" /> : <span aria-hidden="true">⌂</span>}</span><div><span className="public-map-selected__eyebrow">SELECTED HOME</span><strong>{selectedListing.title}</strong><small>{selectedListing.location}</small><b>₱ {Number(selectedListing.price).toLocaleString('en-PH')}</b></div><button type="button" aria-label="Clear selected property" title="Clear selected property" onClick={() => setParam('selected', '')}><X size={16} /></button></article>}
+        {selectedListing && <><article className="public-map-selected"><span className="public-map-selected__photo">{selectedListing.photos[0] ? <img src={selectedListing.photos[0]} alt="" /> : <span aria-hidden="true">⌂</span>}</span><div><span className="public-map-selected__eyebrow">SELECTED HOME</span><strong>{selectedListing.title}</strong><small>{selectedListing.location}</small><b>₱ {Number(selectedListing.price).toLocaleString('en-PH')}</b></div><button type="button" aria-label="Clear selected property" title="Clear selected property" onClick={() => { setSlotMode(false); setParam('selected', ''); }}><X size={16} /></button></article>
+          {role === 'buyer' && <div className="public-map-buyer-actions"><button type="button" disabled={actionBusy} onClick={() => void toggleSaved(selectedListing)}>{savedIds.includes(selectedListing.id) ? 'Remove saved home' : 'Save home'}</button><button type="button" disabled={actionBusy} onClick={() => void contactAgent(selectedListing)}>Ask agent</button><button type="button" disabled={actionBusy} onClick={() => void openSlots(selectedListing)}>Request viewing</button></div>}
+          {slotMode && <section className="public-map-slot-picker" aria-label="Request a viewing"><h2>Choose a viewing time</h2>{slots.length ? <><label>Available time<select value={selectedSlot} onChange={(event) => setSelectedSlot(event.target.value)}>{slots.map((slot) => <option key={slot.id} value={slot.id}>{new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(slot.startsAt))}</option>)}</select></label><label>Note (optional)<input value={buyerNote} maxLength={1000} onChange={(event) => setBuyerNote(event.target.value)} placeholder="Anything the agent should know?" /></label><button type="button" disabled={actionBusy || !selectedSlot} onClick={() => void bookSlot()}>{actionBusy ? 'Requesting…' : 'Send request'}</button></> : <p>No available viewing times right now.</p>}<button type="button" onClick={() => setSlotMode(false)}>Close</button></section>}
+          {actionError && <p className="map-error" role="alert">{actionError}</p>}</>}
         <p className="map-result-count">{mapResultsKnown ? visibleOnMap.length : filtered.length} {filtered.length === 1 ? 'home' : 'homes'} in this area</p>
         <div className="map-result-list">{loading && <p className="map-empty" role="status">Loading published properties…</p>}{(mapResultsKnown ? visibleOnMap : filtered).map((listing) => <button type="button" className={`map-result-card${selectedId === listing.id ? ' is-selected' : ''}`} key={listing.id} onClick={() => selectListing(listing)}>
           {listing.photos[0] ? <img src={listing.photos[0]} alt="" /> : <div className="map-result-card__image">⌂</div>}<span><b>{listing.title}</b><small>{listing.location}</small><strong>₱ {Number(listing.price).toLocaleString('en-PH')}</strong></span>

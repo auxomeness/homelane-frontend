@@ -18,7 +18,7 @@ export default function DiscoveryHeader({ onNavigate }: DiscoveryHeaderProps) {
         <button type="button" aria-label="Messages" onClick={() => onNavigate('messages')}>
           <img src="/assets/figma/messages.svg" alt="" />
         </button>
-        <button type="button" aria-label="Profile"><img src="/assets/figma/profile.svg" alt="" /></button>
+        <button type="button" aria-label="Profile" onClick={() => onNavigate('profile')}><img src="/assets/figma/profile.svg" alt="" /></button>
       </div>
     </header>
   );

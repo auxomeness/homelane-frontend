@@ -30,7 +30,7 @@ export default function ConversationList({ conversations, properties, activeId, 
           ? 'No messages yet'
           : last.offer
             ? `${last.offer.kind === 'offer' ? 'Offer' : 'Counteroffer'} sent (non-binding)`
-            : `${last.senderId === viewerId ? 'You: ' : ''}${last.text}`;
+            : last ? `${last.senderId === viewerId ? 'You: ' : ''}${last.text}` : conversation.lastMessage ?? 'No messages yet';
         return (
           <li key={conversation.id}>
             <button

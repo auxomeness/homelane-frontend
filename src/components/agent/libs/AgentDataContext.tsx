@@ -21,6 +21,8 @@ interface AgentDataValue extends AgentWorkspaceData {
   updateProfile: (profile: AgentProfile) => Promise<void>;
   markInquiryRead: (id: string) => Promise<void>; loadConversation: (id: string) => Promise<void>;
   replyToInquiry: (id: string, message: string) => Promise<void>;
+  offerToInquiry: (id: string, amount: number, note: string) => Promise<void>;
+  respondToOffer: (id: string, status: 'accepted' | 'declined') => Promise<void>;
   createSlot: (slot: { listingId: string; startsAt: string; endsAt: string }) => Promise<void>;
   deleteSlot: (id: string) => Promise<void>; updateAppointment: (id: string, status: 'confirmed' | 'declined', note?: string) => Promise<void>;
   markNotificationRead: (id: string) => Promise<void>;
@@ -63,6 +65,8 @@ export function AgentDataProvider({ children }: { children: ReactNode }) {
     markInquiryRead: async (id) => { await api.markAgentInquiryRead(id); setData((current) => ({ ...current, inquiries: current.inquiries.map((item) => item.id === id ? { ...item, status: 'read' } : item) })); },
     loadConversation: async (id) => { const messages = await api.getAgentMessages(id); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: messages } })); },
     replyToInquiry: async (id, message) => { const sent = await api.sendAgentMessage(id, message); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: [...(current.conversations[id] ?? []), sent] }, inquiries: current.inquiries.map((item) => item.id === id ? { ...item, status: 'read', message } : item) })); await reload(); },
+    offerToInquiry: async (id, amount, note) => { await api.sendAgentOffer(id, amount, note); const messages = await api.getAgentMessages(id); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: messages } })); await reload(); },
+    respondToOffer: async (id, status) => { await api.respondToAgentOffer(id, status); const inquiryId = Object.entries(data.conversations).find(([, messages]) => messages.some((message) => message.offer?.id === id))?.[0]; if (inquiryId) { const messages = await api.getAgentMessages(inquiryId); setData((current) => ({ ...current, conversations: { ...current.conversations, [inquiryId]: messages } })); } await reload(); },
     createSlot: async (slot) => { await api.createAgentSlot(slot); await reload(); },
     deleteSlot: async (id) => { await api.deleteAgentSlot(id); await reload(); },
     updateAppointment: async (id, status, note) => { await api.updateAgentAppointment(id, status, note); await reload(); },
