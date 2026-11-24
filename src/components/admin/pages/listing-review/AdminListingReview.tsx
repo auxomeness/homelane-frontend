@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import AdminHeader from '../../shared/AdminHeader';
 import AdminNavigation from '../../shared/AdminNavigation';
-import { getStaffListings, reviewListing, type ListingStatus, type PropertyListing } from '../../../../shared/maps/listingsApi.js';
+import { getAdminListings, reviewListing, type ListingStatus, type PropertyListing } from '../../../../shared/maps/listingsApi.js';
 import './adminListingReviewStyles.css';
 import { ListReviewGrid } from '../../shared/ReviewGrid.js';
 import { listData } from '../../libs/listData.js';
@@ -24,7 +24,7 @@ export default function AdminListingReview() {
   
   useEffect(() => {
     let active = true;
-    getStaffListings()
+    getAdminListings()
       .then((data) => {
         if (!active) return;
         setListings(data);
@@ -136,7 +136,7 @@ export default function AdminListingReview() {
         </div>
       </>}
 
-      {error && <p className="staff-login-error" role="alert">{error}</p>}
+      {error && <p className="account-login-error" role="alert">{error}</p>}
 
       <div className="admin-review-footer">
         <p>{pendingCount} pending or correction listings · {listings.length} total</p>

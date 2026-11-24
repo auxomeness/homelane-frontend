@@ -14,8 +14,8 @@ import Messages from "./discovery/pages/Messages";
 import Notifications from "./discovery/pages/Notifications";
 import Viewings from "./discovery/pages/Viewings";
 import PropertyMapPage from "./shared/maps/PropertyMapPage";
-import StaffGate from "./shared/maps/StaffGate";
-import StaffMapPage from "./shared/maps/StaffMapPage";
+import RoleGate from "./shared/maps/RoleGate";
+import RoleMapPage from "./shared/maps/RoleMapPage";
 import { AdminAgentDetails, AdminListingDetails } from "./components/admin/shared/DetailsView";
 
 const AppRoutes = createBrowserRouter([
@@ -25,11 +25,11 @@ const AppRoutes = createBrowserRouter([
   },
   {
     path: "/admin",
-    Component: () => <StaffGate role="admin" />,
+    Component: () => <RoleGate role="admin" />,
     // Component: AdminDashboard,
     children: [
       { index: true, Component: AdminDashboard },
-      { path: "map", Component: () => <StaffMapPage role="admin" /> },
+      { path: "map", Component: () => <RoleMapPage role="admin" /> },
       { path: "listing-reviews", Component: AdminListingReview },
       { path: "listing-reviews/:listId", Component: AdminListingDetails },
 
@@ -75,7 +75,7 @@ const AppRoutes = createBrowserRouter([
       { path: "dashboard", Component: AgentDashboard },
       { path: "my-listings/:listingId", Component: AgentListingDetails },
       { path: "my-listings", Component: AgentListings },
-      { path: "map", Component: () => <StaffMapPage role="agent" /> },
+      { path: "map", Component: () => <RoleMapPage role="agent" /> },
       { path: "add-listings", Component: AgentAddListing },
       { path: "viewings", Component: AgentWorkspacePage },
       { path: "activity", Component: AgentWorkspacePage },

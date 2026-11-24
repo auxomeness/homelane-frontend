@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { createListing as createListingRequest, deleteListing as deleteListingRequest, getStaffListings, updateListing as updateListingRequest, type ListingInput, type PropertyListing } from '../../../shared/maps/listingsApi.js';
+import { createListing as createListingRequest, deleteListing as deleteListingRequest, getAgentListings, updateListing as updateListingRequest, type ListingInput, type PropertyListing } from '../../../shared/maps/listingsApi.js';
 import type { AgentListingData, AgentListingStatus } from './listData.js';
 
 export interface AgentInquiry { id: string; name: string; property: string; message: string; time: string; status: 'new' | 'read' | 'replied'; replies?: string[] }
@@ -23,7 +23,7 @@ export function AgentDataProvider({ children }: { children: ReactNode }) {
   const [listings, setListings] = useState<AgentListingData[]>([]); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
   const [inquiries, setInquiries] = useState<AgentInquiry[]>([]);
   const [profile, setProfile] = useState<AgentProfile>({ name: 'Homelane Agent', credential: 'Property professional', city: 'Philippines', verified: false });
-  const reload = useCallback(async () => { setLoading(true); setError(''); try { setListings((await getStaffListings()).map(adaptListing)); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to load listings.'); } finally { setLoading(false); } }, []);
+  const reload = useCallback(async () => { setLoading(true); setError(''); try { setListings((await getAgentListings()).map(adaptListing)); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to load listings.'); } finally { setLoading(false); } }, []);
   useEffect(() => { void reload(); }, [reload]);
   const value = useMemo<AgentDataValue>(() => ({
     listings, inquiries, profile, loading, error, reload,

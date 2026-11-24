@@ -50,8 +50,8 @@
 .fullscreen-map-panel .map-filter-fields { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px 10px; }
 .fullscreen-map-panel .map-filter-fields>label:first-child { grid-column: 1/-1; }
 .fullscreen-map-panel .map-filter-fields>label { min-width: 0; }
-.fullscreen-map-screen .map-filter-fields input,.fullscreen-map-screen .map-filter-fields select,.fullscreen-map-screen .staff-map-selected select { min-height: 44px; padding: 9px 36px 9px 12px; border: 1px solid #e2ddea; border-radius: 13px; background-color: #fff; box-shadow: 0 2px 6px #241d4d08; font-size: .9rem; }
-.fullscreen-map-screen .map-filter-fields input:focus,.fullscreen-map-screen .map-filter-fields select:focus,.fullscreen-map-screen .staff-map-selected select:focus { outline: 3px solid #5a4ba51f; border-color: #8b7cc0; }
+.fullscreen-map-screen .map-filter-fields input,.fullscreen-map-screen .map-filter-fields select,.fullscreen-map-screen .role-map-selected select { min-height: 44px; padding: 9px 36px 9px 12px; border: 1px solid #e2ddea; border-radius: 13px; background-color: #fff; box-shadow: 0 2px 6px #241d4d08; font-size: .9rem; }
+.fullscreen-map-screen .map-filter-fields input:focus,.fullscreen-map-screen .map-filter-fields select:focus,.fullscreen-map-screen .role-map-selected select:focus { outline: 3px solid #5a4ba51f; border-color: #8b7cc0; }
 .fullscreen-map-screen select,.property-map__toolbar select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23544b72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
 .map-result-count { padding: 13px 0 9px; color: #77717e; font-size: .82rem; font-weight: 700; }
 .map-result-list { display: grid; align-content: start; gap: 8px; overflow: auto; padding: 2px 3px 2px 0; }
@@ -63,12 +63,12 @@
 .map-result-card b { font-size: .88rem; }
 .map-result-card small { color: #77717e; }
 .map-result-card strong { font-size: .84rem; }
-.staff-map-selected { display: grid; flex: 0 0 auto; gap: 6px; padding: 11px; margin: 10px 0; border: 1px solid #e9e6ef; border-radius: 12px; background: #fff; font-size: .82rem; }
-.staff-map-selected span,.staff-map-selected small { color: #77717e; }
-.staff-map-selected label { display: grid; gap: 5px; color: #514b5b; font-weight: 700; }
-.staff-map-selected select { min-height: 36px; padding: 6px; border: 1px solid #e1dce8; border-radius: 8px; background: white; }
-.staff-map-selected button { min-height: 36px; border: 0; border-radius: 8px; background: #241d4d; color: white; font: inherit; font-weight: 700; cursor: pointer; }
-.staff-map-selected button:disabled { opacity: .5; cursor: not-allowed; }
+.role-map-selected { display: grid; flex: 0 0 auto; gap: 6px; padding: 11px; margin: 10px 0; border: 1px solid #e9e6ef; border-radius: 12px; background: #fff; font-size: .82rem; }
+.role-map-selected span,.role-map-selected small { color: #77717e; }
+.role-map-selected label { display: grid; gap: 5px; color: #514b5b; font-weight: 700; }
+.role-map-selected select { min-height: 36px; padding: 6px; border: 1px solid #e1dce8; border-radius: 8px; background: white; }
+.role-map-selected button { min-height: 36px; border: 0; border-radius: 8px; background: #241d4d; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+.role-map-selected button:disabled { opacity: .5; cursor: not-allowed; }
 .map-success { padding: 8px; color: #176b43; font-size: .82rem; }
 .fullscreen-map-screen .property-map__toolbar { position: absolute; z-index: 1100; top: 16px; right: 16px; max-width: min(300px,calc(100vw - 410px)); gap: 10px; padding: 8px 11px; border: 1px solid #ffffffbd; border-radius: 17px; background: #ffffffdf; box-shadow: 0 10px 30px #241d4d22; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .fullscreen-map-screen .property-map__toolbar label { gap: 10px; margin: 0; color: #514b5b; font-size: .86rem; font-weight: 700; }

@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { loginStaff, setStaffToken } from './listingsApi.js';
-import './staffLogin.css';
+import { loginAccount, setAccountToken } from './listingsApi.js';
+import './accountLogin.css';
 
-export default function StaffLogin({ role }: { role: 'agent' | 'admin' }) {
+export default function AccountLogin({ role }: { role: 'agent' | 'admin' }) {
   const [email, setEmail] = useState('');  
   const [password, setPassword] = useState(''); 
   const [error, setError] = useState(''); 
@@ -17,15 +17,15 @@ export default function StaffLogin({ role }: { role: 'agent' | 'admin' }) {
     setError('');
     
     try { 
-      const user = await loginStaff(email, password); 
+      const user = await loginAccount(email, password); 
       
       if (user.role !== role) { 
-        setStaffToken(null); 
+        setAccountToken(null); 
         
         throw new Error(`This account does not have the ${role} role.`);
       }
       
-      navigate(location.pathname === '/staff/login' ? `/${role}` : location.pathname, { replace: true }); 
+      navigate(location.pathname, { replace: true });
     }
     
     catch (reason) { 
@@ -36,11 +36,11 @@ export default function StaffLogin({ role }: { role: 'agent' | 'admin' }) {
   };
 
   return (
-  <main className="staff-login">
+  <main className="account-login">
     <form onSubmit={submit}>
-      <p className="staff-login__eyebrow">HOMELANE · {role.toUpperCase()}</p>
+      <p className="account-login__eyebrow">HOMELANE · {role.toUpperCase()}</p>
       
-      <h1>Staff sign in</h1>
+      <h1>{role === 'admin' ? 'Admin sign in' : 'Agent sign in'}</h1>
       <p>Sign in to manage shared property listings.</p>
       
       <label>Email
@@ -61,7 +61,7 @@ export default function StaffLogin({ role }: { role: 'agent' | 'admin' }) {
           required />
       </label>
       
-      {error && <p className="staff-login-error" role="alert">{error}</p>}
+      {error && <p className="account-login-error" role="alert">{error}</p>}
       
       <button type="submit" disabled={busy}> {
       busy 

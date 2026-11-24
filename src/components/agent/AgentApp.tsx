@@ -4,8 +4,8 @@ import { AgentDataProvider } from './libs/AgentDataContext.js';
 import AgentHeader from './shared/AgentHeader.js';
 import AgentNavigation, { type AgentScreen } from './shared/AgentNavigation.js';
 import './shared/sharedStyles.css';
-import StaffLogin from '../../shared/maps/StaffLogin.js';
-import { getStaffRole, getStaffToken, isLocalAdminDev } from '../../shared/maps/listingsApi.js';
+import AccountLogin from '../../shared/maps/AccountLogin.js';
+import { getAccountRole, getAccountToken, isLocalRoleDev } from '../../shared/maps/listingsApi.js';
 
 const paths: Record<AgentScreen, string> = {
   dashboard: '/agent/dashboard',
@@ -39,7 +39,7 @@ export default function AgentApp() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);
 
-  if (!isLocalAdminDev() && (!getStaffToken() || getStaffRole() !== 'agent')) return <StaffLogin role="agent" />;
+  if (!isLocalRoleDev() && (!getAccountToken() || getAccountRole() !== 'agent')) return <AccountLogin role="agent" />;
   if (location.pathname === '/agent/map') return <AgentDataProvider><Outlet /></AgentDataProvider>;
   return (
     <AgentDataProvider>
