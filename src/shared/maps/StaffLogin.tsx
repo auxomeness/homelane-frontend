@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { ArrowLeft, ArrowRight, BadgeCheck, Building2, KeyRound, LockKeyhole, Mail, UserRound } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BadgeCheck, Building2, Eye, EyeOff, KeyRound, LockKeyhole, Mail, UserRound } from 'lucide-react';
 import { loginStaff, registerAgent, setStaffToken } from './listingsApi.js';
 import './staffLogin.css';
 
@@ -10,6 +10,7 @@ export default function StaffLogin({ role }: { role: 'agent' | 'admin' }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,7 +45,7 @@ export default function StaffLogin({ role }: { role: 'agent' | 'admin' }) {
           <p className="staff-login__intro">{isSignup ? 'Set up your details and start managing your property business.' : isAgent ? 'Your listings, conversations, and viewings are all in one place.' : 'Sign in to manage reviews and platform settings.'}</p>
           {isSignup && <label className="staff-login__field"><span>Your name</span><span className="staff-login__input"><UserRound size={17} /><input type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Alex Santos" minLength={2} maxLength={120} required /></span></label>}
           <label className="staff-login__field"><span>Email address</span><span className="staff-login__input"><Mail size={17} /><input type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required /></span></label>
-          <label className="staff-login__field"><span>Password{isSignup && <small>At least 10 characters</small>}</span><span className="staff-login__input"><LockKeyhole size={17} /><input type="password" autoComplete={isSignup ? 'new-password' : 'current-password'} value={password} onChange={(event) => setPassword(event.target.value)} minLength={isSignup ? 10 : undefined} placeholder={isSignup ? 'Create a strong password' : 'Enter your password'} required /></span></label>
+          <label className="staff-login__field"><span>Password{isSignup && <small>At least 10 characters</small>}</span><span className="staff-login__input"><LockKeyhole size={17} /><input type={showPassword ? 'text' : 'password'} autoComplete={isSignup ? 'new-password' : 'current-password'} value={password} onChange={(event) => setPassword(event.target.value)} minLength={isSignup ? 10 : undefined} placeholder={isSignup ? 'Create a strong password' : 'Enter your password'} required /><button className="staff-login__toggle" type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword((current) => !current)}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></span></label>
           {error && <p className="staff-login__error" role="alert">{error}</p>}
           <button className="staff-login__submit" type="submit" disabled={busy}>{busy ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'} {!busy && <ArrowRight size={17} />}</button>
           {isAgent && <p className="staff-login__switch">{isSignup ? 'Already have an account?' : 'New to Homelane?'} <button type="button" onClick={() => { setIsSignup((current) => !current); setError(''); }}>{isSignup ? 'Sign in' : 'Create an agent account'}</button></p>}
