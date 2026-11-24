@@ -223,6 +223,7 @@
 .viewing-status { display: grid; height: 32px; padding: 0 16px; place-items: center; border-radius: 16px; font-size: 13px; font-weight: 500; }
 .viewing-status--pending { background: #fef3c7; color: #92400e; }
 .viewing-status--confirmed { background: #d1fae5; color: #065f46; }
+.viewing-status--declined { background: #ffe4e6; color: #9f1239; }
 .viewing-card__property { margin: 0; font-size: 13px; font-weight: 500; }
 .viewing-card__price { margin: -4px 0 4px; font-size: 11px; font-weight: 700; }
 .viewing-card__line { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted-gray); font-size: 12px; line-height: 20px; }
@@ -254,6 +255,39 @@
   .recommended ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .viewing-list { grid-template-columns: repeat(2, 1fr); align-items: start; }
   .map-placeholder { height: 360px; }
+}
+
+/* ---------- Connected buyer account and listing actions ---------- */
+.profile-form { display: grid; gap: 14px; max-width: 560px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+.profile-form label, .public-map-slot-picker label { display: grid; gap: 6px; color: var(--muted-gray); font-size: 13px; font-weight: 600; }
+.profile-form input, .public-map-slot-picker input, .public-map-slot-picker select { width: 100%; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid var(--edge); border-radius: 9px; background: #fff; color: var(--dark-ink); }
+.profile-form button, .saved-homes__actions button, .saved-homes__actions a, .public-map-buyer-actions button, .public-map-slot-picker button { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 15px; border: 1px solid var(--edge); border-radius: 9px; background: #fff; color: var(--deep-purple); font-weight: 600; text-decoration: none; cursor: pointer; }
+.profile-form button:first-of-type, .public-map-slot-picker button:first-of-type { border-color: var(--deep-purple); background: var(--deep-purple); color: #fff; }
+.profile-form button:disabled, .public-map-buyer-actions button:disabled, .public-map-slot-picker button:disabled { opacity: .55; cursor: wait; }
+.profile-page__account { color: var(--muted-gray); font-size: 13px; }
+.saved-homes { margin-top: 30px; }
+.saved-homes h2, .discovery-home__section-heading h2 { margin: 0 0 14px; font-size: 18px; }
+.saved-homes__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.discovery-home__heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 32px; padding: 24px; border-radius: 18px; background: linear-gradient(130deg, #f1edff, #fff); }
+.discovery-home__heading span { color: #6d5c99; font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+.discovery-home__heading h1 { margin: 7px 0; font-size: clamp(24px, 5vw, 38px); }
+.discovery-home__heading p { margin: 0; color: var(--muted-gray); font-size: 14px; }
+.discovery-home__heading > a, .discovery-home__section-heading > a { color: var(--deep-purple); font-weight: 700; }
+.discovery-home__section-heading { display: flex; align-items: center; justify-content: space-between; }
+.public-map-buyer-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+.public-map-buyer-actions button { min-width: 0; padding: 0 8px; font-size: 12px; }
+.public-map-slot-picker { display: grid; gap: 10px; margin: 10px 0; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.public-map-slot-picker h2 { margin: 0; font-size: 16px; }
+.public-map-slot-picker p { margin: 0; color: var(--muted-gray); font-size: 13px; }
+.offer-response { display: flex; gap: 8px; }
+.offer-response button, .composer__offer-toggle { padding: 6px 11px; border: 1px solid var(--edge); border-radius: 8px; background: #fff; color: var(--deep-purple); font-weight: 600; cursor: pointer; }
+.composer--offer { flex-wrap: wrap; }
+.composer--offer input { min-width: 120px; }
+.composer__error { margin: 4px 16px; color: #9f1239; font-size: 12px; }
+@media (max-width: 480px) {
+  .discovery-home__heading { align-items: flex-start; flex-direction: column; padding: 18px; }
+  .public-map-buyer-actions { grid-template-columns: 1fr; }
+  .public-map-buyer-actions button { min-height: 44px; font-size: 14px; }
 }
 
 /* ---------- Tablet landscape ---------- */

@@ -1,4 +1,4 @@
-export type DiscoveryScreen = 'home' | 'map' | 'viewings' | 'properties' | 'messages' | 'notifications';
+export type DiscoveryScreen = 'home' | 'map' | 'viewings' | 'properties' | 'messages' | 'notifications' | 'profile';
 
 /** Route path of every Discovery screen. These match the routes in AppRoutes.tsx. */
 export const discoveryPaths: Record<DiscoveryScreen, string> = {
@@ -8,6 +8,7 @@ export const discoveryPaths: Record<DiscoveryScreen, string> = {
   properties: '/discovery/properties',
   messages: '/discovery/messages',
   notifications: '/discovery/notifications',
+  profile: '/discovery/profile',
 };
 
 /** Keep browsing filters and selected listing state while moving between the Discovery list and map. */

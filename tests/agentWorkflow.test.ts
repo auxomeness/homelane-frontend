@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveUpdatedListingStatus, validateListingPin, validatePhotoSelection } from '../src/agent/libs/listingWorkflow.ts';
+import { resolveUpdatedListingStatus, validateListingPin, validatePhotoSelection } from '../src/components/agent/libs/listingWorkflow.ts';
 
 test('agent uploads enforce supported image types, per-photo size, and four-photo cap', () => {
   assert.equal(validatePhotoSelection([{ size: 1_200_000, type: 'image/jpeg' }], 3), null);

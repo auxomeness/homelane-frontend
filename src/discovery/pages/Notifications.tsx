@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { NotificationCategory, NotificationItem, OfferSummary, Property } from '../types.js';
 import { formatPeso, getProperty, notificationCategories } from '../utils.js';
 import Icon, { type IconName } from '../shared/Icon.js';
 import StateMessage from '../shared/StateMessage.js';
 import useDiscoveryNavigate from '../shared/useDiscoveryNavigate.js';
+import { getBuyerNotifications, getBuyerOffers, markBuyerNotificationRead, type AccountNotification, type BuyerOffer } from '../buyerApi.js';
+import { getPublicListings } from '../../shared/maps/listingsApi.js';
 
 const categoryIcon: Record<NotificationCategory, IconName> = {
   Messages: 'message',
@@ -19,23 +21,42 @@ const linkLabel: Record<NotificationCategory, string> = {
   Listings: 'View Listings',
 };
 
-// No database yet, so these start empty. Fill them from the API later.
-const notifications: NotificationItem[] = [];
-const offerSummaries: OfferSummary[] = [];
-const properties: Property[] = [];
+const categoryFor = (type: string): NotificationCategory => type.startsWith('offer_') ? 'Offers' : type.startsWith('appointment_') ? 'Viewings' : type.includes('listing') ? 'Listings' : 'Messages';
+const linkFor = (category: NotificationCategory): NotificationItem['link'] => category === 'Viewings' ? 'viewings' : category === 'Listings' ? 'map' : 'messages';
+const readableTime = (value: string) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
 
 export default function Notifications() {
   const onNavigate = useDiscoveryNavigate();
   const [category, setCategory] = useState<'All' | NotificationCategory>('All');
-  const [items, setItems] = useState(notifications);
+  const [items, setItems] = useState<NotificationItem[]>([]);
+  const [offerSummaries, setOfferSummaries] = useState<OfferSummary[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true); const [error, setError] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
 
+  useEffect(() => {
+    Promise.all([getBuyerNotifications(), getBuyerOffers(), getPublicListings()]).then(([notifications, offers, listings]) => {
+      setItems(notifications.map((item: AccountNotification) => { const itemCategory = categoryFor(item.eventType); return { id: item.id, category: itemCategory, title: item.title, description: item.body, time: readableTime(item.createdAt), read: Boolean(item.readAt), reference: item.entityId, link: linkFor(itemCategory) }; }));
+      setOfferSummaries(offers.map((item: BuyerOffer) => ({ id: item.id, propertyId: item.listingId, agentInitials: item.agentName.split(/\s+/).map((part) => part[0] ?? '').join('').slice(0, 2).toUpperCase(), proposed: Number(item.amount), time: readableTime(item.createdAt), status: item.status === 'accepted' ? 'Accepted' : item.status === 'declined' ? 'Declined' : item.status === 'countered' ? 'Countered' : 'Pending' })));
+      setProperties(listings.map((item) => ({ id: item.id, title: item.title, area: item.location, type: item.propertyType as Property['type'], price: Number(item.price), bedrooms: item.bedrooms ?? 0, bathrooms: item.bathrooms ?? 0, floorArea: item.floorArea ?? 0, pinX: 50, pinY: 50 })));
+    }).catch((reason: Error) => setError(reason.message)).finally(() => setLoading(false));
+  }, []);
+
   const visible = items.filter((item) => category === 'All' || item.category === category);
-  const markRead = (id: string) =>
+  const markRead = async (id: string) => {
     setItems((current) => current.map((item) => (item.id === id ? { ...item, read: true } : item)));
+    try { await markBuyerNotificationRead(id); } catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to update notification.'); setItems((current) => current.map((item) => item.id === id ? { ...item, read: false } : item)); }
+  };
+  const followNotification = async (item: NotificationItem) => {
+    await markRead(item.id);
+    if (item.link) onNavigate(item.link);
+  };
 
   return (
     <main className="discovery-page notifications-page">
+      {loading ? <StateMessage title="Loading notifications…" text="Checking for new activity." kind="loading" /> : null}
+      {error && <p className="auth-login__error" role="alert">{error}</p>}
+      {!loading && <>
       <div
         className="notification-filter"
         onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setMenuOpen(false); }}
@@ -109,7 +130,7 @@ export default function Notifications() {
                 <button
                   type="button"
                   className="notification__link"
-                  onClick={() => { markRead(item.id); if (item.link) onNavigate(item.link); }}
+                  onClick={() => { void followNotification(item); }}
                 >
                   {linkLabel[item.category]} <Icon name="arrow-right" size={12} />
                 </button>
@@ -118,6 +139,7 @@ export default function Notifications() {
           ))}
         </ul>
       )}
+      </>}
     </main>
   );
 }

@@ -12,7 +12,8 @@ const API_URL = (import.meta.env.VITE_API_URL ?? '/api').replace(/\/$/, '');
 const TOKEN_KEY = 'homelane.staff-token.v1';
 const ROLE_KEY = 'homelane.staff-role.v1';
 export const isLocalAdminDev = () => import.meta.env.DEV && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
-const useLocalStaffListings = () => isLocalAdminDev() && /^\/(?:admin|agent)(?:\/|$)/.test(window.location.pathname);
+// Keep the admin's existing local review fixtures for development. Agent workspaces always use the API.
+const useLocalStaffListings = () => isLocalAdminDev() && /^\/admin(?:\/|$)/.test(window.location.pathname);
 let localAdminListings: StaffPropertyListing[] = [
   { id: 'local-1', title: 'Three-bedroom townhome', location: 'Quezon City', price: 8500000, propertyType: 'Townhouse', description: 'Three-bedroom townhome submitted for review.', photos: [], bedrooms: 3, bathrooms: 2, floorArea: 120, latitude: 14.676, longitude: 121.0437, status: 'pending', createdAt: '2026-11-12T09:00:00.000Z', updatedAt: '2026-11-12T09:00:00.000Z' },
   { id: 'local-2', title: 'Ortigas Skyline Condo', location: 'Pasig City', price: 3200000, propertyType: 'Condo', description: 'City condo submitted for review.', photos: [], bedrooms: 1, bathrooms: 1, floorArea: 42, latitude: 14.587, longitude: 121.0615, status: 'pending', createdAt: '2026-11-13T09:00:00.000Z', updatedAt: '2026-11-13T09:00:00.000Z' },

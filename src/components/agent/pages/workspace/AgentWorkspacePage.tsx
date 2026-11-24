@@ -9,11 +9,12 @@ const dateLabel = (date: string) => new Date(date).toLocaleString([], { dateStyl
 
 export default function AgentWorkspacePage() {
   const location = useLocation(); const navigate = useNavigate();
-  const { listings, inquiries, profile, updateProfile, markInquiryRead, loadConversation, conversations, replyToInquiry, appointments, slots, createSlot, deleteSlot, updateAppointment, activity, activityHasMore, loadMoreActivity, loading, error, reload } = useAgentData();
+  const { listings, inquiries, profile, updateProfile, markInquiryRead, loadConversation, conversations, replyToInquiry, offerToInquiry, respondToOffer, appointments, slots, createSlot, deleteSlot, updateAppointment, activity, activityHasMore, loadMoreActivity, loading, error, reload } = useAgentData();
   const section = location.pathname.split('/').at(-1) ?? '';
   const selectedInquiryId = new URLSearchParams(location.search).get('inquiry');
   const [activeInquiryId, setActiveInquiryId] = useState(selectedInquiryId ?? '');
   const [reply, setReply] = useState(''); const [busy, setBusy] = useState(false); const [formError, setFormError] = useState('');
+  const [offerOpen, setOfferOpen] = useState(false); const [offerAmount, setOfferAmount] = useState(''); const [offerNote, setOfferNote] = useState('');
   const [profileForm, setProfileForm] = useState(profile); const [saved, setSaved] = useState(false);
   const [slotForm, setSlotForm] = useState({ listingId: '', startsAt: '', endsAt: '' });
   const [inquiryFilter, setInquiryFilter] = useState<'all' | 'new'>('all');
@@ -39,6 +40,19 @@ export default function AgentWorkspacePage() {
     setBusy(true); setFormError('');
     try { await replyToInquiry(activeInquiry.id, reply.trim()); setReply(''); }
     catch (reason) { setFormError(reason instanceof Error ? reason.message : 'Unable to send reply.'); }
+    finally { setBusy(false); }
+  };
+  const submitOffer = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); if (!activeInquiry || !Number.isFinite(Number(offerAmount)) || Number(offerAmount) <= 0) return;
+    setBusy(true); setFormError('');
+    try { await offerToInquiry(activeInquiry.id, Number(offerAmount), offerNote.trim()); setOfferAmount(''); setOfferNote(''); setOfferOpen(false); }
+    catch (reason) { setFormError(reason instanceof Error ? reason.message : 'Unable to send offer.'); }
+    finally { setBusy(false); }
+  };
+  const decideOffer = async (id: string, status: 'accepted' | 'declined') => {
+    setBusy(true); setFormError('');
+    try { await respondToOffer(id, status); }
+    catch (reason) { setFormError(reason instanceof Error ? reason.message : 'Unable to respond to offer.'); }
     finally { setBusy(false); }
   };
   const submitProfile = async (event: FormEvent<HTMLFormElement>) => {
@@ -117,9 +131,11 @@ export default function AgentWorkspacePage() {
       {activeInquiry ? <section className="agent-panel agent-message-thread" aria-label={`Conversation with ${activeInquiry.name}`}>
         <header className="agent-thread-header"><span className="agent-inquiry__avatar">{activeInquiry.name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()}</span><div><h2>{activeInquiry.name}</h2><p><House size={14} /> {activeInquiry.property}</p></div><span className={`agent-thread-status${activeInquiry.status === 'new' ? ' is-new' : ''}`}>{activeInquiry.status === 'new' ? 'New inquiry' : 'Conversation'}</span></header>
         <div className="agent-message-thread__conversation" aria-live="polite">
-          {conversationLoading ? <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>Opening conversation…</strong></div> : messages.length ? messages.map((message) => <article className={`agent-message-bubble${message.senderType === 'agent' ? ' agent-message-bubble--outgoing' : ''}`} key={message.id}><p>{message.body}</p><small>{message.senderType === 'agent' ? 'You' : activeInquiry.name} · {dateLabel(message.createdAt)}</small></article>) : <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>No messages yet</strong><p>Send a reply to start the conversation with {activeInquiry.name.split(' ')[0]}.</p></div>}
+          {conversationLoading ? <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>Opening conversation…</strong></div> : messages.length ? messages.map((message) => <article className={`agent-message-bubble${message.senderType === 'agent' ? ' agent-message-bubble--outgoing' : ''}`} key={message.id}>{message.offer ? <div className="agent-offer-card"><div><strong>{message.offer.kind === 'offer' ? 'Offer' : 'Counteroffer'}</strong><span>{message.offer.status}</span></div><b>₱ {Number(message.offer.amount).toLocaleString('en-PH')}</b>{message.offer.note && <p>{message.offer.note}</p>}<small>Non-binding offer · Not a commitment.</small>{message.senderType === 'buyer' && message.offer.status === 'pending' && <div className="agent-offer-card__actions"><button type="button" disabled={busy} onClick={() => void decideOffer(message.offer!.id, 'accepted')}>Accept</button><button type="button" disabled={busy} onClick={() => void decideOffer(message.offer!.id, 'declined')}>Decline</button></div>}</div> : <p>{message.body}</p>}<small>{message.senderType === 'agent' ? 'You' : activeInquiry.name} · {dateLabel(message.createdAt)}</small></article>) : <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>No messages yet</strong><p>Send a reply to start the conversation with {activeInquiry.name.split(' ')[0]}.</p></div>}
         </div>
         <form onSubmit={submitReply}><label className="agent-sr-only" htmlFor="agent-reply">Write a reply</label><textarea id="agent-reply" value={reply} onChange={(event) => setReply(event.target.value)} placeholder={`Reply to ${activeInquiry.name.split(' ')[0]}…`} required maxLength={5000} disabled={conversationLoading || busy} /><button className="agent-send-button" type="submit" aria-label="Send reply" disabled={busy || conversationLoading || !reply.trim()}><Send size={18} /></button></form>
+        <button type="button" className="agent-offer-toggle" onClick={() => setOfferOpen((open) => !open)}>Make an offer or counteroffer</button>
+        {offerOpen && <form className="agent-offer-form" onSubmit={submitOffer}><label>Amount (PHP)<input type="number" min="0.01" step="0.01" required value={offerAmount} onChange={(event) => setOfferAmount(event.target.value)} /></label><label>Note (optional)<input type="text" maxLength={1000} value={offerNote} onChange={(event) => setOfferNote(event.target.value)} /></label><Button className="agent-button agent-button--primary" size="small" type="submit" disabled={busy || conversationLoading}>Send offer</Button></form>}
       </section> : <section className="agent-panel agent-message-thread agent-message-thread--unselected" aria-label="Conversation panel"><span className="agent-thread-placeholder__icon"><MessageSquareText size={24} /></span><h2>{inquiries.length ? 'Select a conversation' : 'Your conversation space'}</h2><p>{inquiries.length ? 'Choose a buyer from your inbox to view the messages and reply.' : 'When a buyer asks about one of your properties, the conversation will appear here.'}</p>{!inquiries.length && <Button className="agent-button agent-button--primary" size="small" onClick={() => navigate('/agent/my-listings')}>Manage listings <ArrowUpRight size={15} /></Button>}</section>}
     </div>
   </main>;
