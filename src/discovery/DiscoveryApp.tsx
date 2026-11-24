@@ -6,15 +6,17 @@ import StateMessage from './shared/StateMessage.js';
 import useDiscoveryNavigate from './shared/useDiscoveryNavigate.js';
 import { clearBuyerSession, getBuyerToken } from './buyerApi.js';
 import './discovery.css';
+import '../components/agent/shared/sharedStyles.css';
 
 function screenFromPath(path: string): DiscoveryScreen {
+  if (/\/properties\/[^/]+\/?$/.test(path)) return 'properties';
   const match = ['home', 'map', 'viewings', 'properties', 'messages', 'notifications', 'profile'].find((screen) => path.endsWith(`/${screen}`));
   return (match as DiscoveryScreen | undefined) ?? 'map';
 }
 
-// Opens /discovery with the Map page.
+// Buyers land on the workspace home after sign-in.
 export function DiscoveryIndexRedirect() {
-  return <Navigate to="map" replace />;
+  return <Navigate to="home" replace />;
 }
 
 // Home and Properties are built by other teammates. These stay clickable until their pages are connected.
@@ -50,7 +52,7 @@ export default function DiscoveryApp() {
   if (!getBuyerToken()) return <Navigate to="/auth/login?mode=login" replace state={{ from: location.pathname + location.search }} />;
 
   return (
-    <div className="discovery-app">
+    <div className={`agent-app discovery-app${screen === 'map' ? ' agent-app--map' : ''}`}>
       {screen !== 'map' && <DiscoveryHeader onNavigate={navigate} />}
       <Outlet />
       {screen !== 'map' && <DiscoveryNavigation screen={screen} onNavigate={navigate} />}

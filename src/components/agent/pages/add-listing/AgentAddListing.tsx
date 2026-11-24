@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, MapPin as MapPinIcon, UploadCloud } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router';
 import Button from '../../../button.js';
@@ -45,6 +45,8 @@ export default function AgentAddListing() {
   const [pin, setPin] = useState<MapPinData | null>(listingToEdit && listingToEdit.latitude != null && listingToEdit.longitude != null ? { latitude: listingToEdit.latitude, longitude: listingToEdit.longitude } : null);
   const [step, setStep] = useState<'details' | 'preview'>('details');
   const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
 
   useEffect(() => {
     setForm(listingToEdit ? toForm(listingToEdit) : initialForm);
@@ -88,11 +90,19 @@ export default function AgentAddListing() {
   });
 
   const save = async (submitForReview: boolean) => {
+    if (savingRef.current) return;
     const pinError = validateListingPin(submitForReview ? 'submit' : 'draft', pin);
     if (pinError) { setError(pinError); setStep('details'); return; }
-    const draft = toDraft();
-    try { if (editId && listingToEdit) await updateListing(editId, draft as Parameters<typeof updateListing>[1], submitForReview); else await createListing(draft as Parameters<typeof createListing>[0], submitForReview); navigate('/agent/my-listings'); }
+    savingRef.current = true;
+    setSaving(true);
+    try {
+      const draft = toDraft();
+      if (editId && listingToEdit) await updateListing(editId, draft as Parameters<typeof updateListing>[1], submitForReview);
+      else await createListing(draft as Parameters<typeof createListing>[0], submitForReview);
+      navigate('/agent/my-listings');
+    }
     catch (reason) { setError(reason instanceof Error ? reason.message : 'Unable to save the listing.'); }
+    finally { savingRef.current = false; setSaving(false); }
   };
 
   const continueToPreview = (event: FormEvent<HTMLFormElement>) => {
@@ -155,7 +165,7 @@ export default function AgentAddListing() {
 
         <section className="agent-form-section agent-form-facts"><h2>Exact property location <span className="agent-form-optional">Required before submission</span></h2><p>Place the exact public map pin before submitting for review. Drafts can be saved without a pin.</p><PropertyMap listings={[]} mode="pick" pin={pin} onPinChange={setPin} allowRoute={false} height={360} /></section>
         {error && <p className="agent-form-error" role="alert">{error}</p>}
-        <div className="agent-add-listing__actions"><Button className="agent-button agent-button--secondary" variant="secondary" type="button" onClick={() => save(false)}>Save draft</Button><Button className="agent-button agent-button--primary agent-add-listing__next" size="medium" type="submit"><span>Continue to map and preview</span><ArrowRight size={17} /></Button></div>
+        <div className="agent-add-listing__actions"><Button className="agent-button agent-button--secondary" variant="secondary" type="button" onClick={() => save(false)} disabled={saving}>{saving ? 'Saving…' : 'Save draft'}</Button><Button className="agent-button agent-button--primary agent-add-listing__next" size="medium" type="submit" disabled={saving}><span>Continue to map and preview</span><ArrowRight size={17} /></Button></div>
       </form> : <div className="agent-add-listing__form agent-listing-preview">
         <section className="agent-form-section agent-listing-preview__main">
           {form.photos[0] ? <img className="agent-listing-preview__hero" src={form.photos[0]} alt={`${form.title} preview`} /> : <div className="agent-listing-preview__hero agent-listing-preview__hero--empty">Property cover preview</div>}
@@ -164,7 +174,7 @@ export default function AgentAddListing() {
           {form.photos.length > 1 && <div className="agent-photo-previews">{form.photos.slice(1).map((photo, index) => <figure key={`preview-${index}`}><img src={photo} alt={`${form.title} photo ${index + 2}`} /></figure>)}</div>}
         </section>
         <section className="agent-form-section agent-map-preview"><MapPinIcon size={24} /><div><h2>Exact map pin</h2><p>{pin ? `${pin.latitude.toFixed(6)}, ${pin.longitude.toFixed(6)}` : form.location}</p></div><PropertyMap listings={[]} mode="pick" pin={pin} onPinChange={setPin} allowRoute={false} height={320} /></section>
-        <div className="agent-add-listing__actions"><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => setStep('details')}><ArrowLeft size={17} />Back to details</Button><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => save(false)}>Save draft</Button><Button className="agent-button agent-button--primary" size="medium" onClick={() => save(true)}>Submit for review</Button></div>
+        <div className="agent-add-listing__actions"><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => setStep('details')} disabled={saving}><ArrowLeft size={17} />Back to details</Button><Button className="agent-button agent-button--secondary" variant="secondary" onClick={() => save(false)} disabled={saving}>{saving ? 'Saving…' : 'Save draft'}</Button><Button className="agent-button agent-button--primary" size="medium" onClick={() => save(true)} disabled={saving}>{saving ? 'Submitting…' : 'Submit for review'}</Button></div>
       </div>}
     </main>
   );

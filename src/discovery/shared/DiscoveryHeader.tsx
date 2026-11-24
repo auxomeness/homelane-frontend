@@ -1,3 +1,5 @@
+import { Bell, MessageCircle, UserRound } from 'lucide-react';
+import { Link } from 'react-router';
 import type { DiscoveryScreen } from './DiscoveryNavigation.js';
 
 interface DiscoveryHeaderProps {
@@ -8,18 +10,13 @@ interface DiscoveryHeaderProps {
 // The bell asset already includes the notification dot.
 export default function DiscoveryHeader({ onNavigate }: DiscoveryHeaderProps) {
   return (
-    <header className="discovery-header">
-      <img className="discovery-header__brand" src="/logo/Purple%20House%20Path%20Logo%20Icon.png" alt="" />
-      <span className="discovery-header__wordmark">HOMELANE</span>
-      <div className="discovery-header__actions">
-        <button type="button" aria-label="Notifications" onClick={() => onNavigate('notifications')}>
-          <img src="/assets/figma/notifications.svg" alt="" />
-        </button>
-        <button type="button" aria-label="Messages" onClick={() => onNavigate('messages')}>
-          <img src="/assets/figma/messages.svg" alt="" />
-        </button>
-        <button type="button" aria-label="Profile" onClick={() => onNavigate('profile')}><img src="/assets/figma/profile.svg" alt="" /></button>
-      </div>
+    <header className="agent-header discovery-header">
+      <Link className="agent-header__brand landing-brand" to="/discovery/home"><img src="/logo/Purple%20House%20Path%20Logo%20Icon.png" alt="" />homelane<small>BUYER WORKSPACE</small></Link>
+      <div className="agent-header__right"><span className="agent-header__role">Buyer</span><div className="agent-header__actions">
+        <button type="button" aria-label="Notifications" onClick={() => onNavigate('notifications')}><Bell size={23}/></button>
+        <button type="button" aria-label="Messages" onClick={() => onNavigate('messages')}><MessageCircle size={23}/></button>
+        <button type="button" aria-label="Profile" onClick={() => onNavigate('profile')}><UserRound size={23}/></button>
+      </div></div>
     </header>
   );
 }

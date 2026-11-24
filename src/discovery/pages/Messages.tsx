@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import Button from '../../components/button.js';
 import { getPublicListings, type PropertyListing } from '../../shared/maps/listingsApi.js';
 import { getBuyerInquiries, getBuyerMessages, getBuyerProfile, markBuyerInquiryRead, respondToBuyerOffer, sendBuyerMessage, sendBuyerOffer, type BuyerMessage } from '../buyerApi.js';
@@ -14,11 +15,13 @@ const toChatMessage = (message: BuyerMessage): ChatMessage => ({ id: message.id,
 const toProperty = (listing: PropertyListing): Property => ({ id: listing.id, title: listing.title, area: listing.location, type: listing.propertyType as Property['type'], price: Number(listing.price), bedrooms: listing.bedrooms ?? 0, bathrooms: listing.bathrooms ?? 0, floorArea: listing.floorArea ?? 0, pinX: 50, pinY: 50 });
 
 export default function Messages() {
+  const [searchParams] = useSearchParams();
   const onNavigate = useDiscoveryNavigate();
   const [properties, setProperties] = useState<Property[]>([]); const [buyerId, setBuyerId] = useState('');
   const [conversations, setConversations] = useState<Conversation[]>([]); const [activeId, setActiveId] = useState<string | null>(null); const [filter, setFilter] = useState<'All' | 'Unread'>('All');
   const [loading, setLoading] = useState(true); const [loadingMessages, setLoadingMessages] = useState(false); const [error, setError] = useState('');
   const conversationRequest = useRef(0);
+  const autoOpened = useRef('');
   const refreshInquiries = useCallback(async () => {
     const rows = await getBuyerInquiries();
     setConversations((current) => rows.map((row) => {
@@ -41,6 +44,10 @@ export default function Messages() {
       if (requestId === conversationRequest.current) setLoadingMessages(false);
     }
   };
+  useEffect(() => {
+    const requested = searchParams.get('inquiry');
+    if (requested && conversations.some((item) => item.id === requested) && autoOpened.current !== requested) { autoOpened.current = requested; void openConversation(requested); }
+  }, [searchParams, conversations]);
   const refreshActive = async () => { if (!activeId) return; const messages = await getBuyerMessages(activeId); setConversations((items) => items.map((item) => item.id === activeId ? { ...item, messages: messages.map(toChatMessage) } : item)); await refreshInquiries(); };
   const mine = useMemo(() => conversations.filter((item) => item.participantIds.includes(buyerId)), [buyerId, conversations]);
   const visible = mine.filter((item) => filter === 'All' || item.unread > 0);

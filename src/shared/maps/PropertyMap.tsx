@@ -1,4 +1,4 @@
-import { DivIcon, LatLngBounds, type DragEndEvent, type LatLngExpression, type LeafletMouseEvent, type Marker as LeafletMarker } from 'leaflet';
+import { DivIcon, LatLngBounds, Point, type DragEndEvent, type LatLngExpression, type LeafletMouseEvent, type Marker as LeafletMarker } from 'leaflet';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents, Polyline } from 'react-leaflet';
 import { Crosshair, Maximize2, Minimize2, Navigation, Plus, Minus, RotateCcw } from 'lucide-react';
@@ -100,6 +100,62 @@ function MapControls({ listings, fullscreen, onLocate, onToggleTracking, hasUser
 }
 function InvalidateMapSize() { const map = useMap(); useEffect(() => { const observer = new ResizeObserver(() => map.invalidateSize({ pan: false })); observer.observe(map.getContainer()); return () => observer.disconnect(); }, [map]); return null; }
 
+function RouteDirectionArrows({ positions }: { positions: [number, number][] }) {
+  const map = useMap();
+  const [arrows, setArrows] = useState<{ position: [number, number]; angle: number }[]>([]);
+
+  useEffect(() => {
+    const update = () => {
+      const points = positions.map((position) => map.latLngToContainerPoint(position));
+      const segments = points.slice(1).map((point, index) => {
+        const start = points[index];
+        const dx = point.x - start.x;
+        const dy = point.y - start.y;
+        return { start, dx, dy, length: Math.hypot(dx, dy) };
+      });
+      const totalLength = segments.reduce((total, segment) => total + segment.length, 0);
+      const nextArrows: { position: [number, number]; angle: number }[] = [];
+      const spacing = 82;
+      for (let distance = 48; distance < totalLength; distance += spacing) {
+        let remaining = distance;
+        for (const segment of segments) {
+          if (remaining <= segment.length && segment.length > 0) {
+            const fraction = remaining / segment.length;
+            const point = map.containerPointToLatLng(new Point(
+              segment.start.x + segment.dx * fraction,
+              segment.start.y + segment.dy * fraction,
+            ));
+            nextArrows.push({
+              position: [point.lat, point.lng],
+              angle: Math.atan2(segment.dy, segment.dx) * 180 / Math.PI,
+            });
+            break;
+          }
+          remaining -= segment.length;
+        }
+      }
+      setArrows(nextArrows);
+    };
+
+    update();
+    map.on('moveend zoomend resize', update);
+    return () => { map.off('moveend zoomend resize', update); };
+  }, [map, positions]);
+
+  return <>{arrows.map(({ position, angle }, index) => <Marker
+    key={`${index}-${position[0].toFixed(5)}-${position[1].toFixed(5)}`}
+    position={position}
+    icon={new DivIcon({
+      className: 'property-map__route-arrow',
+      html: `<span style="transform:rotate(${angle}deg)"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3 13 9 5 15" /></svg></span>`,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+    })}
+    interactive={false}
+    keyboard={false}
+  />)}</>;
+}
+
 export default function PropertyMap({ listings, mode = 'browse', pin, onPinChange, allowRoute = true, height = 440, fullscreen = false, panelCollapsed = false, radiusKm: controlledRadius, onRadiusChange, selectedListingId, onListingSelect, onVisibleListingsChange }: Props) {
   const [userPosition, setUserPosition] = useState<MapPin | null>(null);
   const [localRadius, setLocalRadius] = useState(10);
@@ -167,6 +223,7 @@ export default function PropertyMap({ listings, mode = 'browse', pin, onPinChang
       {pin && mode === 'pick' && <Marker position={[pin.latitude, pin.longitude]} icon={pinIcon} draggable eventHandlers={{ dragend: (event: DragEndEvent) => { const point = (event.target as LeafletMarker).getLatLng(); onPinChange?.({ latitude: point.lat, longitude: point.lng }); } }} />}
       {userPosition && <><Marker position={[userPosition.latitude, userPosition.longitude]} />{radiusKm > 0 && <AnimatedRadiusCircle center={userPosition} radiusKm={radiusKm} />}</>}
       {route.length > 0 && <Polyline positions={route} pathOptions={{ color: '#4b47c5', weight: 5, opacity: .85 }} />}
+      {route.length > 1 && <RouteDirectionArrows positions={route} />}
     </MapContainer>
     {mode === 'browse' && selected && <div className="property-map__route" role="status">
       <div><b>{selected.title}</b>{routeMessage && <span> · {routeMessage}</span>}

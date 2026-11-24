@@ -34,7 +34,11 @@ export default function AuthLogin() {
       if (!response.ok) throw new Error(result.error ?? 'Unable to sign in. Please try again.');
       sessionStorage.setItem('homelane.buyer-token.v1', result.token);
       const requestedPath = (location.state as { from?: unknown } | null)?.from;
-      navigate(typeof requestedPath === 'string' && requestedPath.startsWith('/discovery') ? requestedPath : '/discovery', { replace: true });
+      const safeRequestedPath = typeof requestedPath === 'string'
+        && (requestedPath.startsWith('/discovery') || requestedPath.startsWith('/visitor/') || requestedPath.startsWith('/buyer/'))
+        ? requestedPath
+        : '/discovery/home';
+      navigate(safeRequestedPath, { replace: true });
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Unable to continue. Please try again.');
     } finally {

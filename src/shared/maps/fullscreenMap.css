@@ -22,6 +22,8 @@
 .property-list-card h2 { margin: 0; font-size: 1.1rem; }
 .property-list-card p { color: #77717e; }
 .property-list-card strong { color: #241d4d; font-size: 1.05rem; }
+.property-list-card small { color: #625d6b; font-size: .78rem; }
+.property-list-card .property-list-card__facts { color: #514178; font-weight: 700; }
 .property-list-card button { min-height: 40px; margin-top: 4px; border: 0; border-radius: 10px; background: #241d4d; color: white; font: inherit; font-weight: 700; cursor: pointer; }
 .map-empty,.map-error { padding: 22px; color: #77717e; text-align: center; }
 .map-error { color: #8a4936; }
@@ -114,6 +116,11 @@
 .public-map-selected strong { color: #241d4d; font-size: .78rem; }
 .public-map-selected small { color: #77717e; font-size: .68rem; }
 .public-map-selected b { color: #241d4d; font-size: .73rem; }
+.public-map-selected__agent { color: #514b5b !important; font-weight: 700; }
+.public-map-selected__details { grid-column: 1 / -1; display: grid; gap: 7px; padding: 9px 2px 1px; border-top: 1px solid #eeeaf3; }
+.public-map-selected__facts { display: flex; flex-wrap: wrap; gap: 5px; }
+.public-map-selected__facts span { padding: 4px 7px; border-radius: 999px; background: #f1edf8; color: #433674; font-size: .65rem; font-weight: 700; }
+.public-map-selected__details p { display: -webkit-box; overflow: hidden; margin: 0; color: #625d6b; font-size: .72rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 .public-map-selected > button { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid #e8e3ec; border-radius: 50%; background: #fff; color: #625d6b; cursor: pointer; }
 .public-map-selected > button:hover { background: #f3f0f7; color: #241d4d; }
 

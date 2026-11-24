@@ -1,7 +1,8 @@
 export type ListingStatus = 'draft' | 'pending' | 'active' | 'rejected';
 export interface PropertyListing {
   id: string; title: string; location: string; price: number; propertyType: string; description: string; photos: string[];
-  bedrooms: number | null; bathrooms: number | null; floorArea: number | null; latitude: number; longitude: number;
+  bedrooms: number | null; bathrooms: number | null; floorArea: number | null; latitude: number; longitude: number; agentName?: string;
+  agentProfile?: { id: string; name: string; credential: string; city: string; verified: boolean };
   status: ListingStatus; createdAt: string; updatedAt: string;
 }
 export interface StaffPropertyListing extends Omit<PropertyListing, 'latitude' | 'longitude'> { latitude: number | null; longitude: number | null }
@@ -69,6 +70,10 @@ export const registerAgent = async (name: string, email: string, password: strin
   return session.user;
 };
 export const getPublicListings = async () => getAllListingPages<PropertyListing>('/listings');
+export const getPublicListing = async (id: string) => {
+  const result = await request<{ listing: PropertyListing }>(`/listings/${encodeURIComponent(id)}`);
+  return result.listing;
+};
 export const getStaffListings = async () => useLocalStaffListings() ? [...localAdminListings] : getAllListingPages<StaffPropertyListing>('/staff/listings', true);
 export interface AdminListingsPage { listings: StaffPropertyListing[]; page: number; pageSize: number; total: number }
 export interface AdminListingsFilters { status?: ListingStatus | 'all'; q?: string; page?: number; pageSize?: number }

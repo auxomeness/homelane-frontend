@@ -22,6 +22,7 @@ import { AdminAgentDetails, AdminListingDetails } from "./components/admin/share
 import AuthLogin from "./auth/AuthLogin";
 import BuyerProfile from "./discovery/pages/Profile";
 import DiscoveryHome from "./discovery/pages/Home";
+import PropertyDetails from "./discovery/pages/PropertyDetails";
 
 const AppRoutes = createBrowserRouter([
   {
@@ -55,6 +56,7 @@ const AppRoutes = createBrowserRouter([
     path: "/visitor/map",
     Component: () => <PropertyMapPage role="visitor" mode="map" />,
   },
+  { path: "/visitor/properties/:listingId", Component: PropertyDetails },
   {
     path: "/buyer",
     Component: () => <PropertyMapPage role="buyer" mode="list" />,
@@ -75,6 +77,7 @@ const AppRoutes = createBrowserRouter([
       { path: "viewings", Component: Viewings },
       { path: "home", Component: DiscoveryHome },
       { path: "properties", Component: () => <PropertyMapPage role="buyer" mode="list" basePath="/discovery" listPath="/discovery/properties" embedded /> },
+      { path: "properties/:listingId", Component: PropertyDetails },
       { path: "*", Component: DiscoveryIndexRedirect },
     ],
   },
