@@ -651,3 +651,45 @@
   .discovery-app .conversation-view { height:calc(100dvh - 12rem); min-height:360px; }
   .discovery-app .message { max-width:90%; }
 }
+
+/* Keep visitor and buyer property details in the same single-column flow on phones. */
+@media (max-width:640px) {
+  .property-details-page,
+  .property-details-layout,
+  .property-details-main,
+  .property-details-aside {
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    box-sizing:border-box;
+  }
+  .property-details-layout {
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    align-items:stretch;
+    gap:.85rem;
+  }
+  .property-details-main,
+  .property-details-aside {
+    position:static;
+    grid-column:1;
+    grid-row:auto;
+  }
+  .property-details-card,
+  .property-agent-card,
+  .property-details-actions { min-width:0; box-sizing:border-box; }
+  .property-details-card p,
+  .property-details-card a,
+  .property-agent-card p { overflow-wrap:anywhere; }
+  .property-details-secure { margin:.15rem .2rem 0; }
+}
+
+/* Keep buyer chat proportions and spacing consistent with the agent workspace. */
+.discovery-app .messages-layout {
+  grid-template-columns:minmax(280px,.72fr) minmax(0,1.5fr);
+  align-items:stretch;
+}
+.discovery-app .conversation-view__messages { scroll-behavior:auto; overscroll-behavior:contain; }
+@media (max-width:767px) {
+  .discovery-app .messages-layout { grid-template-columns:minmax(0,1fr); }
+}

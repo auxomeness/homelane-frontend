@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import 'leaflet/dist/leaflet.css';
 // import App from './App.js';
 import './styles.css';
+import './shared/mobileNavigation.css';
 import { RouterProvider } from 'react-router';
 import router from './AppRoutes.js';
 

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type FormEvent } from 'react';
 import type { ChatMessage, Conversation, Property } from '../../types.js';
 import { getProperty } from '../../utils.js';
 import OfferCard from '../../shared/OfferCard.js';
@@ -18,9 +18,16 @@ export default function ConversationView({ conversation, properties, viewerId, o
   const [clientMessageId, setClientMessageId] = useState<string | null>(null);
   const [optimisticMessage, setOptimisticMessage] = useState<ChatMessage | null>(null);
   const [detailsOpen, setDetailsOpen] = useState<string | null>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const [offerOpen, setOfferOpen] = useState(false); const [amount, setAmount] = useState(''); const [note, setNote] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   const property = getProperty(properties, conversation.propertyId);
   const otherName = conversation.participantIds[0] === viewerId ? conversation.agentName : conversation.buyerName;
+
+  useLayoutEffect(() => {
+    const messages = messagesRef.current;
+    if (!messages) return;
+    messages.scrollTop = messages.scrollHeight;
+  }, [conversation.messages, optimisticMessage]);
 
   const submitMessage = async () => {
     const text = draft.trim();
@@ -46,7 +53,7 @@ export default function ConversationView({ conversation, properties, viewerId, o
         </div>
       </header>
 
-      <div className="conversation-view__messages">
+      <div className="conversation-view__messages" ref={messagesRef} aria-live="polite" aria-relevant="additions">
         {conversation.messages.length === 0 && (
           <p className="composer__note">No messages yet. Say hello below.</p>
         )}
