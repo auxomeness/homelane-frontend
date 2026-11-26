@@ -22,6 +22,7 @@ import { AdminAgentDetails, AdminListingDetails } from "./components/admin/share
 import AuthLogin from "./auth/AuthLogin";
 import BuyerProfile from "./discovery/pages/Profile";
 import DiscoveryHome from "./discovery/pages/Home";
+import GuestSaved from "./discovery/pages/GuestSaved";
 import PropertyDetails from "./discovery/pages/PropertyDetails";
 
 const AppRoutes = createBrowserRouter([
@@ -56,6 +57,7 @@ const AppRoutes = createBrowserRouter([
     path: "/visitor/map",
     Component: () => <PropertyMapPage role="visitor" mode="map" />,
   },
+  { path: "/visitor/saved", Component: GuestSaved },
   { path: "/visitor/properties/:listingId", Component: PropertyDetails },
   {
     path: "/buyer",

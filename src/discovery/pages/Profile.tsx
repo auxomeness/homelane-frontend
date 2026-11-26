@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { clearBuyerSession, getBuyerProfile, getSavedListings, updateBuyerProfile, unsaveListing, type BuyerProfile, type SavedListing } from '../buyerApi.js';
+import { getGuestSavedIds, clearGuestSaved } from '../guestSaved.js';
+import { clearBuyerSession, getBuyerProfile, getSavedListings, saveListing, updateBuyerProfile, unsaveListing, type BuyerProfile, type SavedListing } from '../buyerApi.js';
 import StateMessage from '../shared/StateMessage.js';
 
 export default function Profile() {
@@ -10,7 +11,9 @@ export default function Profile() {
   const [name, setName] = useState(''); const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true); const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [notice, setNotice] = useState('');
   useEffect(() => {
-    Promise.all([getBuyerProfile(), getSavedListings()]).then(([user, listings]) => { setProfile(user); setName(user.name); setEmail(user.email); setSaved(listings); }).catch((reason: Error) => setError(reason.message)).finally(() => setLoading(false));
+    const guestIds = getGuestSavedIds();
+    Promise.all(guestIds.map((id) => saveListing(id).catch(() => undefined))).then(() => clearGuestSaved())
+      .then(() => Promise.all([getBuyerProfile(), getSavedListings()])).then(([user, listings]) => { setProfile(user); setName(user.name); setEmail(user.email); setSaved(listings); }).catch((reason: Error) => setError(reason.message)).finally(() => setLoading(false));
   }, []);
   const save = async (event: FormEvent) => {
     event.preventDefault(); setBusy(true); setError(''); setNotice('');
