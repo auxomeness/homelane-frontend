@@ -95,7 +95,7 @@ export default function LandingPage() {
           <div className="landing-hero__note"><span className="landing-hero__note-icon"><MapPin size={18} /></span><span><strong>Your next place</strong><small>Starts with a good search</small></span></div>
           <div className="landing-hero__stamp">A place<br />to call home</div>
         </div>
-        <div className="landing-hero__bottom"><span>HOMES FOR EVERY CHAPTER</span><nav className="landing-hero__utility" aria-label="Quick links"><Link to={getBuyerToken() ? '/discovery/profile' : '/auth/login?mode=signup'} state={{ from: '/discovery/profile' }}>Saved homes</Link><a href="#contact">Contact</a><span className="landing-hero__lang" aria-label="English language, Philippine peso currency">EN | PHP</span></nav></div>
+        <div className="landing-hero__bottom"><span>HOMES FOR EVERY CHAPTER</span><nav className="landing-hero__utility" aria-label="Quick links"><Link to={getBuyerToken() ? '/discovery/profile' : '/visitor/saved'}>Saved homes</Link><a href="#contact">Contact</a><span className="landing-hero__lang" aria-label="English language, Philippine peso currency">EN | PHP</span></nav></div>
       </section>
 
       <section className="landing-categories" id="explore">
