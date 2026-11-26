@@ -90,6 +90,7 @@ export default function BuyerMessages() {
   const [filter, setFilter] = useState<MessageFilter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
+  const [messageDetailsOpen, setMessageDetailsOpen] = useState<number | null>(null);
 
   const visibleConversations = useMemo(
     () => conversations.filter((conversation) => filter === 'all' || conversation.unreadCount > 0),
@@ -215,8 +216,8 @@ export default function BuyerMessages() {
                 {selectedConversation.messages.map((message) => (
                   <div key={message.id} className={`buyer-message buyer-message--${message.author}`}>
                     {message.author === 'agent' && <span className="buyer-message__sender">{selectedConversation.agent}</span>}
-                    <p>{message.text}</p>
-                    <time>{message.time}</time>
+                    <button className="buyer-message__text" type="button" aria-expanded={messageDetailsOpen === message.id} onClick={() => setMessageDetailsOpen((open) => open === message.id ? null : message.id)}>{message.text}</button>
+                    {messageDetailsOpen === message.id && <time>{message.time}</time>}
                   </div>
                 ))}
               </div>

@@ -25,7 +25,10 @@ export interface ChatMessage {
   senderId: string;
   text?: string;
   time: string;
+  createdAt?: string;
+  cursorCreatedAt?: string;
   offer?: { id?: string; kind: 'offer' | 'counteroffer'; amount: number; status: OfferStatus; note?: string };
+  deliveryStatus?: 'pending' | 'failed';
 }
 
 export interface Conversation {

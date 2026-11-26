@@ -4,7 +4,7 @@ import { formatPeso, getProperty, notificationCategories } from '../utils.js';
 import Icon, { type IconName } from '../shared/Icon.js';
 import StateMessage from '../shared/StateMessage.js';
 import useDiscoveryNavigate from '../shared/useDiscoveryNavigate.js';
-import { getBuyerNotifications, getBuyerOffers, markBuyerNotificationRead, type AccountNotification, type BuyerOffer } from '../buyerApi.js';
+import { getBuyerNotifications, getBuyerOffers, markAllBuyerNotificationsRead, markBuyerNotificationRead, type AccountNotification, type BuyerOffer } from '../buyerApi.js';
 import { getPublicListings } from '../../shared/maps/listingsApi.js';
 
 const categoryIcon: Record<NotificationCategory, IconName> = {
@@ -33,6 +33,7 @@ export default function Notifications() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true); const [error, setError] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [markingAll, setMarkingAll] = useState(false);
 
   useEffect(() => {
     Promise.all([getBuyerNotifications(), getBuyerOffers(), getPublicListings()]).then(([notifications, offers, listings]) => {
@@ -51,12 +52,21 @@ export default function Notifications() {
     await markRead(item.id);
     if (item.link) onNavigate(item.link);
   };
+  const markAllRead = async () => {
+    const previous = items;
+    setItems((current) => current.map((item) => ({ ...item, read: true })));
+    setMarkingAll(true); setError('');
+    try { await markAllBuyerNotificationsRead(); }
+    catch (reason) { setItems(previous); setError(reason instanceof Error ? reason.message : 'Unable to update notifications.'); }
+    finally { setMarkingAll(false); }
+  };
 
   return (
     <main className="discovery-page notifications-page">
       {loading ? <StateMessage title="Loading notifications…" text="Checking for new activity." kind="loading" /> : null}
       {error && <p className="auth-login__error" role="alert">{error}</p>}
       {!loading && <>
+      {items.some((item) => !item.read) && <button type="button" className="notification-mark-all" onClick={() => void markAllRead()} disabled={markingAll}>{markingAll ? 'Marking as read…' : 'Mark all as read'}</button>}
       <div
         className="notification-filter"
         onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setMenuOpen(false); }}

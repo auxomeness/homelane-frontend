@@ -1,8 +1,9 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { ArrowRight, ArrowUpRight, CalendarClock, CalendarDays, CheckCircle2, Clock3, House, Inbox, MapPin, MessageSquareText, Send, ShieldCheck, Trash2, UserRound, Users } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router';
 import Button from '../../../button.js';
 import { useAgentData } from '../../libs/AgentDataContext.js';
+import { subscribeToAgentChatEvents } from '../../libs/agentApi.js';
 import './workspaceStyles.css';
 
 const dateLabel = (date: string) => new Date(date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
@@ -11,7 +12,7 @@ const localTimeValue = (date: Date) => `${String(date.getHours()).padStart(2, '0
 
 export default function AgentWorkspacePage() {
   const location = useLocation(); const navigate = useNavigate();
-  const { listings, inquiries, profile, updateProfile, markInquiryRead, loadConversation, conversations, replyToInquiry, offerToInquiry, respondToOffer, appointments, slots, createSlot, deleteSlot, updateAppointment, activity, activityHasMore, loadMoreActivity, loading, error, reload } = useAgentData();
+  const { listings, inquiries, profile, updateProfile, markInquiryRead, loadConversation, syncConversation, conversations, replyToInquiry, offerToInquiry, respondToOffer, appointments, slots, createSlot, deleteSlot, updateAppointment, activity, activityHasMore, loadMoreActivity, loading, error, reload } = useAgentData();
   const section = location.pathname.split('/').at(-1) ?? '';
   const selectedInquiryId = new URLSearchParams(location.search).get('inquiry');
   const [activeInquiryId, setActiveInquiryId] = useState(selectedInquiryId ?? '');
@@ -21,6 +22,9 @@ export default function AgentWorkspacePage() {
   const [slotForm, setSlotForm] = useState({ listingId: '', date: '', startsAt: '', endsAt: '' });
   const [inquiryFilter, setInquiryFilter] = useState<'all' | 'new'>('all');
   const [conversationLoading, setConversationLoading] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<{ id: string; body: string; createdAt: string; deliveryStatus: 'pending' | 'failed' } | null>(null);
+  const [messageDetailsOpen, setMessageDetailsOpen] = useState<string | null>(null);
+  const messageRequestId = useRef<string | null>(null);
 
   useEffect(() => { if (selectedInquiryId) setActiveInquiryId(selectedInquiryId); else if (!activeInquiryId && inquiries[0]) setActiveInquiryId(inquiries[0].id); }, [selectedInquiryId, activeInquiryId, inquiries]);
   useEffect(() => { setProfileForm(profile); }, [profile]);
@@ -34,17 +38,29 @@ export default function AgentWorkspacePage() {
     if (inquiries.find((item) => item.id === activeInquiryId)?.status === 'new') void markInquiryRead(activeInquiryId).catch(() => undefined);
     return () => { current = false; };
   }, [activeInquiryId, section]);
+  useEffect(() => {
+    if (section !== 'messages' && section !== 'inquiries') return;
+    const sync = (event: { id: string; inquiryId: string }) => {
+      void reload();
+      if (event.inquiryId === activeInquiryId) { void loadConversation(event.inquiryId); void markInquiryRead(event.inquiryId); }
+    };
+    return subscribeToAgentChatEvents(sync, () => { void reload(); if (activeInquiryId) void syncConversation(activeInquiryId); });
+  }, [activeInquiryId, section, reload, loadConversation, syncConversation, markInquiryRead]);
   const activeInquiry = inquiries.find((inquiry) => inquiry.id === activeInquiryId);
   const visibleInquiries = inquiryFilter === 'new' ? inquiries.filter((inquiry) => inquiry.status === 'new') : inquiries;
   const today = localDateValue(new Date());
 
-  const submitReply = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); if (!activeInquiry || !reply.trim()) return;
+  const sendReply = async () => {
+    if (!activeInquiry || !reply.trim()) return;
+    const clientMessageId = messageRequestId.current ?? crypto.randomUUID();
+    messageRequestId.current = clientMessageId;
+    setPendingMessage({ id: clientMessageId, body: reply.trim(), createdAt: new Date().toISOString(), deliveryStatus: 'pending' });
     setBusy(true); setFormError('');
-    try { await replyToInquiry(activeInquiry.id, reply.trim()); setReply(''); }
-    catch (reason) { setFormError(reason instanceof Error ? reason.message : 'Unable to send reply.'); }
+    try { await replyToInquiry(activeInquiry.id, reply.trim(), clientMessageId); setReply(''); messageRequestId.current = null; setPendingMessage(null); }
+    catch (reason) { setPendingMessage((current) => current ? { ...current, deliveryStatus: 'failed' } : current); setFormError(reason instanceof Error ? reason.message : 'Unable to send reply.'); }
     finally { setBusy(false); }
   };
+  const submitReply = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); void sendReply(); };
   const submitOffer = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); if (!activeInquiry || !Number.isFinite(Number(offerAmount)) || Number(offerAmount) <= 0) return;
     setBusy(true); setFormError('');
@@ -138,11 +154,12 @@ export default function AgentWorkspacePage() {
       {activeInquiry ? <section className="agent-panel agent-message-thread" aria-label={`Conversation with ${activeInquiry.name}`}>
         <header className="agent-thread-header"><span className="agent-inquiry__avatar">{activeInquiry.name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()}</span><div><h2>{activeInquiry.name}</h2><p><House size={14} /> {activeInquiry.property}</p></div><span className={`agent-thread-status${activeInquiry.status === 'new' ? ' is-new' : ''}`}>{activeInquiry.status === 'new' ? 'New inquiry' : 'Conversation'}</span></header>
         <div className="agent-message-thread__conversation" aria-live="polite">
-          {conversationLoading ? <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>Opening conversation…</strong></div> : messages.length ? messages.map((message) => <article className={`agent-message-bubble${message.senderType === 'agent' ? ' agent-message-bubble--outgoing' : ''}`} key={message.id}>{message.offer ? <div className="agent-offer-card"><div><strong>{message.offer.kind === 'offer' ? 'Offer' : 'Counteroffer'}</strong><span>{message.offer.status}</span></div><b>₱ {Number(message.offer.amount).toLocaleString('en-PH')}</b>{message.offer.note && <p>{message.offer.note}</p>}<small>Non-binding offer · Not a commitment.</small>{message.senderType === 'buyer' && message.offer.status === 'pending' && <div className="agent-offer-card__actions"><button type="button" disabled={busy} onClick={() => void decideOffer(message.offer!.id, 'accepted')}>Accept</button><button type="button" disabled={busy} onClick={() => void decideOffer(message.offer!.id, 'declined')}>Decline</button></div>}</div> : <p>{message.body}</p>}<small>{message.senderType === 'agent' ? 'You' : activeInquiry.name} · {dateLabel(message.createdAt)}</small></article>) : <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>No messages yet</strong><p>Send a reply to start the conversation with {activeInquiry.name.split(' ')[0]}.</p></div>}
+          {conversationLoading ? <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>Opening conversation…</strong></div> : messages.length ? messages.map((message) => <article className={`agent-message-bubble${message.senderType === 'agent' ? ' agent-message-bubble--outgoing' : ''}`} key={message.id}>{message.offer ? <><div className="agent-offer-card"><div><strong>{message.offer.kind === 'offer' ? 'Offer' : 'Counteroffer'}</strong><span>{message.offer.status}</span></div><b>₱ {Number(message.offer.amount).toLocaleString('en-PH')}</b>{message.offer.note && <p>{message.offer.note}</p>}<small>Non-binding offer · Not a commitment.</small>{message.senderType === 'buyer' && message.offer.status === 'pending' && <div className="agent-offer-card__actions"><button type="button" disabled={busy} onClick={() => void decideOffer(message.offer!.id, 'accepted')}>Accept</button><button type="button" disabled={busy} onClick={() => void decideOffer(message.offer!.id, 'declined')}>Decline</button></div>}</div><button className="agent-message-bubble__details" type="button" aria-expanded={messageDetailsOpen === message.id} onClick={() => setMessageDetailsOpen((open) => open === message.id ? null : message.id)}>Details</button></> : <button className="agent-message-bubble__body" type="button" aria-expanded={messageDetailsOpen === message.id} onClick={() => setMessageDetailsOpen((open) => open === message.id ? null : message.id)}>{message.body}</button>}{messageDetailsOpen === message.id && <small>{message.senderType === 'agent' ? 'You' : activeInquiry.name} · {dateLabel(message.createdAt)}</small>}</article>) : <div className="agent-thread-placeholder"><span className="agent-thread-placeholder__icon"><MessageSquareText size={22} /></span><strong>No messages yet</strong><p>Send a reply to start the conversation with {activeInquiry.name.split(' ')[0]}.</p></div>}
         </div>
-        <form onSubmit={submitReply}><label className="agent-sr-only" htmlFor="agent-reply">Write a reply</label><textarea id="agent-reply" value={reply} onChange={(event) => setReply(event.target.value)} placeholder={`Reply to ${activeInquiry.name.split(' ')[0]}…`} required maxLength={5000} disabled={conversationLoading || busy} /><button className="agent-send-button" type="submit" aria-label="Send reply" disabled={busy || conversationLoading || !reply.trim()}><Send size={18} /></button></form>
-        <button type="button" className="agent-offer-toggle" onClick={() => setOfferOpen((open) => !open)}>Make an offer or counteroffer</button>
-        {offerOpen && <form className="agent-offer-form" onSubmit={submitOffer}><label>Amount (PHP)<input type="number" min="0.01" step="0.01" required value={offerAmount} onChange={(event) => setOfferAmount(event.target.value)} /></label><label>Note (optional)<input type="text" maxLength={1000} value={offerNote} onChange={(event) => setOfferNote(event.target.value)} /></label><Button className="agent-button agent-button--primary" size="small" type="submit" disabled={busy || conversationLoading}>Send offer</Button></form>}
+        {pendingMessage && <article className="agent-message-bubble agent-message-bubble--outgoing"><p>{pendingMessage.body}</p><small>{pendingMessage.deliveryStatus === 'pending' ? 'Sending…' : 'Not sent'}</small>{pendingMessage.deliveryStatus === 'failed' && <button type="button" onClick={() => void sendReply()}>Retry</button>}</article>}
+        <form onSubmit={submitReply}><label className="agent-sr-only" htmlFor="agent-reply">Write a reply</label><textarea id="agent-reply" value={reply} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); if (!busy && !conversationLoading && reply.trim()) void sendReply(); } }} onChange={(event) => { setReply(event.target.value); if (pendingMessage?.deliveryStatus === 'failed' && event.target.value.trim() !== pendingMessage.body) { messageRequestId.current = null; setPendingMessage(null); } }} placeholder={`Reply to ${activeInquiry.name.split(' ')[0]}…`} required maxLength={5000} disabled={conversationLoading || busy} /><button className="agent-send-button" type="submit" aria-label="Send reply" disabled={busy || conversationLoading || !reply.trim()}><Send size={18} /></button></form>
+        <div className="agent-message-actions"><button type="button" className="agent-offer-toggle" aria-expanded={offerOpen} onClick={() => setOfferOpen((open) => !open)}>{offerOpen ? 'Cancel offer' : 'Make an offer or counteroffer'}</button>
+        {offerOpen && <form className="agent-offer-form" onSubmit={submitOffer}><label>Amount (PHP)<input type="number" min="0.01" step="0.01" required value={offerAmount} onChange={(event) => setOfferAmount(event.target.value)} /></label><label>Note (optional)<input type="text" maxLength={1000} value={offerNote} onChange={(event) => setOfferNote(event.target.value)} /></label><Button className="agent-button agent-button--primary" size="small" type="submit" disabled={busy || conversationLoading}>Send offer</Button></form>}</div>
       </section> : <section className="agent-panel agent-message-thread agent-message-thread--unselected" aria-label="Conversation panel"><span className="agent-thread-placeholder__icon"><MessageSquareText size={24} /></span><h2>{inquiries.length ? 'Select a conversation' : 'Your conversation space'}</h2><p>{inquiries.length ? 'Choose a buyer from your inbox to view the messages and reply.' : 'When a buyer asks about one of your properties, the conversation will appear here.'}</p>{!inquiries.length && <Button className="agent-button agent-button--primary" size="small" onClick={() => navigate('/agent/my-listings')}>Manage listings <ArrowUpRight size={15} /></Button>}</section>}
     </div>
   </main>;

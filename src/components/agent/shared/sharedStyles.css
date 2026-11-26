@@ -270,6 +270,7 @@
 .agent-notification-dialog__list .agent-header__notification strong { font-size: .88rem; }
 .agent-notification-dialog__list .agent-header__notification span { font-size: .78rem; line-height: 1.5; }
 .agent-notification-dialog__empty { padding: 2rem .5rem; margin: 0; color: var(--agent-muted); text-align: center; }
+.agent-notification-dialog__error { margin: .6rem 1.3rem 0; color: #a33f3f; font-size: .75rem; }
 @keyframes agent-notification-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes agent-notification-rise-in { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .agent-notification-layer,.agent-notification-dialog { animation-duration: 1ms; } }

@@ -335,6 +335,22 @@
   align-items: flex-start;
 }
 
+.buyer-message__text {
+  margin: 0;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: var(--buyer-radius-card);
+  background: var(--buyer-surface);
+  color: var(--buyer-ink);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre-wrap;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(31,39,71,.08);
+}
+
 .buyer-message p {
   margin: 0;
   padding: 11px 14px;
@@ -346,13 +362,13 @@
   box-shadow: 0 1px 3px rgba(31,39,71,.08);
 }
 
-.buyer-message--buyer p {
+.buyer-message--buyer .buyer-message__text {
   border-bottom-right-radius: 4px;
   background: var(--buyer-primary);
   color: #fff;
 }
 
-.buyer-message--agent p {
+.buyer-message--agent .buyer-message__text {
   border: 1px solid var(--buyer-border);
   border-bottom-left-radius: var(--buyer-space-1);
 }

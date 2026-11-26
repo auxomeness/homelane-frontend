@@ -19,13 +19,14 @@ interface AgentDataValue extends AgentWorkspaceData {
   updateListing: (id: string, draft: ListingDraft, submitForReview?: boolean) => Promise<void>;
   deleteListing: (id: string) => Promise<void>;
   updateProfile: (profile: AgentProfile) => Promise<void>;
-  markInquiryRead: (id: string) => Promise<void>; loadConversation: (id: string) => Promise<void>;
-  replyToInquiry: (id: string, message: string) => Promise<void>;
+  markInquiryRead: (id: string) => Promise<void>; loadConversation: (id: string) => Promise<void>; syncConversation: (id: string) => Promise<void>;
+  replyToInquiry: (id: string, message: string, clientMessageId?: string) => Promise<void>;
   offerToInquiry: (id: string, amount: number, note: string) => Promise<void>;
   respondToOffer: (id: string, status: 'accepted' | 'declined') => Promise<void>;
   createSlot: (slot: { listingId: string; startsAt: string; endsAt: string }) => Promise<void>;
   deleteSlot: (id: string) => Promise<void>; updateAppointment: (id: string, status: 'confirmed' | 'declined', note?: string) => Promise<void>;
   markNotificationRead: (id: string) => Promise<void>;
+  markAllNotificationsRead: () => Promise<void>;
   loadMoreActivity: () => Promise<void>;
 }
 const statusText = (status: AgentListingStatus) => ({ status, statusLabel: status === 'draft' ? 'Draft' : status === 'pending' ? 'Pending review' : status === 'rejected' ? 'Action required' : 'Active / Live', actionLabel: status === 'draft' || status === 'rejected' ? 'Edit listing' : 'View listing' });
@@ -63,14 +64,16 @@ export function AgentDataProvider({ children }: { children: ReactNode }) {
     deleteListing: async (id) => { await deleteListingRequest(id); await reload(); },
     updateProfile: async (profile) => { const saved = await api.saveAgentProfile(profile); setData((current) => ({ ...current, profile: saved })); },
     markInquiryRead: async (id) => { await api.markAgentInquiryRead(id); setData((current) => ({ ...current, inquiries: current.inquiries.map((item) => item.id === id ? { ...item, status: 'read' } : item) })); },
-    loadConversation: async (id) => { const messages = await api.getAgentMessages(id); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: messages } })); },
-    replyToInquiry: async (id, message) => { const sent = await api.sendAgentMessage(id, message); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: [...(current.conversations[id] ?? []), sent] }, inquiries: current.inquiries.map((item) => item.id === id ? { ...item, status: 'read', message } : item) })); await reload(); },
+    loadConversation: async (id) => { const messages = await api.getAgentMessages(id); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: [...new Map([...(current.conversations[id] ?? []), ...messages].map((message) => [message.id, message])).values()] } })); },
+    syncConversation: async (id) => { const current = data.conversations[id] ?? []; const last = current[current.length - 1]; const messages = last ? await api.getAgentMessagesAfter(id, last.cursorCreatedAt, last.id) : await api.getAgentMessages(id); if (messages.length) setData((state) => ({ ...state, conversations: { ...state.conversations, [id]: [...new Map([...(state.conversations[id] ?? []), ...messages].map((message) => [message.id, message])).values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id)) } })); },
+    replyToInquiry: async (id, message, clientMessageId) => { const sent = await api.sendAgentMessage(id, message, clientMessageId); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: [...new Map([...(current.conversations[id] ?? []), sent].map((item) => [item.id, item])).values()] }, inquiries: current.inquiries.map((item) => item.id === id ? { ...item, status: 'read', message } : item) })); await reload(); },
     offerToInquiry: async (id, amount, note) => { await api.sendAgentOffer(id, amount, note); const messages = await api.getAgentMessages(id); setData((current) => ({ ...current, conversations: { ...current.conversations, [id]: messages } })); await reload(); },
     respondToOffer: async (id, status) => { await api.respondToAgentOffer(id, status); const inquiryId = Object.entries(data.conversations).find(([, messages]) => messages.some((message) => message.offer?.id === id))?.[0]; if (inquiryId) { const messages = await api.getAgentMessages(inquiryId); setData((current) => ({ ...current, conversations: { ...current.conversations, [inquiryId]: messages } })); } await reload(); },
     createSlot: async (slot) => { await api.createAgentSlot(slot); await reload(); },
     deleteSlot: async (id) => { await api.deleteAgentSlot(id); await reload(); },
     updateAppointment: async (id, status, note) => { await api.updateAgentAppointment(id, status, note); await reload(); },
     markNotificationRead: async (id) => { const result = await api.markAgentNotificationRead(id); setData((current) => ({ ...current, notifications: current.notifications.map((item) => item.id === id ? { ...item, readAt: result.readAt } : item) })); },
+    markAllNotificationsRead: async () => { await api.markAllAgentNotificationsRead(); const now = new Date().toISOString(); setData((current) => ({ ...current, notifications: current.notifications.map((item) => item.readAt ? item : { ...item, readAt: now }) })); },
     loadMoreActivity: async () => { const result = await api.getAgentActivity(20, data.activity.length); setData((current) => ({ ...current, activity: [...current.activity, ...result.activity], activityHasMore: result.pagination.hasMore })); },
   }), [data, loading, error, reload]);
   return <AgentDataContext.Provider value={value}>{children}</AgentDataContext.Provider>;

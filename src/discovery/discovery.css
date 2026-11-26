@@ -307,12 +307,21 @@
 .message { display: grid; gap: 4px; max-width: 85%; justify-items: start; }
 .message.is-mine { align-self: flex-end; justify-items: end; }
 .message__bubble { margin: 0; padding: 10px 14px; border-radius: 14px 14px 14px 4px; border: 1px solid var(--line); background: #fff; font-size: 12px; }
+.message button.message__bubble { color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .message.is-mine .message__bubble { border-color: var(--deep-purple); border-radius: 14px 14px 4px 14px; background: var(--deep-purple); color: #fff; }
+.message__details { padding: 0 4px; color: var(--muted-gray); font-size: 10px; }
+.message__details-toggle { justify-self: start; padding: 2px 4px; border: 0; background: transparent; color: var(--deep-purple); font-size: 10px; font-weight: 600; cursor: pointer; }
 
 .composer { display: flex; gap: 8px; padding: 12px 16px 4px; }
 .composer input { flex: 1; height: 42px; min-width: 0; padding: 0 14px; border: 1px solid var(--edge); border-radius: 999px; background: #fff; }
 .composer button { padding: 0 18px; border: 0; border-radius: 999px; background: var(--deep-purple); color: #fff; font-weight: 600; cursor: pointer; }
 .composer__note { margin: 0; padding: 4px 16px 12px; color: var(--muted-gray); font-size: 11px; }
+.composer__actions { display: grid; gap: 8px; padding: 4px 16px 10px; }
+.composer__actions .composer__offer-toggle { justify-self: start; min-height: 34px; padding: 0 13px; border: 1px solid var(--edge); border-radius: 999px; background: #fff; color: var(--deep-purple); font-size: 12px; font-weight: 600; cursor: pointer; }
+.composer__actions .composer--offer { flex-wrap: wrap; padding: 0; }
+.composer__actions .composer--offer input { min-width: 120px; }
+.notification-mark-all { display: block; margin: 0 0 12px auto; padding: 9px 13px; border: 1px solid var(--edge); border-radius: 999px; background: #fff; color: var(--deep-purple); font-size: 12px; font-weight: 700; cursor: pointer; }
+.notification-mark-all:disabled { opacity: .6; cursor: wait; }
 
 .offer-card { display: grid; gap: 4px; min-width: 220px; padding: 12px 14px; border: 1px solid var(--deep-purple); border-radius: 12px; background: #fff; color: var(--dark-ink); text-align: left; }
 .message.is-mine .offer-card { background: #fff; }
@@ -620,7 +629,7 @@
 .discovery-app .message { max-width:min(78%, 42rem); }
 .discovery-app .message__bubble { overflow-wrap:anywhere; }
 .discovery-app .composer { flex:none; align-items:center; padding:1rem 1rem .5rem; }
-.discovery-app .composer__offer-toggle { flex:none; min-height:2.6rem; margin:0 1rem; }
+.discovery-app .composer__offer-toggle { flex:none; min-height:2.4rem; margin:0; }
 .discovery-app .conversation-view > .composer__note { flex:none; }
 @media (max-width:767px) {
   .discovery-app .messages-page { padding-top:1rem; }

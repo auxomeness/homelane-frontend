@@ -10,11 +10,12 @@ type NotificationPosition = { top: number; right: number };
 
 export default function AgentHeader() {
   const [panel, setPanel] = useState<HeaderPanel>(null);
-  const { notifications, profile, markNotificationRead } = useAgentData();
+  const { notifications, profile, markNotificationRead, markAllNotificationsRead } = useAgentData();
   const navigate = useNavigate();
   const notificationTrigger = useRef<HTMLButtonElement>(null);
   const notificationDialog = useRef<HTMLElement>(null);
   const [notificationPosition, setNotificationPosition] = useState<NotificationPosition>({ top: 16, right: 16 });
+  const [notificationError, setNotificationError] = useState('');
   const unread = notifications.filter((notification) => !notification.readAt).length;
 
   const positionNotifications = () => {
@@ -69,6 +70,11 @@ export default function AgentHeader() {
     setPanel(null);
     notificationTrigger.current?.focus();
   };
+  const markAllRead = async () => {
+    setNotificationError('');
+    try { await markAllNotificationsRead(); }
+    catch (reason) { setNotificationError(reason instanceof Error ? reason.message : 'Unable to update notifications.'); }
+  };
 
   return (
     <>
@@ -102,6 +108,8 @@ export default function AgentHeader() {
       {panel === 'notifications' && createPortal(<div className="agent-notification-layer" onPointerDown={(event) => { if (event.target === event.currentTarget) closeNotifications(); }}>
         <section ref={notificationDialog} className="agent-notification-dialog" style={{ top: notificationPosition.top, right: notificationPosition.right, maxHeight: `calc(100dvh - ${notificationPosition.top}px - 24px)` }} role="dialog" aria-modal="true" aria-labelledby="agent-notification-title" tabIndex={-1} onPointerDown={(event) => event.stopPropagation()}>
           <header><div><span className="agent-notification-dialog__eyebrow">YOUR WORKSPACE</span><h2 id="agent-notification-title">Notifications</h2></div><button type="button" className="agent-notification-dialog__close" aria-label="Close notifications" onClick={closeNotifications}>×</button></header>
+          {notificationError && <p className="agent-notification-dialog__error" role="alert">{notificationError}</p>}
+          {unread > 0 && <button type="button" className="agent-notification-dialog__mark-all" onClick={() => void markAllRead()}>Mark all as read</button>}
           <div className="agent-notification-dialog__list">
             {notifications.length ? notifications.slice(0, 8).map((notification) => <button className="agent-header__notification" type="button" key={notification.id} onClick={() => { void markNotificationRead(notification.id); closeNotifications(); if (notification.entityType === 'inquiry') navigate(`/agent/messages?inquiry=${encodeURIComponent(notification.entityId)}`); else if (notification.entityType === 'appointment') navigate('/agent/viewings'); }}><strong>{notification.title}</strong><span>{notification.body}</span></button>) : <p className="agent-notification-dialog__empty">You’re all caught up.</p>}
           </div>

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import Button from '../../components/button.js';
 import { getPublicListings, type PropertyListing } from '../../shared/maps/listingsApi.js';
-import { getBuyerInquiries, getBuyerMessages, getBuyerProfile, markBuyerInquiryRead, respondToBuyerOffer, sendBuyerMessage, sendBuyerOffer, type BuyerMessage } from '../buyerApi.js';
+import { getBuyerInquiries, getBuyerMessages, getBuyerMessagesAfter, getBuyerProfile, markBuyerInquiryRead, respondToBuyerOffer, sendBuyerMessage, sendBuyerOffer, subscribeToBuyerChatEvents, type BuyerMessage } from '../buyerApi.js';
 import type { ChatMessage, Conversation, OfferStatus, Property } from '../types.js';
 import StateMessage from '../shared/StateMessage.js';
 import useDiscoveryNavigate from '../shared/useDiscoveryNavigate.js';
@@ -11,7 +11,7 @@ import ConversationView from './messages/ConversationView.js';
 
 const fmtTime = (time?: string | null) => time ? new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'short' }).format(new Date(time)) : '';
 const offerStatus = (value: string): OfferStatus => value === 'accepted' ? 'Accepted' : value === 'declined' ? 'Declined' : value === 'countered' ? 'Countered' : 'Pending';
-const toChatMessage = (message: BuyerMessage): ChatMessage => ({ id: message.id, senderId: message.senderId, text: message.body, time: fmtTime(message.createdAt), offer: message.offer ? { id: message.offer.id, kind: message.offer.kind, amount: Number(message.offer.amount), status: offerStatus(message.offer.status), note: message.offer.note } : undefined });
+const toChatMessage = (message: BuyerMessage): ChatMessage => ({ id: message.id, senderId: message.senderId, text: message.body, time: fmtTime(message.createdAt), createdAt: message.createdAt, cursorCreatedAt: message.cursorCreatedAt, offer: message.offer ? { id: message.offer.id, kind: message.offer.kind, amount: Number(message.offer.amount), status: offerStatus(message.offer.status), note: message.offer.note } : undefined });
 const toProperty = (listing: PropertyListing): Property => ({ id: listing.id, title: listing.title, area: listing.location, type: listing.propertyType as Property['type'], price: Number(listing.price), bedrooms: listing.bedrooms ?? 0, bathrooms: listing.bathrooms ?? 0, floorArea: listing.floorArea ?? 0, pinX: 50, pinY: 50 });
 
 export default function Messages() {
@@ -21,6 +21,7 @@ export default function Messages() {
   const [conversations, setConversations] = useState<Conversation[]>([]); const [activeId, setActiveId] = useState<string | null>(null); const [filter, setFilter] = useState<'All' | 'Unread'>('All');
   const [loading, setLoading] = useState(true); const [loadingMessages, setLoadingMessages] = useState(false); const [error, setError] = useState('');
   const conversationRequest = useRef(0);
+  const messageCursors = useRef(new Map<string, { createdAt: string; id: string }>());
   const autoOpened = useRef('');
   const refreshInquiries = useCallback(async () => {
     const rows = await getBuyerInquiries();
@@ -37,7 +38,11 @@ export default function Messages() {
     setActiveId(id); setLoadingMessages(true); setError('');
     try {
       const [, messages] = await Promise.all([markBuyerInquiryRead(id), getBuyerMessages(id)]);
-      if (requestId === conversationRequest.current) setConversations((items) => items.map((item) => item.id === id ? { ...item, unread: 0, messages: messages.map(toChatMessage) } : item));
+      if (requestId === conversationRequest.current) {
+        const last = messages[messages.length - 1];
+        if (last) messageCursors.current.set(id, { createdAt: last.cursorCreatedAt, id: last.id });
+        setConversations((items) => items.map((item) => item.id === id ? { ...item, unread: 0, messages: [...new Map([...item.messages, ...messages.map(toChatMessage)].map((message) => [message.id, message])).values()].sort((a, b) => (a.createdAt ?? '').localeCompare(b.createdAt ?? '') || a.id.localeCompare(b.id)) } : item));
+      }
     } catch (reason) {
       if (requestId === conversationRequest.current) setError(reason instanceof Error ? reason.message : 'Unable to load conversation.');
     } finally {
@@ -48,11 +53,30 @@ export default function Messages() {
     const requested = searchParams.get('inquiry');
     if (requested && conversations.some((item) => item.id === requested) && autoOpened.current !== requested) { autoOpened.current = requested; void openConversation(requested); }
   }, [searchParams, conversations]);
-  const refreshActive = async () => { if (!activeId) return; const messages = await getBuyerMessages(activeId); setConversations((items) => items.map((item) => item.id === activeId ? { ...item, messages: messages.map(toChatMessage) } : item)); await refreshInquiries(); };
+  const refreshActive = useCallback(async (id = activeId) => { if (!id) return; const messages = await getBuyerMessages(id); const last = messages[messages.length - 1]; if (last) messageCursors.current.set(id, { createdAt: last.cursorCreatedAt, id: last.id }); setConversations((items) => items.map((item) => item.id === id ? { ...item, messages: [...new Map([...item.messages, ...messages.map(toChatMessage)].map((message) => [message.id, message])).values()].sort((a, b) => (a.createdAt ?? '').localeCompare(b.createdAt ?? '') || a.id.localeCompare(b.id)) } : item)); await refreshInquiries(); }, [activeId, refreshInquiries]);
+  const syncActive = useCallback(async (id: string) => {
+    const cursor = messageCursors.current.get(id);
+    if (!cursor) return refreshActive(id);
+    const messages = await getBuyerMessagesAfter(id, cursor.createdAt, cursor.id);
+    if (!messages.length) return;
+    const last = messages[messages.length - 1]!;
+    messageCursors.current.set(id, { createdAt: last.cursorCreatedAt, id: last.id });
+    setConversations((items) => items.map((item) => item.id === id ? { ...item, messages: [...new Map([...item.messages, ...messages.map(toChatMessage)].map((message) => [message.id, message])).values()].sort((a, b) => (a.createdAt ?? '').localeCompare(b.createdAt ?? '') || a.id.localeCompare(b.id)) } : item));
+  }, [refreshActive]);
+  useEffect(() => {
+    if (!buyerId) return;
+    const sync = (event: { id: string; inquiryId: string }) => {
+      void refreshInquiries();
+      if (event.inquiryId === activeId) {
+        void refreshActive(event.inquiryId).then(() => { setConversations((items) => items.map((item) => item.id === event.inquiryId ? { ...item, unread: 0 } : item)); return markBuyerInquiryRead(event.inquiryId); }).catch((reason: Error) => setError(reason.message));
+      }
+    };
+    return subscribeToBuyerChatEvents(sync, () => { void refreshInquiries(); if (activeId) void syncActive(activeId); });
+  }, [buyerId, activeId, refreshInquiries, refreshActive, syncActive]);
   const mine = useMemo(() => conversations.filter((item) => item.participantIds.includes(buyerId)), [buyerId, conversations]);
   const visible = mine.filter((item) => filter === 'All' || item.unread > 0);
   const active = mine.find((item) => item.id === activeId) ?? null;
-  const send = async (body: string) => { if (!activeId) return; await sendBuyerMessage(activeId, body); await refreshActive(); };
+  const send = async (body: string, clientMessageId: string) => { if (!activeId) return; await sendBuyerMessage(activeId, body, clientMessageId); await refreshActive(activeId); };
   const offer = async (amount: number, note: string) => { if (!activeId) return; await sendBuyerOffer(activeId, amount, note); await refreshActive(); };
   const decision = async (id: string, status: 'accepted' | 'declined') => { await respondToBuyerOffer(id, status); await refreshActive(); };
 
