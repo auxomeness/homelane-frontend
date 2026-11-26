@@ -9,6 +9,7 @@ import './discovery.css';
 import '../components/agent/shared/sharedStyles.css';
 
 function screenFromPath(path: string): DiscoveryScreen {
+  path = path.replace(/\/+$/, '') || '/';
   if (/\/properties\/[^/]+\/?$/.test(path)) return 'properties';
   const match = ['home', 'map', 'viewings', 'properties', 'messages', 'notifications', 'profile'].find((screen) => path.endsWith(`/${screen}`));
   return (match as DiscoveryScreen | undefined) ?? 'map';

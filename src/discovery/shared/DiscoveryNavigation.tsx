@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Home, Map, CalendarDays, Building2, MessageCircle, Bell, UserRound, MoreHorizontal, X } from 'lucide-react';
+import { Home, Map, CalendarDays, Building2, MessageCircle, Bell, UserRound, Menu, X } from 'lucide-react';
 import type { DiscoveryScreen } from './discoveryRoutes.js';
 export type { DiscoveryScreen } from './discoveryRoutes.js';
 interface DiscoveryNavigationProps { screen: DiscoveryScreen; onNavigate: (screen: DiscoveryScreen) => void }
@@ -16,12 +16,12 @@ export default function DiscoveryNavigation({ screen, onNavigate }: DiscoveryNav
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [moreOpen]);
-  const primary = allItems.slice(0, 3); const active = screen === 'messages' || screen === 'notifications' || screen === 'profile' ? 'more' : screen;
+  const primary = allItems.slice(0, 3); const primaryScreens = primary.map((item) => item.id); const moreActive = screen !== null && !primaryScreens.includes(screen);
   const button = (item: typeof allItems[number]) => { const Icon = item.icon; return <button key={item.id} type="button" className={`agent-nav-item${screen === item.id ? ' is-active' : ''}`} aria-current={screen === item.id ? 'page' : undefined} onClick={() => { setMoreOpen(false); onNavigate(item.id); }}><Icon size={22}/><span className="agent-nav-item__label">{item.label}</span></button>; };
   return <>
     <nav id="agent-nav" className="discovery-agent-nav" aria-label="Buyer workspace navigation">
       <div className="agent-nav-title"><h3>WORKSPACE</h3></div><div className="agent-nav-panel">{allItems.map(button)}</div>
-      <div className="agent-nav-mobile">{primary.map(button)}<button type="button" className={`agent-nav-item${active === 'more' ? ' is-active' : ''}`} aria-expanded={moreOpen} aria-controls="buyer-nav-drawer" onClick={() => setMoreOpen((open) => !open)}><MoreHorizontal size={22}/><span className="agent-nav-item__label">More</span></button></div>
+      <div className="agent-nav-mobile">{primary.map(button)}<button type="button" className={`agent-nav-item agent-nav-more${moreOpen || moreActive ? ' is-active' : ''}`} aria-current={moreActive ? 'page' : undefined} aria-expanded={moreOpen} aria-controls="buyer-nav-drawer" onClick={() => setMoreOpen((open) => !open)}><Menu className="agent-nav-item__icon" size={22} aria-hidden="true"/><span className="agent-nav-item__label">More</span></button></div>
     </nav>
     {moreOpen && createPortal(<>
       <button type="button" className="agent-nav-backdrop buyer-nav-backdrop" aria-label="Close more navigation" onClick={() => setMoreOpen(false)} />
