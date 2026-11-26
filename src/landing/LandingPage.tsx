@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { ArrowUpRight, BedDouble, Building2, MapPin, Menu, Search, Sparkles, X } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { getPublicListings, type PropertyListing } from '../shared/maps/listingsApi.js';
+import { getBuyerToken } from '../discovery/buyerApi.js';
 import './landingPage.css';
 
 const categories = [
@@ -67,6 +68,7 @@ export default function LandingPage() {
           <Link className="landing-nav__mobile-cta" to="/visitor">Browse homes</Link>
         </nav>
         <div className="landing-nav__actions">
+          <Link className="landing-nav__sign-in" to="/auth/login?mode=signup">Sign up</Link>
           <Link className="landing-nav__sign-in" to="/auth/login">Sign in</Link>
           <Link className="landing-nav__browse" to="/visitor">Browse homes</Link>
         </div>
@@ -93,7 +95,7 @@ export default function LandingPage() {
           <div className="landing-hero__note"><span className="landing-hero__note-icon"><MapPin size={18} /></span><span><strong>Your next place</strong><small>Starts with a good search</small></span></div>
           <div className="landing-hero__stamp">A place<br />to call home</div>
         </div>
-        <div className="landing-hero__bottom"><span>HOMES FOR EVERY CHAPTER</span><span>01 / EXPLORE</span></div>
+        <div className="landing-hero__bottom"><span>HOMES FOR EVERY CHAPTER</span><nav className="landing-hero__utility" aria-label="Quick links"><Link to={getBuyerToken() ? '/discovery/profile' : '/auth/login?mode=signup'} state={{ from: '/discovery/profile' }}>Saved homes</Link><a href="#contact">Contact</a><span className="landing-hero__lang" aria-label="English language, Philippine peso currency">EN | PHP</span></nav></div>
       </section>
 
       <section className="landing-categories" id="explore">
@@ -149,7 +151,7 @@ export default function LandingPage() {
       </section>
 
       <ScrollFade className="landing-cta"><div><span className="landing-kicker">YOUR NEXT CHAPTER STARTS SOMEWHERE</span><h2>Let’s find that somewhere.</h2></div><Link className="landing-button landing-button--light" to="/visitor">Explore properties <ArrowUpRight size={18} /></Link></ScrollFade>
-      <footer className="landing-footer"><Link className="landing-brand" to="/"><img src="/logo/Purple%20House%20Path%20Logo%20Icon.png" alt="" /><span>homelane</span></Link><span>Find a place that feels like yours.</span><div><Link to="/visitor">Explore homes</Link><Link to="/agent">Agent workspace</Link><Link to="/admin">Admin</Link></div><small>© {new Date().getFullYear()} Homelane</small></footer>
+      <footer className="landing-footer" id="contact"><Link className="landing-brand" to="/"><img src="/logo/Purple%20House%20Path%20Logo%20Icon.png" alt="" /><span>homelane</span></Link><span>Find a place that feels like yours.</span><div><Link to="/visitor">Explore homes</Link><Link to="/agent">Agent workspace</Link><Link to="/admin">Admin</Link></div><small>© {new Date().getFullYear()} Homelane</small></footer>
     </main>
   );
 }

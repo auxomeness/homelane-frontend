@@ -608,3 +608,10 @@
 
 /* Keep the capped guide panel centered instead of anchoring it to the left. */
 .landing-guide { margin-inline:auto; }
+
+/* Quick links tucked into the hero footer so the top nav stays uncluttered. */
+.landing-hero__utility { display: flex; align-items: center; gap: clamp(16px, 2.4vw, 32px); }
+.landing-hero__utility a, .landing-hero__lang { color: inherit; transition: color .2s, opacity .2s; }
+.landing-hero__utility a:hover { color: #fff; }
+.landing-hero__lang { opacity: .85; }
+@media (max-width: 680px) { .landing-hero__utility { gap: 14px; letter-spacing: .06em; } }
