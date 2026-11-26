@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { BellDot, CircleUser, MessageCircleText, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
@@ -17,6 +17,19 @@ export default function AgentHeader() {
   const [notificationPosition, setNotificationPosition] = useState<NotificationPosition>({ top: 16, right: 16 });
   const [notificationError, setNotificationError] = useState('');
   const unread = notifications.filter((notification) => !notification.readAt).length;
+  const notificationGroups = useMemo(() => {
+    const groups = new Map<string, { notification: typeof notifications[number]; ids: string[]; unreadCount: number }>();
+    for (const notification of notifications) {
+      const groupedMessage = notification.eventType === 'message_received' && notification.entityType === 'inquiry';
+      const key = groupedMessage ? `${notification.eventType}:${notification.entityId}` : notification.id;
+      const group = groups.get(key);
+      if (group) {
+        group.ids.push(notification.id);
+        if (!notification.readAt) group.unreadCount += 1;
+      } else groups.set(key, { notification, ids: [notification.id], unreadCount: notification.readAt ? 0 : 1 });
+    }
+    return [...groups.values()];
+  }, [notifications]);
 
   const positionNotifications = () => {
     const trigger = notificationTrigger.current;
@@ -111,7 +124,14 @@ export default function AgentHeader() {
           {notificationError && <p className="agent-notification-dialog__error" role="alert">{notificationError}</p>}
           {unread > 0 && <button type="button" className="agent-notification-dialog__mark-all" onClick={() => void markAllRead()}>Mark all as read</button>}
           <div className="agent-notification-dialog__list">
-            {notifications.length ? notifications.slice(0, 8).map((notification) => <button className="agent-header__notification" type="button" key={notification.id} onClick={() => { void markNotificationRead(notification.id); closeNotifications(); if (notification.entityType === 'inquiry') navigate(`/agent/messages?inquiry=${encodeURIComponent(notification.entityId)}`); else if (notification.entityType === 'appointment') navigate('/agent/viewings'); }}><strong>{notification.title}</strong><span>{notification.body}</span></button>) : <p className="agent-notification-dialog__empty">You’re all caught up.</p>}
+            {notificationGroups.length ? notificationGroups.slice(0, 8).map(({ notification, ids, unreadCount }) => {
+              const groupedMessages = notification.eventType === 'message_received' && ids.length > 1;
+              const title = groupedMessages && unreadCount > 1 ? `${unreadCount} new messages from a buyer` : notification.title;
+              const body = groupedMessages && unreadCount > 1
+                ? `${unreadCount} new messages about ${notification.body.replace(/^A buyer sent a message about\s*/i, '').replace(/[.]$/, '')}.`
+                : notification.body;
+              return <button className="agent-header__notification" type="button" key={`${notification.eventType}:${notification.entityId}`} onClick={() => { void Promise.all(ids.map((id) => markNotificationRead(id))); closeNotifications(); if (notification.entityType === 'inquiry') navigate(`/agent/messages?inquiry=${encodeURIComponent(notification.entityId)}`); else if (notification.entityType === 'appointment') navigate('/agent/viewings'); }}><strong>{title}{groupedMessages && unreadCount > 1 && <span className="agent-notification-count">{unreadCount}</span>}</strong><span>{body}</span></button>;
+            }) : <p className="agent-notification-dialog__empty">You’re all caught up.</p>}
           </div>
         </section>
       </div>, document.body)}

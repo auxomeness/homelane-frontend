@@ -12,7 +12,7 @@
     bottom: 0 !important;
     left: 0 !important;
     display: flex !important;
-    width: 100% !important;
+    width: 100vw !important;
     max-width: none !important;
     height: auto !important;
     min-height: calc(4.5rem + env(safe-area-inset-bottom)) !important;
@@ -31,6 +31,21 @@
     box-shadow: 0 -8px 24px rgba(37,32,68,.09) !important;
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
+  }
+
+  html,
+  body,
+  #root {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body .agent-app,
+  body .admin-layout {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
   }
 
   body .agent-app #agent-nav .agent-nav-title,
