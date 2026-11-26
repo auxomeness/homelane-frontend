@@ -98,8 +98,15 @@
 .admin-agent-dialog__footer button:disabled { opacity: .5; cursor: not-allowed; }
 
 @media (max-width: 640px) {
-    .agent-filter__actions { width: 100%; flex: auto; }
-    .agent-filter__actions .search-filter { max-width: none; }
+    .agent-container { padding: 1rem; }
+    #agent-header { margin: 1.5rem 0; }
+    .agent-filter { margin-top: 1rem; }
+    .agent-filter .category-filter { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: .5rem; }
+    .agent-filter .category-btn { width: 100%; }
+    .agent-filter__actions { width: 100%; flex: auto; flex-wrap: wrap; }
+    .agent-filter__actions .search-filter { max-width: none; flex: 1 1 100%; }
+    .agent-filter__add { width: 100%; }
+    .agent-application-pages { flex-wrap: wrap; gap: .5rem; }
     .admin-agent-dialog[open] { padding: 1rem; }
     .admin-agent-dialog__fields { grid-template-columns: 1fr; }
     .admin-agent-dialog__footer { align-items: stretch; flex-direction: column; }

@@ -1,20 +1,14 @@
 /* --------- Stat Card ------------ */
 
 .card-container {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(1rem);
-    -webkit-backdrop-filter: blur(1rem);
-
-    border: 0.0625rem solid rgba(255, 255, 255, 0.35);
-    border-radius: 0.875rem;
-
-    box-shadow:
-        0 0.5rem 2rem rgba(31, 38, 135, 0.12),
-        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.6);
+    border: 1px solid #e4dff0;
+    border-radius: 1.15rem;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(43, 33, 92, .07);
 
     display: flex;
     flex-direction: column;
-    min-width: 40rem;
+    min-width: 0;
     padding: 1rem;
 }
 
@@ -65,17 +59,16 @@
 
 .grid-container {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     justify-content: start;
-    min-width: 30rem;
+    min-width: 0;
     
-    border: 0.5px solid #615f5f8a;
-    box-shadow:
-        0 0.5rem 2rem rgba(31, 38, 135, 0.12),
-        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.6);
-        padding: 1rem 2rem;
-        border-radius: 1rem;
+    padding: 1rem 2rem;
+    border: 1px solid #e8e5ed;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0 7px 23px rgba(37, 32, 68, .045);
 
     margin: 1rem 0;
     gap: 1.5rem;
@@ -85,7 +78,7 @@
     width: 3rem;
     height: 3rem;
     border-radius: 5rem;
-    background-color: var(--main-color);
+    background-color: #30245e;
 }
 
 .grid-logo.listing {
@@ -99,18 +92,33 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    min-width: 0;
 }
 
 .grid-name {
     font-size: 1rem;
+    overflow-wrap: anywhere;
 }
 
 .grid-sub-details {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.4rem;
     color: #585757;
     font-size: 0.8rem;
+    overflow-wrap: anywhere;
 }
 
 /* --------- Agent/Listing Grid ------------ */
+
+@media (max-width: 600px) {
+    .card-total { font-size: clamp(2.5rem, 12vw, 4rem); }
+    .card-link { gap: .35rem; font-size: .8rem; }
+    .grid-container {
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: .75rem;
+        padding: .85rem;
+    }
+    .grid-container > :last-child { grid-column: 2; }
+}

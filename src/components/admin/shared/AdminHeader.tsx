@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { BellDot, CircleUser, LogOut } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { getAdminDashboard, type AdminDashboardData } from '../../../shared/admin/dashboardApi.js';
 import { setAccountToken } from '../../../shared/maps/listingsApi.js';
 import './sharedStyles.css';
@@ -9,6 +9,7 @@ import './sharedStyles.css';
 type HeaderMenu = 'notifications' | 'profile' | null;
 
 export default function AdminHeader() {
+    const navigate = useNavigate();
     const [menu, setMenu] = useState<HeaderMenu>(null);
     const [dashboard, setDashboard] = useState<AdminDashboardData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -100,6 +101,8 @@ export default function AdminHeader() {
     const signOut = () => {
         setAccountToken(null);
         window.dispatchEvent(new Event('homelane:session-changed'));
+        setMenu(null);
+        navigate('/', { replace: true });
     };
 
     const recent = dashboard ? [
@@ -121,9 +124,13 @@ export default function AdminHeader() {
 
     return (<>
         <header id="admin-header">
-            <h3 id="header-title">HOMELANE</h3>
+            <Link className="admin-header__brand" to="/admin" aria-label="Homelane admin workspace">
+                <img src="/logo/Purple%20House%20Path%20Logo%20Icon.png" alt="" />
+                <span>homelane</span>
+                <small>ADMIN WORKSPACE</small>
+            </Link>
             <div className="right-header">
-                <div className="header-role"><p>Admin</p></div>
+                <span className="header-role">Admin</span>
                 <div className="header-icons" ref={menuRef}>
                     <button 
                         ref={notificationTrigger} 
@@ -187,9 +194,11 @@ export default function AdminHeader() {
                 {error && <p role="alert" className="admin-notification-dialog__error">{error}</p>}
                 <div className="admin-notification-dialog__list">
                     {loading && !dashboard && <p className="admin-notification-dialog__empty">Loading notifications…</p>}
+                   
                     {dashboard && (recent.length ? <>
                         <p className="admin-notification-dialog__summary">{pendingCount} pending {pendingCount === 1 ? 'request' : 'requests'}</p>
-                        {recent.map((item) => <Link className="admin-notification-dialog__item" key={item.id} to={item.path} onClick={closeNotifications}><strong>{item.title}</strong><span>{item.detail}</span></Link>)}
+                        {
+                        recent.map((item) => <Link className="admin-notification-dialog__item" key={item.id} to={item.path} onClick={closeNotifications}><strong>{item.title}</strong><span>{item.detail}</span></Link>)}
                         <div className="admin-notification-dialog__queues">
                             <Link to="/admin/agent-reviews" onClick={closeNotifications}>View agent requests</Link>
                             <Link to="/admin/listing-reviews?status=pending" onClick={closeNotifications}>View listing requests</Link>

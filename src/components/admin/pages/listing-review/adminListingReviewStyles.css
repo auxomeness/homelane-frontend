@@ -206,6 +206,13 @@
 }
 
 @media (max-width: 640px) {
+    .listing-container { padding: 1rem; }
+    #listing-header { margin: 1.5rem 0; }
+    .listing-filter { margin-top: 1rem; }
+    .listing-filter label { width: 100%; }
+    .listing-filter input,
+    .listing-filter select { flex: 1; min-width: 0; }
+    .listing-queue-pages { flex-wrap: wrap; gap: .5rem; }
     .review-grid-container-header {
         align-items: flex-start;
         flex-wrap: wrap;
@@ -222,6 +229,8 @@
     }
 
     .admin-add-listing__fields { grid-template-columns: 1fr; }
+    .admin-add-listing__card { padding: 1rem; }
+    .admin-add-listing__heading { margin: 1.5rem 0 1rem; }
 
     .admin-add-listing__heading,
     .admin-add-listing__footer { align-items: flex-start; flex-direction: column; }
