@@ -346,7 +346,7 @@
   .agent-communications-layout .agent-message-list { min-height: 18rem; max-height: 24rem; }
   .agent-communications-layout .agent-message-thread { min-height: 26rem; }
 }
-@media (max-width:680px) {
+@media (max-width:767px) {
   .agent-communications-page.has-active-conversation .agent-message-list { display:none; }
   .agent-communications-page.has-active-conversation .agent-message-thread { min-height:calc(100dvh - 12rem); }
   .agent-communications-page.has-active-conversation .agent-thread-back { display:grid; }

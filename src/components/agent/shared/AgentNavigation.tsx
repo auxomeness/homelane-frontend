@@ -21,6 +21,7 @@ const navItems: { label: string; screen: AgentScreen; icon: LucideIcon }[] = [
   { label: 'Activity', screen: 'activity', icon: LayoutDashboard },
   { label: 'Profile', screen: 'profile', icon: UserRound },
 ];
+const primaryScreens: AgentScreen[] = ['dashboard', 'listings', 'map'];
 
 export default function AgentNavigation({ screen, onNavigate }: AgentNavigationProps) {
   const [moreOpen, setMoreOpen] = useState(false);
@@ -64,7 +65,7 @@ export default function AgentNavigation({ screen, onNavigate }: AgentNavigationP
       </div>
       <div className="agent-nav-mobile" aria-label="Primary pages">
         {navItems.slice(0, 3).map((item) => renderItem(item, true))}
-        <button type="button" className={`agent-nav-item agent-nav-more${moreOpen ? ' is-active' : ''}`} aria-expanded={moreOpen} aria-controls="agent-nav-drawer" onClick={() => setMoreOpen((open) => !open)}>
+        <button type="button" className={`agent-nav-item agent-nav-more${moreOpen || (screen !== null && !primaryScreens.includes(screen)) ? ' is-active' : ''}`} aria-expanded={moreOpen} aria-controls="agent-nav-drawer" onClick={() => setMoreOpen((open) => !open)}>
           {moreOpen ? <X className="agent-nav-item__icon" size={22} aria-hidden="true" /> : <Menu className="agent-nav-item__icon" size={22} aria-hidden="true" />}
           <span className="agent-nav-item__label">More</span>
         </button>

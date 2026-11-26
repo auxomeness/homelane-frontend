@@ -47,10 +47,12 @@ export default function ConversationView({ conversation, properties, viewerId, o
     <section className="conversation-view" aria-label={`Conversation with ${otherName}`}>
       <header className="conversation-view__header">
         <button type="button" className="conversation-view__back" onClick={onBack} aria-label="Back to conversations">‹</button>
-        <div>
+        <span className="conversation-view__avatar" aria-hidden="true">{otherName.trim().charAt(0).toUpperCase() || 'H'}</span>
+        <div className="conversation-view__identity">
           <strong>{otherName}</strong>
           <span>{property?.title} · {property?.area}</span>
         </div>
+        <span className="conversation-view__status">Conversation</span>
       </header>
 
       <div className="conversation-view__messages" ref={messagesRef} aria-live="polite" aria-relevant="additions">
