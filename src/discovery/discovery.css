@@ -518,6 +518,39 @@
   .discovery-app .property-list-grid { grid-template-columns:repeat(auto-fill,minmax(min(100%,16rem),1fr)); }
   .property-list-topbar { align-items:center; }
   .property-list-topbar__links { display:none; }
+
+  /* Keep the details and contact panels in one normal-flow column on phones. */
+  .discovery-app .property-details-page,
+  .discovery-app .property-details-layout,
+  .discovery-app .property-details-main,
+  .discovery-app .property-details-aside {
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    box-sizing:border-box;
+  }
+  .discovery-app .property-details-layout {
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    align-items:stretch;
+    gap:.85rem;
+  }
+  .discovery-app .property-details-main,
+  .discovery-app .property-details-aside {
+    position:static;
+    grid-column:1;
+    grid-row:auto;
+  }
+  .discovery-app .property-details-facts { grid-template-columns:repeat(3,minmax(0,1fr)); gap:.4rem; }
+  .discovery-app .property-details-facts>span { grid-template-columns:1fr; justify-items:start; gap:.35rem; min-width:0; padding:.7rem; }
+  .discovery-app .property-details-facts svg { grid-row:auto; width:2rem; height:2rem; }
+  .discovery-app .property-details-facts strong { font-size:1rem; }
+  .discovery-app .property-details-facts small { font-size:.68rem; }
+  .discovery-app .property-details-card,
+  .discovery-app .property-agent-card,
+  .discovery-app .property-details-actions { min-width:0; box-sizing:border-box; }
+  .discovery-app .property-details-card p,
+  .discovery-app .property-details-card a { overflow-wrap:anywhere; }
 }
 
 /* Compact mobile agent navigation; keep every destination the same size. */
