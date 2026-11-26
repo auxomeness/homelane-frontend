@@ -62,7 +62,6 @@ export default function LandingPage() {
           <span>homelane</span>
         </Link>
         <nav className={`landing-nav__links${menuOpen ? ' is-open' : ''}`} aria-label="Main navigation">
-          <a href="#explore" onClick={() => setMenuOpen(false)}>Explore</a>
           <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
           <Link to="/agent" onClick={() => setMenuOpen(false)}>For agents</Link>
           <Link className="landing-nav__mobile-cta" to="/visitor">Browse homes</Link>
