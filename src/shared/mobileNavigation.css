@@ -114,4 +114,76 @@
   body .agent-app.agent-app--map #agent-nav {
     display: flex !important;
   }
+
+  /* Portaled workspace bars escape app scroll containers and stay viewport-fixed. */
+  body #agent-nav.agent-nav--viewport {
+    position: fixed !important;
+    z-index: 1200 !important;
+    inset: auto 0 0 !important;
+    display: flex !important;
+    width: auto !important;
+    max-width: none !important;
+    min-height: calc(4.5rem + env(safe-area-inset-bottom)) !important;
+    box-sizing: border-box !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: .35rem max(.5rem, env(safe-area-inset-right)) calc(.35rem + env(safe-area-inset-bottom)) max(.5rem, env(safe-area-inset-left)) !important;
+    margin: 0 !important;
+    transform: none !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-top: 1px solid #e9e5f0 !important;
+    border-radius: 0 !important;
+    background: rgba(255,255,255,.98) !important;
+    box-shadow: 0 -8px 24px rgba(37,32,68,.09) !important;
+    color: #625d70;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  body #agent-nav.agent-nav--viewport .agent-nav-title,
+  body #agent-nav.agent-nav--viewport .agent-nav-panel { display: none !important; }
+
+  body #agent-nav.agent-nav--viewport .agent-nav-mobile {
+    display: flex !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    gap: .25rem !important;
+  }
+
+  body #agent-nav.agent-nav--viewport .agent-nav-mobile .agent-nav-item {
+    display: grid !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 3.45rem !important;
+    max-height: 3.45rem !important;
+    flex: 1 1 0 !important;
+    align-content: center !important;
+    justify-items: center !important;
+    gap: .25rem !important;
+    padding: .35rem .2rem !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: .8rem !important;
+    color: #625d70 !important;
+    font: inherit !important;
+    text-align: center !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  body #agent-nav.agent-nav--viewport .agent-nav-mobile .agent-nav-item__label {
+    display: block !important;
+    font-size: .66rem !important;
+    font-weight: 650 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  body #agent-nav.agent-nav--viewport .agent-nav-mobile .agent-nav-item.is-active {
+    background: linear-gradient(135deg,#30245e,#51438c) !important;
+    color: #fff !important;
+  }
 }

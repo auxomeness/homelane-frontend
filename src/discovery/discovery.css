@@ -971,12 +971,28 @@
 .discovery-app .messages-page .buyer-message-error { margin: .15rem .9rem .7rem; color: #9f1239; font-size: .75rem; }
 .discovery-app .messages-page .buyer-message-error button { border: 0; background: none; color: inherit; font: inherit; font-weight: 700; text-decoration: underline; }
 @media (max-width: 767px) {
+  /* Match the Agent mobile shell: inset app chrome and page content by 12px. */
+  .discovery-app.agent-app {
+    padding: .75rem .75rem calc(7.5rem + env(safe-area-inset-bottom));
+    background:
+      radial-gradient(ellipse at 82% 4%, rgba(222,216,246,.62), transparent 34rem),
+      radial-gradient(ellipse at 8% 45%, rgba(240,235,250,.76), transparent 30rem),
+      #f8f7fb;
+  }
+  .discovery-app .discovery-header {
+    position: sticky;
+    top: .75rem;
+    min-height: 4.25rem;
+    padding: .65rem .8rem;
+    border: 1px solid rgba(226,221,239,.9);
+    border-radius: 1.1rem;
+    box-shadow: 0 12px 34px rgba(43,33,92,.09);
+  }
   .discovery-app .messages-page.agent-communications-page { padding: 1.2rem 0 2rem; }
   .discovery-app .messages-page .agent-page-heading { margin: 1.25rem 0 1rem; }
   .discovery-app .messages-page .agent-communications-layout { min-height: 0; grid-template-columns: minmax(0,1fr); gap: .75rem; }
   .discovery-app .messages-page .agent-message-list { min-height: 18rem; max-height: 24rem; }
   .discovery-app .messages-page.has-active-conversation .agent-message-list { display: none; }
-  .discovery-app .messages-page.has-active-conversation .messages-layout__view { display: block; }
   .discovery-app .messages-page.has-active-conversation .agent-message-thread { min-height: calc(100dvh - 12rem); }
   .discovery-app .messages-page.has-active-conversation .agent-thread-back { display: grid; }
   .discovery-app .messages-page .agent-thread-header { gap: .55rem; }

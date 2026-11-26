@@ -2,6 +2,7 @@ import { Bell, Eye, LayoutDashboard, List, Map, Menu, MessageSquare, Plus, UserR
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { LucideIcon } from 'lucide-react';
+import useMobileNavPortal from '../../../shared/useMobileNavPortal.js';
 
 export type AgentScreen = 'dashboard' | 'listings' | 'addListing' | 'viewings' | 'map' | 'inquiries' | 'messages' | 'activity' | 'profile';
 
@@ -25,6 +26,7 @@ const primaryScreens: AgentScreen[] = ['dashboard', 'listings', 'map'];
 
 export default function AgentNavigation({ screen, onNavigate }: AgentNavigationProps) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const usePortal = useMobileNavPortal();
 
   useEffect(() => {
     if (!moreOpen) return;
@@ -55,8 +57,8 @@ export default function AgentNavigation({ screen, onNavigate }: AgentNavigationP
     </button>
   );
 
-  return (
-    <nav id="agent-nav" aria-label="Agent workspace">
+  const navigation = (
+    <nav id="agent-nav" className={usePortal ? 'agent-nav--viewport' : undefined} aria-label="Agent workspace">
       <div className="agent-nav-title">
         <h3>Workspace</h3>
       </div>
@@ -79,4 +81,5 @@ export default function AgentNavigation({ screen, onNavigate }: AgentNavigationP
       </>, document.body)}
     </nav>
   );
+  return usePortal ? createPortal(navigation, document.body) : navigation;
 }
