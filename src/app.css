@@ -1,0 +1,51 @@
+.landing-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #fbf9fc;
+  color: #171638;
+}
+
+.landing-card {
+  width: min(188px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: center;
+}
+
+.landing-card h1 {
+  margin: 0 0 7px;
+  font-size: 35px;
+  line-height: 1.1;
+  letter-spacing: -1.4px;
+  white-space: nowrap;
+}
+
+@media (max-width: 500px) {
+  .landing-card { width: min(188px, 100%); }
+}
+
+@media (min-width: 501px) {
+  .landing-card { width: 240px; }
+  .landing-card h1 { font-size: 43px; }
+  .landing-card button { min-height: 42px; font-size: 15px; }
+}
+
+.landing-card button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 5px;
+  background: #211d4e;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.landing-card .landing-visitor {
+  margin-top: 1px;
+  background: transparent;
+  color: #211d4e;
+}

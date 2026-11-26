@@ -55,7 +55,7 @@ export default function DiscoveryApp() {
     <div className={`agent-app discovery-app${screen === 'map' ? ' agent-app--map' : ''}`}>
       {screen !== 'map' && <DiscoveryHeader onNavigate={navigate} />}
       <Outlet />
-      {screen !== 'map' && <DiscoveryNavigation screen={screen} onNavigate={navigate} />}
+      <DiscoveryNavigation screen={screen} onNavigate={navigate} />
     </div>
   );
 }

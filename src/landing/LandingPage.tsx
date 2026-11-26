@@ -88,6 +88,10 @@ export default function LandingPage() {
             <input id="landing-location" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Where would you like to live?" />
             <button type="submit" aria-label="Search properties"><Search size={20} /><span>Search</span></button>
           </form>
+          <div className="landing-hero__auth-actions" aria-label="Account options">
+            <Link to="/auth/login">Sign in</Link>
+            <Link to="/auth/login?mode=signup">Sign up</Link>
+          </div>
         </div>
         <div className="landing-hero__visual" aria-label="Find a home that fits your next chapter">
           <div className="landing-hero__photo" role="img" aria-label="Sunlit contemporary home with a garden" />
