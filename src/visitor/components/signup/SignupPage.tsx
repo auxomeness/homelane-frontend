@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { House, Info, UserRound } from 'lucide-react';
-import LoginModal from '../login/LoginModal';
 import './signup.css';
 
 type AccountType = 'buyer' | 'agent';
 
 export default function SignupPage() {
   const [accountType, setAccountType] = useState<AccountType>('buyer');
-  const [loginOpen, setLoginOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -16,7 +14,7 @@ export default function SignupPage() {
       <div className="signup-shell">
         <header className="signup-header">
           <a className="signup-brand" href="/" aria-label="Homelane home"><span className="signup-brand__mark" />HOMELANE</a>
-          <button className="signup-header__signin" type="button" onClick={() => setLoginOpen(true)}>Sign in</button>
+          <button className="signup-header__signin" type="button" onClick={() => navigate('/auth/login')}>Sign in</button>
         </header>
 
         <section className="signup-content">
@@ -44,11 +42,10 @@ export default function SignupPage() {
             <button className="signup-submit" type="submit">Create account</button>
           </form>
 
-          <p className="signup-existing">Already have an account? <button type="button" onClick={() => setLoginOpen(true)}>Sign in</button></p>
+          <p className="signup-existing">Already have an account? <button type="button" onClick={() => navigate('/auth/login')}>Sign in</button></p>
           {accountType === 'agent' && <aside className="signup-notice"><Info size={17} /><span>Agents are reviewed by an admin before they can publish listings.</span></aside>}
         </section>
       </div>
-      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </main>
   );
 }
