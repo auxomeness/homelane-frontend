@@ -32,6 +32,7 @@
 .landing-search input::placeholder { color: #8e8b98; }
 .landing-search button { border: 0; border-radius: 7px; height: 52px; padding: 0 20px; display: flex; gap: 9px; align-items: center; color: white; background: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
 .landing-search button:hover { background: #191542; }
+.landing-hero__auth-actions { display: none; }
 .landing-hero__meta { display: flex; align-items: center; gap: 8px; margin-top: 16px; color: #777482; font-size: .8rem; }
 .landing-hero__meta svg { color: var(--accent); }
 .landing-hero__visual { min-height: 485px; position: relative; align-self: stretch; z-index: 1; }
@@ -263,7 +264,7 @@
   .landing-nav { display: flex; width: 100%; height: 72px; padding: 0 6%; margin: 0; border-radius: 0; }
   .landing-nav.is-scrolled { height: 64px; }
   .landing-nav__links { top: 72px; border-color: transparent; border-radius: 0 0 16px 16px; background: rgba(255,255,255,.98); }
-  .landing-nav__links a { color: var(--purple) !important; }
+  .landing-nav .landing-nav__links a { color: var(--purple) !important; }
   .landing-nav__links.is-open { box-shadow: 0 16px 30px rgba(18,15,51,.18); }
   .landing-nav.is-scrolled .landing-nav__links { top: 64px; border-color: #eeedf4; }
   .landing-nav__menu { color: white !important; }
@@ -441,8 +442,15 @@
     backdrop-filter: blur(22px);
   }
   .landing-nav.is-scrolled .landing-nav__links { top: 52px; }
+  .landing-nav.is-scrolled .landing-nav__menu {
+  color: var(--purple) !important;
+}
   .landing-nav__links.is-open { box-shadow: 0 16px 30px rgba(18,15,51,.18); }
-  .landing-nav__links a { color: var(--purple) !important; }
+  .landing-nav .landing-nav__links a { color: var(--purple) !important; }
+  .landing-nav__links a { padding-block: 8px; }
+  .landing-hero__auth-actions { display: grid; grid-template-columns: 1fr; gap: 6px; width: min(100%, 150px); margin: 18px auto 0; }
+  .landing-hero__auth-actions a { display: grid; min-height: 32px; place-items: center; border: 1px solid rgba(255,255,255,.72); border-radius: 9px; background: rgba(255,255,255,.14); color: #fff; font-size: .75rem; font-weight: 700; text-decoration: none; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .landing-hero__auth-actions a:last-child { border-color: #fff; background: #fff; color: var(--purple); }
   .landing-hero { min-height: max(690px,100svh); padding-top: 76px; padding-bottom: 106px; }
   .landing-hero__bottom {
     right: 0;

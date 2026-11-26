@@ -39,7 +39,7 @@
 .property-list-auth__signin:hover { background: #f1eef8; }
 .property-list-auth__signup { border: 1px solid #241d4d; background: #241d4d; color: #fff; }
 .property-list-auth__signup:hover { background: #3a2f78; }
-@media (max-width: 480px) { .property-list-auth a { padding: 0 12px; font-size: .8rem; } }
+@media (max-width: 480px) { .property-list-auth a { flex-shrink: 0; padding: 0 8px; font-size: .72rem; white-space: nowrap; } }
 
 .fullscreen-map-screen { position: fixed; z-index: 200; inset: 0; overflow: hidden; height: 100vh; height: 100dvh; background: #eeeaf2; color: #241d4d; }
 .fullscreen-map-header { position: absolute; z-index: 1300; top: max(12px,env(safe-area-inset-top)); right: 16px; left: 16px; display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 20px; padding: 7px 12px 7px 18px; border: 1px solid #ffffffbb; border-radius: 16px; background: #ffffffdf; box-shadow: 0 10px 32px #241d4d20; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
@@ -230,6 +230,20 @@
   .agent-app.agent-app--map { min-height: 0; padding: 0; }
   .agent-app--map .agent-header,
   .agent-app--map #agent-nav { display: none; }
+  .discovery-app.agent-app--map #agent-nav {
+    position: fixed;
+    z-index: 1400;
+    top: auto;
+    right: .5rem;
+    bottom: max(.5rem, env(safe-area-inset-bottom));
+    left: .5rem;
+    display: flex !important;
+    width: min(26rem, calc(100% - 1rem));
+    transform: none;
+  }
+  .discovery-app.agent-app--map .public-map-screen .fullscreen-map-panel {
+    bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  }
   .agent-app--map .agent-map-screen { position: fixed; z-index: 200; inset: 0; width: 100vw; height: 100dvh; border: 0; border-radius: 0; }
   .agent-map-screen .fullscreen-map-panel__actions .map-close { display: grid; }
 }
