@@ -27,7 +27,7 @@
 .agent-message-bubble small { color: var(--agent-muted); font-size: .7rem; }
 .agent-message-bubble__body { display: block; padding: 0; border: 0; background: transparent; color: var(--agent-ink); font: inherit; line-height: 1.5; text-align: left; white-space: pre-wrap; overflow-wrap: anywhere; cursor: pointer; }
 .agent-message-bubble__details { display: block; margin: .35rem 0 0; padding: 0; border: 0; background: transparent; color: var(--agent-primary); font-size: .68rem; font-weight: 700; cursor: pointer; }
-.agent-message-bubble--outgoing { justify-self: end; border-radius: .8rem .8rem .2rem .8rem; background: #1e1b4b; }
+.agent-message-bubble--outgoing { justify-self: end; border-radius: .8rem .8rem .2rem .8rem; background: #432c7a; }
 .agent-message-bubble--outgoing p,.agent-message-bubble--outgoing small { color: #fff; }
 .agent-message-bubble--outgoing .agent-message-bubble__body { color: #fff; }
 .agent-message-bubble > small { display: block; margin-top: .45rem; }

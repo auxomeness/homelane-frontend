@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import Button from '../../components/button.js';
 import { getPublicListings, type PropertyListing } from '../../shared/maps/listingsApi.js';
-import { getBuyerInquiries, getBuyerMessages, getBuyerMessagesAfter, getBuyerProfile, markBuyerInquiryRead, respondToBuyerOffer, sendBuyerMessage, sendBuyerOffer, subscribeToBuyerChatEvents, type BuyerMessage } from '../buyerApi.js';
+import { getBuyerInquiries, getBuyerMessages, getBuyerMessagesAfter, getBuyerProfile, markBuyerInquiryRead, respondToBuyerOffer, sendBuyerMessage, subscribeToBuyerChatEvents, type BuyerMessage } from '../buyerApi.js';
 import type { ChatMessage, Conversation, OfferStatus, Property } from '../types.js';
 import StateMessage from '../shared/StateMessage.js';
 import useDiscoveryNavigate from '../shared/useDiscoveryNavigate.js';
@@ -18,7 +18,7 @@ export default function Messages() {
   const [searchParams] = useSearchParams();
   const onNavigate = useDiscoveryNavigate();
   const [properties, setProperties] = useState<Property[]>([]); const [buyerId, setBuyerId] = useState('');
-  const [conversations, setConversations] = useState<Conversation[]>([]); const [activeId, setActiveId] = useState<string | null>(null); const [filter, setFilter] = useState<'All' | 'Unread'>('All');
+  const [conversations, setConversations] = useState<Conversation[]>([]); const [activeId, setActiveId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); const [loadingMessages, setLoadingMessages] = useState(false); const [error, setError] = useState('');
   const conversationRequest = useRef(0);
   const messageCursors = useRef(new Map<string, { createdAt: string; id: string }>());
@@ -74,20 +74,17 @@ export default function Messages() {
     return subscribeToBuyerChatEvents(sync, () => { void refreshInquiries(); if (activeId) void syncActive(activeId); });
   }, [buyerId, activeId, refreshInquiries, refreshActive, syncActive]);
   const mine = useMemo(() => conversations.filter((item) => item.participantIds.includes(buyerId)), [buyerId, conversations]);
-  const visible = mine.filter((item) => filter === 'All' || item.unread > 0);
   const active = mine.find((item) => item.id === activeId) ?? null;
   const send = async (body: string, clientMessageId: string) => { if (!activeId) return; await sendBuyerMessage(activeId, body, clientMessageId); await refreshActive(activeId); };
-  const offer = async (amount: number, note: string) => { if (!activeId) return; await sendBuyerOffer(activeId, amount, note); await refreshActive(); };
   const decision = async (id: string, status: 'accepted' | 'declined') => { await respondToBuyerOffer(id, status); await refreshActive(); };
 
-  if (loading) return <main className="discovery-page messages-page"><h1 className="messages-title">Messages</h1><StateMessage title="Loading conversations…" text="Your latest conversations are loading." kind="loading" /></main>;
+  if (loading) return <main className="discovery-page messages-page"><div className="agent-page-heading discovery-message-heading"><div><span className="agent-workspace-eyebrow">BUYER RELATIONSHIPS</span><h1>Messages</h1><p>Continue the conversation, one home at a time.</p></div></div><StateMessage title="Loading conversations…" text="Your latest conversations are loading." kind="loading" /></main>;
   return <main className={`discovery-page messages-page${active ? ' has-active' : ''}`}>
-    <h1 className="messages-title">Messages</h1>
+    <div className="agent-page-heading discovery-message-heading"><div><span className="agent-workspace-eyebrow">BUYER RELATIONSHIPS</span><h1>Messages</h1><p>Continue the conversation, one home at a time.</p></div></div>
     {error && <p className="auth-login__error" role="alert">{error}</p>}
     {mine.length === 0 ? <StateMessage icon="chat" title="No messages yet" text="When you send an inquiry to an agent, the conversation shows up here."><Button className="state-message__button" onClick={() => onNavigate('properties')}>Browse properties</Button></StateMessage> : <>
-      <div className="message-filters" role="group" aria-label="Filter conversations">{(['All', 'Unread'] as const).map((name) => <button key={name} type="button" className={`message-filter${filter === name ? ' is-active' : ''}`} aria-pressed={filter === name} onClick={() => setFilter(name)}>{name}</button>)}</div>
-      <div className="messages-layout"><aside className="messages-layout__list"><div className="conversation-list__header"><div><span>INBOX</span><strong>Conversations</strong></div><b>{visible.length}</b></div>{visible.length ? <ConversationList conversations={visible} properties={properties} activeId={activeId} viewerRole="buyer" viewerId={buyerId} onSelect={(id) => void openConversation(id)} /> : <StateMessage icon="chat" title="No unread messages" text="You're all caught up." />}</aside>
-        <div className="messages-layout__view">{active ? loadingMessages ? <StateMessage title="Loading conversation…" text="Messages are loading." kind="loading" /> : <ConversationView key={active.id} conversation={active} properties={properties} viewerId={buyerId} onBack={() => { conversationRequest.current += 1; setActiveId(null); setLoadingMessages(false); }} onSend={send} onOffer={offer} onOfferDecision={decision} /> : <StateMessage icon="chat" title="Select a conversation" text="Choose a conversation to read messages and offers." />}</div>
+      <div className="messages-layout"><aside className="messages-layout__list"><div className="conversation-list__header"><div><span>INBOX</span><strong>Conversations</strong></div><b>{mine.length}</b></div>{mine.length ? <ConversationList conversations={mine} properties={properties} activeId={activeId} viewerRole="buyer" viewerId={buyerId} onSelect={(id) => void openConversation(id)} /> : <StateMessage icon="chat" title="No messages yet" text="When you send an inquiry to an agent, the conversation shows up here." />}</aside>
+        <div className="messages-layout__view">{active ? loadingMessages ? <StateMessage title="Loading conversation…" text="Messages are loading." kind="loading" /> : <ConversationView key={active.id} conversation={active} properties={properties} viewerId={buyerId} onBack={() => { conversationRequest.current += 1; setActiveId(null); setLoadingMessages(false); }} onSend={send} onOfferDecision={decision} /> : <StateMessage icon="chat" title="Select a conversation" text="Choose a conversation to read messages and offers." />}</div>
       </div>
     </>}
   </main>;

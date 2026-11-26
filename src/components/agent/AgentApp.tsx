@@ -20,6 +20,7 @@ const paths: Record<AgentScreen, string> = {
 };
 
 function screenFromPath(path: string): AgentScreen | null {
+  path = path.replace(/\/+$/, '') || '/';
   if (path.endsWith('/dashboard') || path === '/agent') return 'dashboard';
   if (path.endsWith('/my-listings')) return 'listings';
   if (path.endsWith('/map')) return 'map';
